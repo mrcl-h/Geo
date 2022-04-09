@@ -1,2 +1,2 @@
-# dzi-ogebra
+# Geo
 geometria
