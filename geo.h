@@ -1,189 +1,203 @@
 #include<iostream>
 
 //lista figur geometrycznych
-class Odcinek;
-class Trojkat;
-class Prosta;
-class Okrag;
+class Segment;
+class Triangle;
+class Line;
+class Circle;
 
 //lista przeksztalcen geometrycznych
 /*jednokladnosc
  *obrot
  *przesuniecie o wektor
  *symetria wzgledem prostej
- *symetria wzgledem punktu
+ *symetria wzgledem Pointu
  *przeksztalcenie afiniczne
  *inwersja
  *
  */
 
-class Punkt{
+class Point{
 public:
 	double x,y;
-	
-	//punkt o współrzędnych (1) i (2) +
-	Punkt(double,double);
 
-	//punkt przecięcia dwóch prostych +
-	Punkt(Prosta,Prosta);
-	
-	//czy oba punkty są sobie równe + 
-	bool operator==(Punkt);
-	
+	//Punkt o współrzędnych (1) i (2) +
+	Point(double,double);
+
+	//Punkt przecięcia dwóch prostych +
+	Point(Line,Line);
+
+	//czy oba Punkty są sobie równe +
+	bool operator==(Point);
+
 	//dodawanie (1) do punktu +
-	Punkt operator+(Punkt);
-	
-	//odejmowanie (1) od punktu +
-	Punkt operator-(Punkt);	
-	
+	Point operator+(Point);
+
+	//odejmowanie (1) od Punktu +
+	Point operator-(Point);
+
 	//iloczyn o skalar +
-	Punkt operator*(double);
-	
+	Point operator*(double);
+
 	//iloczyn skalarny +
-	double operator*(Punkt);
-	
+	double operator*(Point);
+
 	//iloczyn wektorowy +
-	double operator%(Punkt);
-	
-	//długość do (0,0) + 
+	double operator%(Point);
+
+	//długość do (0,0) +
 	double abs();
-	
+
 	//odległość do (1) +
- 	double operator/(Punkt);	
+ 	double operator/(Point);
 
 };
 
-class Prosta{
+class Line{
 public:
-	
+
 	double a, b, c;
 
-	//prosta ax+by+c=0 +
-	Prosta(double,double,double);
+	//Line ax+by+c=0 +
+	Line(double,double,double);
 
 	//prosta przechodząca przez (1) i (2) +
-	Prosta(Punkt,Punkt);
+	Line(Point,Point);
 
 	//prosta która biegnie przez przecięcia (1) i (2) +
-	Prosta(Okrag, Okrag);
+	Line(Circle, Circle);
 
 	//prosta która biegnie przez (1) +
-	Prosta(Odcinek);
-	
+	Line(Segment);
+
 	// sprawdź czy równoległe do (1) +
-	bool operator||(Prosta);
-	
-	//punkt przecięcia tej prostej i (1) +
-	Punkt operator*(Prosta);
-	
+	bool operator||(Line);
+
+	//Punkt przecięcia tej prostej i (1) +
+	Point operator*(Line);
+
 	//prosta równoległa przez (1) +
-	Prosta par(Punkt);
-	
+	Line par(Point);
+
 	//prosta prostopadla przez (1) +
-	Prosta orto(Punkt);
+	Line ortho(Point);
 };
 
-class Okrag{
+class Circle{
 public:
-	Punkt srodek;
+	Point middle;
 	double r;
 
-	//okrag opisany na (1), (2), (3)
-	Okrag(Punkt,Punkt,Punkt);
-	
-	//okrag o środku w (1) i promieniu (2) +
-	Okrag(Punkt,double);
-	
-	//Okrag o środku w (1) i promieniu (2) +
-	Okrag(Punkt,Punkt);
-	
+	//Okrąg opisany na (1), (2), (3)
+	Circle(Point,Point,Point);
+
+	//Okrąg o środku w (1) i promieniu (2) +
+	Circle(Point,double);
+
+	//Okrąg o środku w (1) i promieniu (2) +
+	Circle(Point,Point);
+
 	//Okrąg opisany na (1) i (2)
-	Okrag(Odcinek, Punkt);
-	
+	Circle(Segment, Point);
+
 	//Okrąg opisany na (1)
-	Okrag(Trojkat);
+	Circle(Triangle);
 };
 
-class Odcinek{
+class Segment{
 public:
-	Punkt p1, p2;
-	
-	//odcinek o krańcach w (1) i (2) +
-	Odcinek(Punkt,Punkt);
-	
-	//odcinek o  krańcach w punktach przecięcia (1) i (2)
-	Odcinek(Okrag,Okrag);
-	
-	//odcinek o krańcach w punktach przecięcia (1) i (2)
-	Odcinek(Okrag, Prosta);
-	
+	Point p1, p2;
+
+	//Odcinek o krańcach w (1) i (2) +
+	Segment(Point,Point);
+
+	//Odcinek o  krańcach w punktach przecięcia (1) i (2)
+	Segment(Circle,Circle);
+
+	//Odcinek o krańcach w punktach przecięcia (1) i (2)
+	Segment(Circle, Line);
+
 	//dlugosc odcinka +
 	double abs();
 
 };
 
-class Trojkat{
+class Triangle{
 public:
-	Punkt A,B,C;
-	
-	//Trojkat o punktach (1), (2), (3) +
-	Trojkat(Punkt,Punkt,Punkt);
-	
-	//Trojkat o punktach przeciecia parami przez (1), (2), (3) +
-	Trojkat(Prosta,Prosta,Prosta);
-	
-	//obwod trojkata +
-	double obwod();
-	
-	//pole figury +
-	double pole();
-	
-	//czy trojkat jest przystajacy do (1) +
-	bool operator==(Trojkat);
-	
-	//czy trojkat jest podobny do (1) +
-	bool operator!=(Trojkat);
-	/* o - okrag
-	 * pu - punkt
-	 * pr - prosta
+	Point A,B,C;
+
+	//Trójkąt o Pointach (1), (2), (3) +
+	Triangle(Point,Point,Point);
+
+	//Trójkąt o punktach  przeciecia parami przez (1), (2), (3) +
+	Triangle(Line,Line,Line);
+
+	//obwod trójkąta +
+	double perimeter();
+
+	//pole trójkąta +
+	double area();
+
+	//czy trójkąt jest przystajacy do (1) +
+	bool operator==(Triangle);
+
+	//czy trójkąt jest podobny do (1) +
+	bool operator!=(Triangle);
+	/* c - okrąg
+	 * p - Punkt
+	 * l - prosta
 	 */
-	
-	// okrag wpisany w trojkat
-	Okrag o_Wpisany();
-	
-	// okrag opisany na trojkacie
-	Okrag o_Opisany();
-	
-	// punkt przeciecia wysokosci trojkata
-	Punkt ortocentrum();
-	
-	// punkt przeciecia srodkowych trojkata
-	Punkt pu_Ciezkosci();
-	
-	// prosta Eulera trojkata
-	Prosta pr_Eulera();
-	
-	// prosta Nagela trojkata
-	Prosta pr_Nagela();
-	
-	// okrag dziewieciu punktow trojkata
-	Okrag o_dziewieciu_pu();
-	
+
+	// okrąg wpisany w trójkąt
+	Circle inscribed_c();
+
+	// Okrąg opisany na trojkacie
+	Circle circum_c();
+
+	// Punkt przeciecia wysokosci trójkąta
+	Point orthocenter();
+
+	// Punkt przeciecia srodkowych trójkąta
+	Point center_of_mass();
+
+	// Prosta Eulera trójkąta
+	Line euler_l();
+
+	// prosta Nagela trójkąta
+	Line nagel_l();
+
+	// okrąg dziewięciu punktów trójkąta
+	Circle nine_p_c();
+
 };
-//odcinek od (1) w kierunku (2) o dlugosci (3) +
-Punkt Przedluzenie(Punkt, Punkt, double);
+//-------------Konstrukcje-----------------------
 
-//jednokladnosc prostej (3) o skali (2) wzgledem punktu (1)
-Prosta jednokladnosc(Punkt, double, Prosta);
+Point middle(Point, Point);
 
-//jednokladnosc punktu (3) o skali (2) wzgledem punktu (1) +
-Punkt jednokladnosc(Punkt, double, Punkt);
+Point middle(Segment);
 
-//jednokladnosc okregu (3) o skali (2) wzgledem punktu (1) 
-Okrag jednokladnosc(Punkt, double, Okrag);
+Line bisector(Line,Line);
 
-//jednokladnosc odcinka (3) o skali (2) wzgledem punktu (1) 
-Odcinek jednokladnosc(Punkt, double, Odcinek);
+Line bisector(Point,Point, Point);
 
-//jednokladnosc trojkata (3) o skali (2) wzgledem punktu (1) +
-Trojkat jednokladnosc(Punkt, double, Trojkat);
+Line tangent_to_c(Point, Line);
+
+//Punkt na półprostej od (1) w kierunku (2) odległy o (3) od (1) +
+Point lengthen(Point, Point, double);
+
+//-------------Przekształcenia-------------------------
+
+//jednokladnosc prostej (3) o skali (2) wzgledem Pointu (1)
+Line homothety (Point, double, Line);
+
+//jednokladnosc Pointu (3) o skali (2) wzgledem Pointu (1) +
+Point homothety(Point, double, Point);
+
+//jednokladnosc okregu (3) o skali (2) wzgledem Pointu (1)
+Circle homothety(Point, double, Circle);
+
+//jednokladnosc odcinka (3) o skali (2) wzgledem Pointu (1)
+Segment homothety(Point, double, Segment);
+
+//jednokladnosc Trianglea (3) o skali (2) wzgledem Pointu (1) +
+Triangle homothety(Point, double, Triangle);
