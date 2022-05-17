@@ -1,13 +1,24 @@
 #include <iostream>
 #include<vector>
-#include"geo.h"
+#include"source/geo.h"
 
 
 vector<Shape*> shapes;
-void func(auto a){
+
+template <typename T>
+void func(T& a){
     Shape &S=a;
     shapes.push_back(&S);
 }
+
+void draw (sf::RenderWindow& window) {
+        window.clear(sf::Color(255,255,255,255));
+        for(unsigned int i=0;i<shapes.size();i++){
+            shapes[i]->draw(&window);
+        }
+        window.display();
+};
+
 int main()
 {
     sf::RenderWindow window;
@@ -25,6 +36,19 @@ int main()
     func(Omega);
     while (window.isOpen()){
         sf::Event event;
+        window.waitEvent (event);
+        if (event.type == sf::Event::Closed){
+            window.close();
+        } else if (event.type == sf::Event::MouseButtonPressed){
+            double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
+            Point *mysz = new Point(x,y);
+            Shape &S=*mysz;
+            shapes.push_back(&S);
+        } else if (event.type== sf::Event::Resized){
+
+        }
+        draw(window);
+        /*
         while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed){
                 window.close();
@@ -42,6 +66,8 @@ int main()
         }
         window.display();
         window.clear(sf::Color(255,255,255,255));
+        */
     }
     return 0;
 }
+
