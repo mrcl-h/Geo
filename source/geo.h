@@ -13,7 +13,8 @@ class Shape {
 public:
     //string name;
     virtual double dist(Point)=0;
-    virtual void draw(sf::RenderWindow*)=0;
+    virtual void draw(sf::RenderWindow*) {}
+    virtual void hull_draw(sf::RenderWindow*) {}
     virtual string what_is()=0;
 
 };
@@ -61,7 +62,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream&, const Point&);
 
-	Point(double, double);
+	Point(double=0, double=0);
 
 	bool operator==(Point);
 

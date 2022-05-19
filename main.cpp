@@ -1,4 +1,12 @@
 #include <iostream>
+#include "source/Geoapp.h"
+
+int main () {
+    Geoapp g;
+}
+
+/*
+#include <iostream>
 #include<vector>
 #include"source/geo.h"
 
@@ -48,26 +56,8 @@ int main()
 
         }
         draw(window);
-        /*
-        while (window.pollEvent(event)){
-            if (event.type == sf::Event::Closed){
-                window.close();
-            } else if (event.type == sf::Event::MouseButtonPressed){
-                double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
-                Point *mysz = new Point(x,y);
-                Shape &S=*mysz;
-                shapes.push_back(&S);
-            } else if (event.type== sf::Event::Resized){
-
-            }
-        }
-        for(int i=0;i<shapes.size();i++){
-            shapes[i]->draw(&window);
-        }
-        window.display();
-        window.clear(sf::Color(255,255,255,255));
-        */
     }
     return 0;
 }
 
+*/

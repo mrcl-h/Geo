@@ -5,7 +5,7 @@
 using namespace std;
 
 //----------------------------------------
-Point::Point(double x1=0, double y2=0){
+Point::Point(double x1, double y2){
 	x=x1;
 	y=y2;
 }

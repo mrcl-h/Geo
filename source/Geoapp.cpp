@@ -1,12 +1,13 @@
 #include"Geoapp.h"
 #include<SFML/Graphics.hpp>
 using namespace std;
-
+constexpr double epsilon = 2;
 
 Geoapp::Geoapp(){
-    height=300.0;
-    width=300.0;
-    uiwidth=200.0;
+    //height=300.0;
+    //width=300.0;
+    //uiwidth=200.0;
+    uiBarrier = 0.6;
     window.create(sf::VideoMode(500, 300), "Geo");
     scalingFactor=1.0;
     loop();
@@ -30,7 +31,7 @@ void Geoapp::events(sf::Event event){
             } else if (event.type == sf::Event::MouseButtonPressed){
                 double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
                 Point *mysz = new Point(x,y);
-                if(x>width){
+                if(x>uiBarrier*window.getSize().x){
                     UIhandling(*mysz);
                 } else {
                     whenClick(x,y);
@@ -49,24 +50,27 @@ void Geoapp::update(){
 }
 
 void Geoapp::drawUI(){
-    sf::RectangleShape rect(sf::Vector2f(uiwidth,height));
-    rect.move(sf::Vector2f(300,0));
+    unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+    window.setView (sf::View(sf::FloatRect(0,0,windowWidth, windowHeight)));
+    sf::RectangleShape rect (sf::Vector2f(windowWidth*(1-uiBarrier),windowHeight));
+    rect.move(sf::Vector2f(windowWidth*uiBarrier,0));
     sf::Vertex line[] =
     {
-        sf::Vertex(sf::Vector2f(width, 0)),
-        sf::Vertex(sf::Vector2f(width, height))
+        sf::Vertex(sf::Vector2f(windowWidth*uiBarrier, 0)),
+        sf::Vertex(sf::Vector2f(windowWidth*uiBarrier, windowHeight))
     };
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
-    window.draw(line, 2, sf::Lines);
+    rect.setFillColor (sf::Color(0,255,255));
     window.draw(rect);
+    window.draw(line, 2, sf::Lines);
 }
 
 void Geoapp::drawObjects(){
-    for(int i=0;i<hulledShapes.size();i++){
+    for(unsigned int i=0;i<hulledShapes.size();i++){
         hulledShapes[i]->hull_draw(&window);
     }
-    for(int i=0;i<shapes.size();i++){
+    for(unsigned int i=0;i<shapes.size();i++){
         shapes[i]->draw(&window);
     }
 }
@@ -116,16 +120,16 @@ void Geoapp::changeMode(sf::Event e){
 
 
 int Geoapp::FTCP(Point A){
-    for(int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<EPSILON)){
+    for(unsigned int i=0;i<shapes.size();i++){
+        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<epsilon)){
             return i;
         }
     }
     return -1;
 }
 int Geoapp::FTCL(Point A){
-    for(int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Line")&&(shapes[i]->dist(A)<EPSILON)){
+    for(unsigned int i=0;i<shapes.size();i++){
+        if((shapes[i]->what_is()=="Line")&&(shapes[i]->dist(A)<epsilon)){
             return i;
         }
 
@@ -133,16 +137,16 @@ int Geoapp::FTCL(Point A){
     return -1;
 }
 int Geoapp::FTCS(Point A){
-    for(int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Segment")&&(shapes[i]->dist(A)<EPSILON)){
+    for(unsigned int i=0;i<shapes.size();i++){
+        if((shapes[i]->what_is()=="Segment")&&(shapes[i]->dist(A)<epsilon)){
             return i;
         }
     }
     return -1;
 }
 int Geoapp::FTCC(Point A){
-    for(int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<EPSILON)){
+    for(unsigned int i=0;i<shapes.size();i++){
+        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<epsilon)){
             return i;
         }
     }

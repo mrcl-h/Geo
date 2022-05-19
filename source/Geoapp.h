@@ -1,5 +1,6 @@
 #include"geo.h"
-#include<SFML/Graphics.hpp>
+//#include<SFML/Graphics.hpp>
+
 class Geoapp{
     int mode=0;
 
@@ -9,7 +10,8 @@ class Geoapp{
 
     vector<Construction> constructions;
 
-    double height, width, uiwidth;
+    //double height, width, uiwidth;
+    double uiBarrier;
 
     double scalingFactor=1;
 
