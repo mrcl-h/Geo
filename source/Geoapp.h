@@ -61,4 +61,12 @@ public:
 
     //void pushToConstructions(Construction);
     Geoapp();
+    ~Geoapp () {
+        for (auto i : shapes) {
+            delete i;
+        }
+        for (auto i : hulledShapes) {
+            delete i;
+        }
+    }
 };

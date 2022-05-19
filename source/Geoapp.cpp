@@ -43,6 +43,15 @@ void Geoapp::events(sf::Event event){
             } else if (event.type== sf::Event::Resized){
 
             } else if(event.type == sf::Event::KeyPressed){
+                if (event.key.code == sf::Keyboard::Left) {
+                    centerX -= 10; 
+                } else if (event.key.code == sf::Keyboard::Right) {
+                    centerX += 10;
+                } else if (event.key.code == sf::Keyboard::Up) {
+                    centerY -= 10;
+                } else if (event.key.code == sf::Keyboard::Down) {
+                    centerY += 10;
+                }
                 changeMode(event);
             }
         }
@@ -71,11 +80,14 @@ void Geoapp::drawUI(){
 }
 
 void Geoapp::drawObjects(){
+    float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+    sf::FloatRect visible (centerX - uiBarrier*windowWidth/2, centerY-windowHeight/2,uiBarrier*windowWidth,windowHeight);
+    sf::FloatRect box (0,0,window.getSize().x*uiBarrier,window.getSize().y);
     for(unsigned int i=0;i<hulledShapes.size();i++){
-        hulledShapes[i]->hull_draw(&window);
+        hulledShapes[i]->hull_draw(&window, visible, box);
     }
     for(unsigned int i=0;i<shapes.size();i++){
-        shapes[i]->draw(&window);
+        shapes[i]->draw(&window, visible, box);
     }
 }
 
@@ -84,7 +96,7 @@ void Geoapp::UIhandling(Point mysz){
 }
 
 void Geoapp::whenClick(double x, double y){
-    Point *mysz=new Point(x,y);
+    Point *mysz=new Point(centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
     if(mode==0){
         Shape &S=*mysz;
         shapes.push_back(&S);

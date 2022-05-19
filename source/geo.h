@@ -16,6 +16,7 @@ public:
     virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual string what_is()=0;
+    virtual ~Shape() {}
 
 };
 class Construction {

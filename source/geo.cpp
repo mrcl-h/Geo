@@ -14,11 +14,20 @@ double Point::dist(Point v){
     return temp.abs();
 }
 void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
-        sf::CircleShape shape(radiusOfDrawing);
-        sf::Vector2f v(x-radiusOfDrawing,y-radiusOfDrawing);
-        shape.setPosition(v);
-        shape.setFillColor(sf::Color::Black);
-        window->draw(shape);
+        //sf::CircleShape shape(radiusOfDrawing);
+        //sf::Vector2f v(x-radiusOfDrawing,y-radiusOfDrawing);
+        //shape.setPosition(v);
+        //shape.setFillColor(sf::Color::Black);
+        //window->draw(shape);
+    sf::CircleShape shape (radiusOfDrawing);
+    float alpha = (x-visible.left)/visible.width;
+    float beta = (y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= radiusOfDrawing;
+    v.y -= radiusOfDrawing;
+    shape.setPosition(v);
+    shape.setFillColor(sf::Color::Black);
+    window->draw(shape);
 }
 string Point::what_is(){
     return "Point";
@@ -72,10 +81,20 @@ Segment::Segment(Point A, Point B){
     p1=B;
 }
 void Segment::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box){
+    //float alpha = (x-visible.left)/visible.width;
+    //float beta = (y-visible.top)/visible.height;
+    //sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    //v.x -= radiusOfDrawing;
+    //v.y -= radiusOfDrawing;
+    float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
+    float tp2x = box.left + (p2.x-visible.left)/visible.width*box.width;
+
+    float tp1y = box.top + (p1.y-visible.top)/visible.height*box.height;
+    float tp2y = box.top + (p2.y-visible.top)/visible.height*box.height;
     sf::Vertex line[] =
     {
-        sf::Vertex(sf::Vector2f(p1.x, p1.y)),
-        sf::Vertex(sf::Vector2f(p2.x, p2.y))
+        sf::Vertex(sf::Vector2f(tp1x, tp1y)),
+        sf::Vertex(sf::Vector2f(tp2x, tp2y))
     };
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
@@ -127,36 +146,62 @@ double Line::dist(Point v){
     return (n*v+c)/n.abs();
 }
 void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
-    double w = window->getSize().x, h = window->getSize().y;
 
-    double  x1= -c/n.x,
-            y1= -c/n.y,
-            x2= -(c+n.y*h)/n.x,
-            y2= -(c+n.x*w)/n.y;
-    vector<sf::Vertex> v;
-    if((x1>0)&&(x1<w)){
-        v.push_back(sf::Vertex(sf::Vector2f(x1, 0)));
+
+    sf::Vector2f from;
+    sf::Vector2f to;
+
+    unsigned int cond1 = (n.y+n.x)>=0;
+    unsigned int cond2 = (n.y-n.x)<0;
+    if (cond1^cond2) { //draw horizontally
+        from.x = (box.left);
+        from.y = box.top+box.height/visible.height*((-c-n.x*visible.left)/n.y-visible.top);
+
+
+        to.x = (box.left+box.width);
+        to.y = box.top+box.height/visible.height*((-c-n.x*(visible.left+visible.width))/n.y-visible.top);
+    } else { //draw vertically
+        from.y = (box.top);
+        from.x = box.left+box.width/visible.width*((-c-n.y*visible.top)/n.x-visible.left);
+
+        to.y = (box.top+box.height);
+        to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
     }
-    if((y1>=0)&&(y1<=h)){
-        v.push_back(sf::Vertex(sf::Vector2f(0, y1)));
-    }
-    if((x2>0)&&(x2<w)){
-        v.push_back(sf::Vertex(sf::Vector2f(x2, h)));
-    }
-    if((y2>=0)&&(y2<=h)){
-        v.push_back(sf::Vertex(sf::Vector2f(w, y2)));
-    }
-    if(v.size()<2){
-        return;
-    }
-    sf::Vertex line[] =
-    {
-        v[0],
-        v[1]
-    };
+    sf::Vertex line[] = { from, to };
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
     window->draw(line, 2, sf::Lines);
+
+    //double w = window->getSize().x, h = window->getSize().y;
+
+    //double  x1= -c/n.x,
+    //        y1= -c/n.y,
+    //        x2= -(c+n.y*h)/n.x,
+    //        y2= -(c+n.x*w)/n.y;
+    //vector<sf::Vertex> v;
+    //if((x1>0)&&(x1<w)){
+    //    v.push_back(sf::Vertex(sf::Vector2f(x1, 0)));
+    //}
+    //if((y1>=0)&&(y1<=h)){
+    //    v.push_back(sf::Vertex(sf::Vector2f(0, y1)));
+    //}
+    //if((x2>0)&&(x2<w)){
+    //    v.push_back(sf::Vertex(sf::Vector2f(x2, h)));
+    //}
+    //if((y2>=0)&&(y2<=h)){
+    //    v.push_back(sf::Vertex(sf::Vector2f(w, y2)));
+    //}
+    //if(v.size()<2){
+    //    return;
+    //}
+    //sf::Vertex line[] =
+    //{
+    //    v[0],
+    //    v[1]
+    //};
+    //line[0].color=sf::Color(0,0,0);
+    //line[1].color=sf::Color(0,0,0);
+    //window->draw(line, 2, sf::Lines);
 }
 string Line::what_is(){
     return "Line";
