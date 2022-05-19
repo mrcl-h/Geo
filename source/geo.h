@@ -13,8 +13,8 @@ class Shape {
 public:
     //string name;
     virtual double dist(Point)=0;
-    virtual void draw(sf::RenderWindow*) {}
-    virtual void hull_draw(sf::RenderWindow*) {}
+    virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
+    virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual string what_is()=0;
 
 };
@@ -54,7 +54,7 @@ public:
 
     string nazwa;
 
-    void draw(sf::RenderWindow*) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     double dist(Point) override;
 
@@ -91,7 +91,7 @@ public:
 
     double dist(Point) override;
 
-    void draw(sf::RenderWindow*) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     string what_is() override;
 
@@ -117,7 +117,7 @@ public:
 
     double dist(Point) override;
 
-    void draw(sf::RenderWindow*) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     string what_is() override;
 
@@ -130,7 +130,7 @@ public:
     Point middle;
     double r;
     double dist(Point) override;
-    void draw(sf::RenderWindow*) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
     string what_is() override;
     friend std::ostream& operator<<(std::ostream&, const Circle&);
     Circle(Point, Point, Point);

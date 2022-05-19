@@ -2,14 +2,18 @@
 #include<SFML/Graphics.hpp>
 using namespace std;
 constexpr double epsilon = 2;
+constexpr int antialias = 4;
 
 Geoapp::Geoapp(){
     //height=300.0;
     //width=300.0;
     //uiwidth=200.0;
     uiBarrier = 0.6;
-    window.create(sf::VideoMode(500, 300), "Geo");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = antialias;
+    window.create(sf::VideoMode(500, 300), "Geo", sf::Style::Default, settings);
     scalingFactor=1.0;
+    centerX = centerY = 0;
     loop();
 }
 

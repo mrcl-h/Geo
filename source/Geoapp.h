@@ -2,6 +2,9 @@
 //#include<SFML/Graphics.hpp>
 
 class Geoapp{
+    
+    double centerX, centerY;
+
     int mode=0;
 
     vector<Shape*> shapes;

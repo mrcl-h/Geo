@@ -13,7 +13,7 @@ double Point::dist(Point v){
     Point temp=*this-v;
     return temp.abs();
 }
-void Point::draw(sf::RenderWindow *window){
+void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
         sf::CircleShape shape(radiusOfDrawing);
         sf::Vector2f v(x-radiusOfDrawing,y-radiusOfDrawing);
         shape.setPosition(v);
@@ -71,7 +71,7 @@ Segment::Segment(Point A, Point B){
     p1=A;
     p1=B;
 }
-void Segment::draw(sf::RenderWindow* window){
+void Segment::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box){
     sf::Vertex line[] =
     {
         sf::Vertex(sf::Vector2f(p1.x, p1.y)),
@@ -126,7 +126,7 @@ double Line::dist(Point v){
 
     return (n*v+c)/n.abs();
 }
-void Line::draw(sf::RenderWindow *window){
+void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
     double w = window->getSize().x, h = window->getSize().y;
 
     double  x1= -c/n.x,
@@ -171,7 +171,7 @@ Line::Line(Circle o1, Circle o2){
 double Circle::dist(Point v){
     return std::abs(middle.dist(v)-r);
 }
-void Circle::draw(sf::RenderWindow* window){
+void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box){
     sf::CircleShape shape(r);
     sf::Vector2f v(middle.x-r,middle.y-r);
     shape.setPosition(v);
