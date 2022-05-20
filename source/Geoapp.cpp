@@ -181,6 +181,11 @@ void Geoapp::UIhandling(Point mysz){
     if (constructionMade != NULL) {
         constructions.push_back(constructionMade);
     }
+    for (auto i : hulledShapes) {
+        i->isActive = false;
+    }
+    hulledShapes.clear();
+    currentConditions.reset();
 }
 
 void Geoapp::whenClick(double x, double y){
@@ -200,17 +205,25 @@ void Geoapp::whenClick(double x, double y){
         int a=FTCO(clickPosition);
         std::cout<<a;
         if(a>-1){
-            if (shapes[a]->what_is() == "Point") {
-                currentConditions.pointCount++;
-            } else if (shapes[a]->what_is() == "Line") {
-                currentConditions.lineCount++;
-            } else if (shapes[a]->what_is() == "Segment") {
-                currentConditions.segmentCount++;
-            } else if (shapes[a]->what_is() == "Circle") {
-                currentConditions.circleCount++;
+            int selectCount;
+            if (shapes[a]->isActive) {
+                shapes[a]->isActive = false;
+                hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), shapes[a]));
+                selectCount = -1;
+            } else {
+                shapes[a]->isActive = true;
+                hulledShapes.push_back(shapes[a]);
+                selectCount = 1;
             }
-            hulledShapes.push_back(shapes[a]);
-            shapes[a]->isActive = true;
+            if (shapes[a]->what_is() == "Point") {
+                currentConditions.pointCount += selectCount;
+            } else if (shapes[a]->what_is() == "Line") {
+                currentConditions.lineCount += selectCount;
+            } else if (shapes[a]->what_is() == "Segment") {
+                currentConditions.segmentCount += selectCount;
+            } else if (shapes[a]->what_is() == "Circle") {
+                currentConditions.circleCount += selectCount;
+            }
         }
         /*Shape &s=shapes[a];
         if(findInObjects(&s)>-1){
