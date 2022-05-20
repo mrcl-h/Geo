@@ -1,3 +1,4 @@
+#pragma once
 #include"geo.h"
 #include<unordered_map>
 
@@ -16,18 +17,19 @@ class Geoapp{
         void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
     };
     uint32_t uiMapId (uiOptionConditions conditions) {
-        uint32_t mapId = conditions.segmentCount;  
+        uint32_t mapId = conditions.segmentCount;
         mapId <<= 8;
-        mapId += conditions.circleCount;  
+        mapId += conditions.circleCount;
         mapId <<= 8;
-        mapId += conditions.pointCount;  
+        mapId += conditions.pointCount;
         mapId <<= 8;
-        mapId += conditions.lineCount;  
+        mapId += conditions.lineCount;
         return mapId;
     }
-    
-    double centerX, centerY;
+
+    double centerX, centerY, step=0.25;
     int mode=0;
+    bool leftKeyDown=false, rightKeyDown=false, upKeyDown=false, downKeyDown=false;
 
     std::vector<Shape*> shapes;
     std::vector<Shape*> hulledShapes;
@@ -56,7 +58,7 @@ class Geoapp{
     int FTCS(Point); //find segment closest to mouse
     int FTCC(Point); //find circle closest to mouse
     int FTCT(Point); //find triangle closest to mouse
-                     
+
     void registerUiOption (uiObject obj, uiOptionConditions conditions) {
         uint32_t mapId = uiMapId (conditions);
         uiPages[mapId].push_back(obj);

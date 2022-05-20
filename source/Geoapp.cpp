@@ -38,7 +38,7 @@ Geoapp::Geoapp(){
     cond.reset();
     cond.pointCount = 2;
     registerUiOption (pointMidObject, cond);
-    
+
     //parallel line
     uiObject parallelLineObject;
     parallelLineObject.creator = makeParallel;
@@ -49,7 +49,7 @@ Geoapp::Geoapp(){
     cond.pointCount = 1;
     cond.lineCount = 1;
     registerUiOption (parallelLineObject, cond);
-    
+
     //orthogonal line
     uiObject orthogonalLineObject;
     orthogonalLineObject.creator = makeOrthogonal;
@@ -91,13 +91,25 @@ void Geoapp::events(sf::Event event){
 
             } else if(event.type == sf::Event::KeyPressed){
                 if (event.key.code == sf::Keyboard::Left) {
-                    centerX -= 10; 
+                    leftKeyDown=true;
                 } else if (event.key.code == sf::Keyboard::Right) {
-                    centerX += 10;
+                    rightKeyDown=true;
                 } else if (event.key.code == sf::Keyboard::Up) {
-                    centerY -= 10;
+                    upKeyDown=true;
                 } else if (event.key.code == sf::Keyboard::Down) {
-                    centerY += 10;
+                    downKeyDown=true;
+                }
+                changeMode(event);
+            }
+            else if(event.type == sf::Event::KeyReleased){
+                if (event.key.code == sf::Keyboard::Left) {
+                    leftKeyDown=false;
+                } else if (event.key.code == sf::Keyboard::Right) {
+                    rightKeyDown=false;
+                } else if (event.key.code == sf::Keyboard::Up) {
+                    upKeyDown=false;
+                } else if (event.key.code == sf::Keyboard::Down) {
+                    downKeyDown=false;
                 }
                 changeMode(event);
             }
@@ -107,6 +119,18 @@ void Geoapp::events(sf::Event event){
 void Geoapp::update(){
     drawObjects();
     drawUI();
+    if (leftKeyDown) {
+        centerX -= step;
+    }
+    if (rightKeyDown) {
+        centerX += step;
+    }
+    if (upKeyDown) {
+        centerY -= step;
+    }
+    if (downKeyDown) {
+        centerY += step;
+    }
 }
 
 void Geoapp::drawUI(){
@@ -147,7 +171,7 @@ void Geoapp::drawUI(){
         separator[0].color=sf::Color(0,0,0);
         separator[1].color=sf::Color(0,0,0);
         window.draw (separator, 2, sf::Lines);
-         
+
         leftSeparator.y += objectHeight;
         rightSeparator.y += objectHeight;
         currentIcon.move(0,objectHeight);
