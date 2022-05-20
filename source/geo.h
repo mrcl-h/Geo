@@ -1,6 +1,8 @@
+#pragma once
 #include<iostream>
 #include<SFML/Graphics.hpp>
-using namespace std;
+#include<vector>
+
 //lista figur geometrycznych
 class Segment;
 class Triangle;
@@ -8,44 +10,79 @@ class Line;
 class Circle;
 class Point;
 class Shape;
-class Construction;
+
 class Shape {
 public:
-    //string name;
+    //std::string name;
     virtual double dist(Point)=0;
     virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
-    virtual string what_is()=0;
+    virtual std::string what_is()=0;
     virtual ~Shape() {}
 
 };
 class Construction {
-public:
-    string name;
-    Shape* make(vector<Shape*>);
-    static Point middle(Point, Point);
-
-    /*static Point* middle(Segment);
-
-    static Point* middle(Circle);
-
-    static Line orthogonal(Line, Point);
-
-    static Line parrarel(Line, Point);
-
-    static Line bisection(Segment);
-
-    static Line bisection(Point, Point);
-
-    static Line bisector(Line, Line);
-
-    static Line bisector(Point, Point, Point);
-
-    static Line tangent_to_c(Point, Line);*/
-
-    //Punkt na półprostej od (1) w kierunku (2) odległy o (3) od (1) +
-    static Point lengthen(Point, Point, double);
+    public:
+    virtual ~Construction () {}
+    virtual void adjust () {}
 };
+
+typedef Construction* (*constructionMaker)(std::vector<Shape*>&, std::vector<Shape*>&);
+//typedef void* (*parseState)(charParsingData&, const char*, parsedstd::string&);
+
+
+
+class segmentMiddle : public Construction { //constructs middle point from segment
+    private:                                        
+        Segment *segment;
+        Point *midPoint;
+    public:
+        segmentMiddle (Segment *_segment, Point *_midPoint) : segment(_segment), midPoint(_midPoint) {}
+        virtual void adjust ();
+};
+
+
+Construction *makeSegmentMiddle(std::vector<Shape *> &segment,
+                                std::vector<Shape *> &mid);
+
+class pointsMiddle : public Construction { //constructs middle point from two points
+    private:
+        Point *pointA, *pointB;
+        Point *midPoint;
+    public:
+        pointsMiddle (Point *_pointA, Point *_pointB, Point *_midPoint) : pointA (_pointA), pointB (_pointB), midPoint(_midPoint) {}
+        virtual void adjust ();
+};
+
+Construction *makePointsMiddle(std::vector<Shape *> &points,
+                               std::vector<Shape *> &mid);
+
+class orthogonalLine : public Construction { //constructs orthogonal line from line and a point
+    private:
+        Line *line;
+        Point *point;
+        Line *orthogonal;
+    public:
+        orthogonalLine (Line *_line, Point *_point, Line *_orthogonal) : line(_line), point(_point), orthogonal(_orthogonal) {}
+        virtual void adjust ();
+};
+
+Construction *makeOrthogonal(std::vector<Shape *> &shapes,
+                             std::vector<Shape *> &ortho);
+
+class parallelLine : public Construction { //constructs parallel line from line and a point
+    private:
+        Line *line;
+        Point *point;
+        Line *parallel;
+    public:
+        parallelLine (Line *_line, Point *_point, Line *_parallel) : line(_line), point(_point), parallel(_parallel) {}
+        virtual void adjust ();
+};
+
+Construction *makeParallel(std::vector<Shape *> &shapes,
+                           std::vector<Shape *> &parall);
+
 class Point : public Shape {
     double radiusOfDrawing=3;
 public:
@@ -53,30 +90,24 @@ public:
 
     static Point zero();
 
-    string nazwa;
+    std::string nazwa;
 
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     double dist(Point) override;
 
-    string what_is() override;
+    std::string what_is() override;
 
     friend std::ostream& operator<<(std::ostream&, const Point&);
 
 	Point(double=0, double=0);
 
 	bool operator==(Point);
-
 	Point operator+(Point);
-
 	Point operator-(Point);
-
 	Point operator*(double);
-
 	Point operator/(double);
-
 	double operator*(Point);
-
 	double operator%(Point);
 
 	//długość do (0,0) +
@@ -94,7 +125,7 @@ public:
 
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
-    string what_is() override;
+    std::string what_is() override;
 
     friend std::ostream& operator<<(std::ostream&, const Segment&);
 
@@ -108,19 +139,15 @@ public:
     Point n;
 	double c;
 
-	//Line ax+by+c=0 +
-	Line(double,double,double);
-
-	//prosta przechodząca przez (1) i (2) +
-	Line(Point,Point);
-
+	Line(double,double,double); //line ax+by+c=0
+	Line(Point,Point); //line through two points
 	Line(Segment);
 
     double dist(Point) override;
 
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
-    string what_is() override;
+    std::string what_is() override;
 
     friend std::ostream& operator<<(std::ostream&, const Line&);
 
@@ -132,7 +159,7 @@ public:
     double r;
     double dist(Point) override;
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
-    string what_is() override;
+    std::string what_is() override;
     friend std::ostream& operator<<(std::ostream&, const Circle&);
     Circle(Point, Point, Point);
     Circle(Point, double);

@@ -1,59 +1,66 @@
 #include"geo.h"
+#include<unordered_map>
+
 //#include<SFML/Graphics.hpp>
 
 class Geoapp{
+
+    struct uiObject {
+        sf::Texture image;
+        constructionMaker creator;
+    };
+    std::unordered_map<uint32_t, std::vector<uiObject> > uiPages;
+
+    struct uiOptionConditions {
+        uint8_t lineCount, pointCount, circleCount, segmentCount;
+        void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
+    };
+    uint32_t uiMapId (uiOptionConditions conditions) {
+        uint32_t mapId = conditions.segmentCount;  
+        mapId <<= 8;
+        mapId += conditions.circleCount;  
+        mapId <<= 8;
+        mapId += conditions.pointCount;  
+        mapId <<= 8;
+        mapId += conditions.lineCount;  
+        return mapId;
+    }
     
     double centerX, centerY;
-
     int mode=0;
 
-    vector<Shape*> shapes;
+    std::vector<Shape*> shapes;
+    std::vector<Shape*> hulledShapes;
 
-    vector<Shape*> hulledShapes;
+    std::vector<Construction*> constructions;
 
-    vector<Construction> constructions;
+    uiOptionConditions currentConditions;
 
-    //double height, width, uiwidth;
     double uiBarrier;
-
     double scalingFactor=1;
-
-    //Point Of Left Up Corner
-    Point PORUC();
 
     sf::RenderWindow window;
 
     void loop();
-
     void update();
-
     void events(sf::Event);
-
     void UIhandling(Point);
-
     void drawUI();
-
     void drawObjects();
-
     void whenClick(double,double);
-
     void changeMode(sf::Event);
 
-    //finding objects that are the closest to mouse
-    /*
-    O-objects
-    P-Points
-    L-Line
-    S-Segment
-    C-Circle
-    T-Triangles
-    */
-    int FTCO(Point);
-    int FTCP(Point);
-    int FTCL(Point);
-    int FTCS(Point);
-    int FTCC(Point);
-    int FTCT(Point);
+    int FTCO(Point); //find object closest to mouse
+    int FTCP(Point); //find point closest to mouse
+    int FTCL(Point); //find line closest to mouse
+    int FTCS(Point); //find segment closest to mouse
+    int FTCC(Point); //find circle closest to mouse
+    int FTCT(Point); //find triangle closest to mouse
+                     
+    void registerUiOption (uiObject obj, uiOptionConditions conditions) {
+        uint32_t mapId = uiMapId (conditions);
+        uiPages[mapId].push_back(obj);
+    }
 
 public:
     template<typename T>
@@ -65,7 +72,7 @@ public:
         for (auto i : shapes) {
             delete i;
         }
-        for (auto i : hulledShapes) {
+        for (auto i : constructions) {
             delete i;
         }
     }

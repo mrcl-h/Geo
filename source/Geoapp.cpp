@@ -1,6 +1,6 @@
 #include"Geoapp.h"
 #include<SFML/Graphics.hpp>
-using namespace std;
+
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
@@ -14,6 +14,53 @@ Geoapp::Geoapp(){
     window.create(sf::VideoMode(500, 300), "Geo", sf::Style::Default, settings);
     scalingFactor=1.0;
     centerX = centerY = 0;
+    currentConditions.reset();
+    //currentConditions.segmentCount = 1;
+
+    uiOptionConditions cond;
+
+    //segment mid point
+    uiObject segMidObject;
+    segMidObject.creator = makeSegmentMiddle;
+    segMidObject.image.loadFromFile ("resources/segmentMid.png");
+    segMidObject.image.setSmooth(true);
+
+    cond.reset();
+    cond.segmentCount = 1;
+    registerUiOption (segMidObject, cond);
+
+    //points mid point
+    uiObject pointMidObject;
+    pointMidObject.creator = makePointsMiddle;
+    pointMidObject.image.loadFromFile ("resources/pointsMid.png");
+    pointMidObject.image.setSmooth(true);
+
+    cond.reset();
+    cond.pointCount = 2;
+    registerUiOption (pointMidObject, cond);
+    
+    //parallel line
+    uiObject parallelLineObject;
+    parallelLineObject.creator = makeParallel;
+    parallelLineObject.image.loadFromFile ("resources/parallelLine.png");
+    parallelLineObject.image.setSmooth(true);
+
+    cond.reset();
+    cond.pointCount = 1;
+    cond.lineCount = 1;
+    registerUiOption (parallelLineObject, cond);
+    
+    //orthogonal line
+    uiObject orthogonalLineObject;
+    orthogonalLineObject.creator = makeOrthogonal;
+    orthogonalLineObject.image.loadFromFile ("resources/orthogonalLine.png");
+    orthogonalLineObject.image.setSmooth (true);
+
+    cond.reset();
+    cond.pointCount = 1;
+    cond.lineCount = 1;
+    registerUiOption (orthogonalLineObject, cond);
+
     loop();
 }
 
@@ -34,9 +81,9 @@ void Geoapp::events(sf::Event event){
                 window.close();
             } else if (event.type == sf::Event::MouseButtonPressed){
                 double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
-                Point *mysz = new Point(x,y);
+                Point mysz (x,y);
                 if(x>uiBarrier*window.getSize().x){
-                    UIhandling(*mysz);
+                    UIhandling(mysz);
                 } else {
                     whenClick(x,y);
                 }
@@ -64,19 +111,47 @@ void Geoapp::update(){
 
 void Geoapp::drawUI(){
     unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+
+    float uiWidth = windowWidth*(1-uiBarrier);
+    float uiLeft = windowWidth * uiBarrier;
+
     window.setView (sf::View(sf::FloatRect(0,0,windowWidth, windowHeight)));
-    sf::RectangleShape rect (sf::Vector2f(windowWidth*(1-uiBarrier),windowHeight));
-    rect.move(sf::Vector2f(windowWidth*uiBarrier,0));
+    sf::RectangleShape rect (sf::Vector2f(uiWidth,windowHeight));
+    rect.move(sf::Vector2f(uiLeft,0));
     sf::Vertex line[] =
     {
-        sf::Vertex(sf::Vector2f(windowWidth*uiBarrier, 0)),
-        sf::Vertex(sf::Vector2f(windowWidth*uiBarrier, windowHeight))
+        sf::Vertex(sf::Vector2f(uiLeft, 0)),
+        sf::Vertex(sf::Vector2f(uiLeft, windowHeight))
     };
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
     rect.setFillColor (sf::Color(0,255,255));
     window.draw(rect);
     window.draw(line, 2, sf::Lines);
+
+    std::vector<uiObject>& currentObjects = uiPages[uiMapId (currentConditions)];
+    float top = 0;
+    float objectHeight = uiWidth/2;
+
+    sf::Sprite currentIcon;
+    currentIcon.setPosition (uiLeft+uiWidth*0.3, top+objectHeight*0.1);
+
+    sf::Vector2f leftSeparator (uiLeft, top+objectHeight);
+    sf::Vector2f rightSeparator (windowWidth, top+objectHeight);
+    for (auto& i : currentObjects) {
+        currentIcon.setTexture (i.image);
+        float texWidth = i.image.getSize().x, texHeight = i.image.getSize().y;
+        currentIcon.setScale (objectHeight*0.8/texWidth, objectHeight*0.8/texHeight);
+        window.draw (currentIcon);
+        sf::Vertex separator [] = { sf::Vertex (leftSeparator), sf::Vertex (rightSeparator) };
+        separator[0].color=sf::Color(0,0,0);
+        separator[1].color=sf::Color(0,0,0);
+        window.draw (separator, 2, sf::Lines);
+         
+        leftSeparator.y += objectHeight;
+        rightSeparator.y += objectHeight;
+        currentIcon.move(0,objectHeight);
+    }
 }
 
 void Geoapp::drawObjects(){
@@ -92,26 +167,48 @@ void Geoapp::drawObjects(){
 }
 
 void Geoapp::UIhandling(Point mysz){
-
+    unsigned int windowWidth = window.getSize().x;
+    float uiWidth = windowWidth*(1-uiBarrier);
+    float top = 0;
+    float objectHeight = uiWidth/2;
+    int clickedOption = (mysz.y-top)/objectHeight;
+    std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
+    if (clickedOption >= (int)currentPage.size()) {
+        return;
+    }
+    if (clickedOption < 0) return;
+    Construction* constructionMade = currentPage[clickedOption].creator (hulledShapes, shapes);
+    if (constructionMade != NULL) {
+        constructions.push_back(constructionMade);
+    }
 }
 
 void Geoapp::whenClick(double x, double y){
-    Point *mysz=new Point(centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
+    Point clickPosition (centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
     if(mode==0){
-        Shape &S=*mysz;
-        shapes.push_back(&S);
+        Shape *S = new Point (clickPosition);;
+        shapes.push_back(S);
         if(shapes.size()>1){
             if(shapes[shapes.size()-2]->what_is()=="Point"){
                 Point* a=static_cast<Point*>(shapes[shapes.size()-2]);
-                Line *l= new Line(*a,*mysz);
-                Shape &L=*l;
-                shapes.push_back(&L);
+                Line *l= new Line(*a,clickPosition);
+                //Shape &L=*l;
+                shapes.push_back(l);
             }
         }
     } else if(mode==1){
-        int a=FTCO(*mysz);
-        cout<<a;
+        int a=FTCO(clickPosition);
+        std::cout<<a;
         if(a>-1){
+            if (shapes[a]->what_is() == "Point") {
+                currentConditions.pointCount++;
+            } else if (shapes[a]->what_is() == "Line") {
+                currentConditions.lineCount++;
+            } else if (shapes[a]->what_is() == "Segment") {
+                currentConditions.segmentCount++;
+            } else if (shapes[a]->what_is() == "Circle") {
+                currentConditions.circleCount++;
+            }
             hulledShapes.push_back(shapes[a]);
         }
         /*Shape &s=shapes[a];
@@ -137,7 +234,7 @@ void Geoapp::changeMode(sf::Event e){
 
 int Geoapp::FTCP(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<epsilon)){
+        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<20)){
             return i;
         }
     }
@@ -175,18 +272,22 @@ int Geoapp::FTCT(Point A){
 int Geoapp::FTCO(Point A){
     int temp=FTCP(A);
     if(temp>-1){
+        std::cout << "selected point" << std::endl;
         return temp;
     }
     temp=FTCS(A);
     if(temp>-1){
+        std::cout << "selected segment" << std::endl;
         return temp;
     }
     temp=FTCL(A);
     if(temp>-1){
+        std::cout << "selected line" << std::endl;
         return temp;
     }
     temp=FTCC(A);
     if(temp>-1){
+        std::cout << "selected circle" << std::endl;
         return temp;
     }
     return FTCT(A);

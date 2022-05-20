@@ -2,7 +2,6 @@
 #include<iostream>
 #include<cmath>
 #include<SFML/Graphics.hpp>
-using namespace std;
 
 //----------------------------------------
 Point::Point(double x1, double y2){
@@ -29,7 +28,7 @@ void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect 
     shape.setFillColor(sf::Color::Black);
     window->draw(shape);
 }
-string Point::what_is(){
+std::string Point::what_is(){
     return "Point";
 }
 double Point::abs(){
@@ -111,14 +110,15 @@ double Segment::dist(Point v){
     }
     return std::abs(((v-p2)%D)/(p1.dist(p2)));
 }
-string Segment::what_is(){
+std::string Segment::what_is(){
     return "Segment";
 }
 //----------------------------------------------------
 Line::Line(double a1, double b1, double c1){
     if((a1==0)&&(b1==0))
         throw std::invalid_argument("First two arguments can not be zero at the same time");
-    Point n(a1,b1);
+    n.x = a1; n.y = b1;
+    //Point n(a1, b1);
     c=c1;
 }
 Line::Line(Point p,Point q){
@@ -203,7 +203,7 @@ void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect b
     //line[1].color=sf::Color(0,0,0);
     //window->draw(line, 2, sf::Lines);
 }
-string Line::what_is(){
+std::string Line::what_is(){
     return "Line";
 }
 Line::Line(Circle o1, Circle o2){
@@ -225,7 +225,7 @@ void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect
     shape.setFillColor(sf::Color(255,255,255,0));
     window->draw(shape);
 }
-string Circle::what_is(){
+std::string Circle::what_is(){
     return "Circle";
 }
 Circle::Circle(Point mid, double radius){
@@ -244,6 +244,7 @@ Circle::Circle(Point A, Point B, Point C){
     middle=middle+C;
 }
 
+/*
 Point Construction::lengthen(Point A, Point B, double a){
     double b = a/A.dist(B);
     return (B-A)*b+A;
@@ -251,4 +252,74 @@ Point Construction::lengthen(Point A, Point B, double a){
 
 Point Construction::middle(Point A, Point B){
     return (A+B)/2;
+}
+*/
+Construction *makeSegmentMiddle(std::vector<Shape*> &segment,
+        std::vector<Shape*> &shapes) {
+    if (segment.size() != 1 || segment[0]->what_is()=="segment")
+        return NULL;
+    shapes.push_back (new Point ());
+    Construction *segmid = new segmentMiddle(static_cast<Segment*>(segment[0]), static_cast<Point*>(shapes.back()));
+    segmid->adjust();
+    return segmid;
+}
+void segmentMiddle::adjust() {
+    midPoint->x = (segment->p1.x + segment->p2.x)/2;
+    midPoint->y = (segment->p1.y + segment->p2.y)/2;
+}
+
+Construction *makePointsMiddle(std::vector<Shape*> &points,
+        std::vector<Shape*> &shapes) {
+    if (points.size() != 2 || points[0]->what_is() != "Point" || points[1]->what_is() != "Point")
+        return NULL;
+    shapes.push_back (new Point());
+    Construction *pointMid = new pointsMiddle (static_cast<Point*>(points[0]), static_cast<Point*>(points[1]), static_cast<Point*>(shapes.back()));
+    pointMid->adjust();
+    return pointMid;
+}
+void pointsMiddle::adjust() {
+    midPoint->x = (pointA->x+pointB->x)/2;
+    midPoint->y = (pointA->y+pointB->y)/2;
+}
+
+Construction *makeOrthogonal(std::vector<Shape*> &input,
+        std::vector<Shape*> &shapes) {
+    std::cout << "make orthogonal" << std::endl;
+    if (input.size() != 2)
+        return NULL;
+    shapes.push_back (new Line(1,0,0));
+    Construction *orthogonal = NULL;
+    if (input[0]->what_is() == "Line" && input[1]->what_is() == "Point") {
+        orthogonal = new orthogonalLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
+    } else if (input[0]->what_is() == "Point" && input[1]->what_is() == "Line")
+        orthogonal = new orthogonalLine(static_cast<Line*>(input[1]), static_cast<Point*>(input[0]), static_cast<Line*>(shapes.back()));
+    if (orthogonal != NULL) 
+        orthogonal->adjust();
+    return orthogonal;
+}
+void orthogonalLine::adjust() {
+    orthogonal->n.x = -(line->n.y);
+    orthogonal->n.y = line->n.x;
+    orthogonal->c = -( point->x * orthogonal->n.x + point->y * orthogonal->n.y);
+}
+
+Construction *makeParallel(std::vector<Shape*> &input,
+        std::vector<Shape*> &shapes) {
+    std::cout << "make parallel" << std::endl;
+    if (input.size() != 2)
+        return NULL;
+    shapes.push_back (new Line(1,0,0));
+    Construction *parallel = NULL;
+    if (input[0]->what_is() == "Line" && input[1]->what_is() == "Point") {
+        parallel = new parallelLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
+    } else if (input[0]->what_is() == "Point" && input[1]->what_is() == "Line")
+        parallel = new parallelLine(static_cast<Line*>(input[1]), static_cast<Point*>(input[0]), static_cast<Line*>(shapes.back()));
+    if (parallel != NULL) 
+        parallel->adjust();
+    return parallel;
+}
+void parallelLine::adjust() {
+    parallel->n = line->n;
+    //parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
+    parallel->c=0;
 }
