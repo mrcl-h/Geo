@@ -210,6 +210,7 @@ void Geoapp::whenClick(double x, double y){
                 currentConditions.circleCount++;
             }
             hulledShapes.push_back(shapes[a]);
+            shapes[a]->isActive = true;
         }
         /*Shape &s=shapes[a];
         if(findInObjects(&s)>-1){
@@ -272,22 +273,18 @@ int Geoapp::FTCT(Point A){
 int Geoapp::FTCO(Point A){
     int temp=FTCP(A);
     if(temp>-1){
-        std::cout << "selected point" << std::endl;
         return temp;
     }
     temp=FTCS(A);
     if(temp>-1){
-        std::cout << "selected segment" << std::endl;
         return temp;
     }
     temp=FTCL(A);
     if(temp>-1){
-        std::cout << "selected line" << std::endl;
         return temp;
     }
     temp=FTCC(A);
     if(temp>-1){
-        std::cout << "selected circle" << std::endl;
         return temp;
     }
     return FTCT(A);

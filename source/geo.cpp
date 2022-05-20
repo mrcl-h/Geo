@@ -25,7 +25,11 @@ void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect 
     v.x -= radiusOfDrawing;
     v.y -= radiusOfDrawing;
     shape.setPosition(v);
-    shape.setFillColor(sf::Color::Black);
+    if (isActive) {
+        shape.setFillColor(sf::Color::Blue);
+    } else {
+        shape.setFillColor(sf::Color::Black);
+    }
     window->draw(shape);
 }
 std::string Point::what_is(){
@@ -141,9 +145,7 @@ Line::Line(Segment s){
     *this=Line(s.p1,s.p2);
 }
 double Line::dist(Point v){
-
-
-    return (n*v+c)/n.abs();
+    return doubleAbs((n*v+c)/n.abs());
 }
 void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
 
@@ -168,8 +170,13 @@ void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect b
         to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
     }
     sf::Vertex line[] = { from, to };
-    line[0].color=sf::Color(0,0,0);
-    line[1].color=sf::Color(0,0,0);
+    if (isActive) {
+        line[0].color=sf::Color::Blue;
+        line[1].color=sf::Color::Blue;
+    } else {
+        line[0].color=sf::Color(0,0,0);
+        line[1].color=sf::Color(0,0,0);
+    }
     window->draw(line, 2, sf::Lines);
 
     //double w = window->getSize().x, h = window->getSize().y;
@@ -320,6 +327,6 @@ Construction *makeParallel(std::vector<Shape*> &input,
 }
 void parallelLine::adjust() {
     parallel->n = line->n;
-    //parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
-    parallel->c=0;
+    parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
+    //parallel->c=0;
 }

@@ -11,8 +11,14 @@ class Circle;
 class Point;
 class Shape;
 
+inline double doubleAbs (double r) {
+    return r >= 0 ? r : -r;
+}
+
 class Shape {
 public:
+    //TODO delete 
+    bool isActive = false;
     //std::string name;
     virtual double dist(Point)=0;
     virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
