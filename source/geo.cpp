@@ -34,8 +34,7 @@ sf::Color getShapeColor (bool active, bool current, bool dependent) {
 }
 
 void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
-
-    sf::CircleShape shape (radiusOfDrawing);
+sf::CircleShape shape (radiusOfDrawing);
     float alpha = (x-visible.left)/visible.width;
     float beta = (y-visible.top)/visible.height;
     sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
@@ -225,13 +224,29 @@ double Circle::dist(Point v){
     return std::abs(middle.dist(v)-r);
 }
 void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box){
+    sf::CircleShape shape (r);
+    float alpha = (middle.x-visible.left)/visible.width;
+    float beta = (middle.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= r;
+    v.y -= r;
+    shape.setPosition(v);
+    //shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
+    shape.setOutlineColor(sf::Color(0,0,0,255));
+    shape.setOutlineThickness(1);
+    shape.setFillColor(sf::Color(255,255,255,0));
+    shape.setPointCount (400);
+    window->draw(shape);
+    /*
     sf::CircleShape shape(r);
     sf::Vector2f v(middle.x-r,middle.y-r);
     shape.setPosition(v);
     shape.setOutlineColor(sf::Color(0,0,0,255));
     shape.setOutlineThickness(1);
     shape.setFillColor(sf::Color(255,255,255,0));
+    shape.setPointCount (400);
     window->draw(shape);
+    */
 }
 std::string Circle::what_is(){
     return "Circle";
@@ -368,4 +383,47 @@ void lineThroughPoints::adjust() {
             //= Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
 	    // self x p = return x*p.y-y*p.x;
     }
+}
+
+
+Construction *makeSegmentFromPoints(std::vector<Shape *> &input,
+        std::vector<Shape *> &shapes) {
+    if (input.size() != 2) {
+        return NULL;
+    }
+    shapes.push_back (new Segment);
+    shapes.back()->isDependent = true;
+    if (input[0]->what_is() == "Point" && input[1]->what_is() == "Point") {
+        Construction *segment = new segmentFromPoints (static_cast<Point*>(input[0]), static_cast<Point*>(input[1]), static_cast<Segment*>(shapes.back()));
+        segment->adjust();
+        return segment;
+    }
+    return NULL;
+}
+
+void segmentFromPoints::adjust() {
+    segment->p1.x = pointA->x;
+    segment->p1.y = pointA->y;
+    segment->p2.x = pointB->x;
+    segment->p2.y = pointB->y;
+}
+
+Construction *makeCircleWithCenter(std::vector<Shape *> &input,
+                                   std::vector<Shape *> &shapes) {
+    if (input.size() != 2) {
+        return NULL;
+    }
+    shapes.push_back (new Circle(Point(), 1));
+    shapes.back()->isDependent = true;
+    if (input[0]->what_is() == "Point" && input[1]->what_is() == "Point") {
+        Construction *circle = new circleWithCenter (static_cast<Point*>(input[0]), static_cast<Point*>(input[1]), static_cast<Circle*>(shapes.back()));
+        circle->adjust();
+        return circle;
+    }
+    return NULL; }
+
+void circleWithCenter::adjust() {
+    circle->middle.x = center->x;   
+    circle->middle.y = center->y;
+    circle->r = center->dist (*point);
 }

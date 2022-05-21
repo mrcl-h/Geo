@@ -22,7 +22,7 @@ public:
     bool isCurrent = false;
     bool isDependent = false;
     //std::string name;
-    virtual double dist(Point)=0;
+    virtual double dist(Point) =0;
     virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual std::string what_is()=0;
@@ -103,6 +103,30 @@ class lineThroughPoints : public Construction {
 Construction *makeLineThroughPoints(std::vector<Shape *> &shapes,
                                     std::vector<Shape *> &line);
 
+class segmentFromPoints : public Construction {
+    private:
+        Point *pointA, *pointB;
+        Segment *segment;
+    public:
+        segmentFromPoints (Point *_pointA, Point *_pointB, Segment *_segment) : pointA (_pointA), pointB (_pointB), segment(_segment) {}
+        virtual void adjust ();
+};
+
+Construction *makeSegmentFromPoints(std::vector<Shape *> &input,
+                          std::vector<Shape *> &shapes);
+
+class circleWithCenter : public Construction {
+    private:
+        Point *center, *point;
+        Circle *circle;
+    public:
+        circleWithCenter (Point *_center, Point *_point, Circle *_circle) : center(_center), point(_point), circle(_circle) {}
+        virtual void adjust ();
+};
+
+Construction *makeCircleWithCenter(std::vector<Shape *> &input,
+                                   std::vector<Shape *> &shapes);
+
 class Point : public Shape {
     double radiusOfDrawing=3;
 public:
@@ -142,6 +166,7 @@ public:
 	Point p1, p2;
 
 	Segment(Point,Point);
+    Segment () {}
 
     double dist(Point) override;
 

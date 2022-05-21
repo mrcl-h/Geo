@@ -69,6 +69,22 @@ Geoapp::Geoapp(){
     cond.pointCount = 2;
     registerUiOption (lineThroughPointsObject, cond);
 
+    uiObject circleWithCenterObject;
+    circleWithCenterObject.creator = makeCircleWithCenter;
+    circleWithCenterObject.image.loadFromFile("resources/circleWithCenter.png");
+    lineThroughPointsObject.image.setSmooth(true);
+    cond.reset();
+    cond.pointCount = 2;
+    registerUiOption (circleWithCenterObject, cond);
+
+    uiObject segmentFromPointsObject;
+    segmentFromPointsObject.creator = makeSegmentFromPoints;
+    segmentFromPointsObject.image.loadFromFile("resources/segmentFromPoints.png");
+    segmentFromPointsObject.image.setSmooth(true);
+    cond.reset();
+    cond.pointCount = 2;
+    registerUiOption (segmentFromPointsObject, cond);
+
     loop();
 }
 
