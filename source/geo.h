@@ -19,6 +19,8 @@ class Shape {
 public:
     //TODO delete
     bool isActive = false;
+    bool isCurrent = false;
+    bool isDependent = false;
     //std::string name;
     virtual double dist(Point)=0;
     virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
@@ -88,6 +90,18 @@ class parallelLine : public Construction { //constructs parallel line from line 
 
 Construction *makeParallel(std::vector<Shape *> &shapes,
                            std::vector<Shape *> &parall);
+
+class lineThroughPoints : public Construction {
+    private:
+        Point *pointA, *pointB;
+        Line *line;
+    public:
+        lineThroughPoints (Point *_pointA, Point *_pointB, Line *_line) : pointA (_pointA), pointB (_pointB), line(_line) {}
+        virtual void adjust ();
+};
+
+Construction *makeLineThroughPoints(std::vector<Shape *> &shapes,
+                                    std::vector<Shape *> &line);
 
 class Point : public Shape {
     double radiusOfDrawing=3;

@@ -61,6 +61,14 @@ Geoapp::Geoapp(){
     cond.lineCount = 1;
     registerUiOption (orthogonalLineObject, cond);
 
+    uiObject lineThroughPointsObject;
+    lineThroughPointsObject.creator = makeLineThroughPoints;
+    lineThroughPointsObject.image.loadFromFile("resources/lineThroughPoints.png");
+    lineThroughPointsObject.image.setSmooth(true);
+    cond.reset();
+    cond.pointCount = 2;
+    registerUiOption (lineThroughPointsObject, cond);
+
     loop();
 }
 
@@ -90,6 +98,10 @@ void Geoapp::events(sf::Event event){
             } else if (event.type== sf::Event::Resized){
 
             } else if(event.type == sf::Event::KeyPressed){
+
+                float xMovePoints = 0, yMovePoints = 0;
+                float pointsMoveDist = 10;
+            
                 if (event.key.code == sf::Keyboard::Left) {
                     leftKeyDown=true;
                 } else if (event.key.code == sf::Keyboard::Right) {
@@ -98,6 +110,24 @@ void Geoapp::events(sf::Event event){
                     upKeyDown=true;
                 } else if (event.key.code == sf::Keyboard::Down) {
                     downKeyDown=true;
+                } else if (event.key.code == sf::Keyboard::H) {
+                    xMovePoints -= pointsMoveDist;
+                } else if (event.key.code == sf::Keyboard::J) {
+                    yMovePoints += pointsMoveDist;
+                } else if (event.key.code == sf::Keyboard::K) {
+                    yMovePoints -= pointsMoveDist;
+                } else if (event.key.code == sf::Keyboard::L) {
+                    xMovePoints += pointsMoveDist;
+                }
+                for (auto i : hulledShapes) {
+                    if (i->what_is() == "Point" && i->isDependent == false) {
+                        Point *pt = static_cast<Point*> (i);
+                        pt->x += xMovePoints;
+                        pt->y += yMovePoints;
+                    }
+                }
+                for (auto i : constructions) {
+                    i->adjust();
                 }
                 changeMode(event);
             }
@@ -205,6 +235,9 @@ void Geoapp::UIhandling(Point mysz){
     if (constructionMade != NULL) {
         constructions.push_back(constructionMade);
     }
+    if (hulledShapes.size() > 0) {
+        hulledShapes.back()->isCurrent = false;
+    }
     for (auto i : hulledShapes) {
         i->isActive = false;
     }
@@ -217,6 +250,7 @@ void Geoapp::whenClick(double x, double y){
     if(mode==0){
         Shape *S = new Point (clickPosition);;
         shapes.push_back(S);
+        /*
         if(shapes.size()>1){
             if(shapes[shapes.size()-2]->what_is()=="Point"){
                 Point* a=static_cast<Point*>(shapes[shapes.size()-2]);
@@ -225,18 +259,27 @@ void Geoapp::whenClick(double x, double y){
                 shapes.push_back(l);
             }
         }
+        */
     } else if(mode==1){
         int a=FTCO(clickPosition);
-        std::cout<<a;
+        //std::cout<<a;
         if(a>-1){
             int selectCount;
             if (shapes[a]->isActive) {
                 shapes[a]->isActive = false;
+                shapes[a]->isCurrent = false;
+
                 hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), shapes[a]));
+                if (hulledShapes.size() > 0) {
+                    hulledShapes.back()->isCurrent = true;
+                }
                 selectCount = -1;
             } else {
                 shapes[a]->isActive = true;
+                if (hulledShapes.size() > 0) 
+                    hulledShapes.back()->isCurrent = false;
                 hulledShapes.push_back(shapes[a]);
+                hulledShapes.back()->isCurrent = true;
                 selectCount = 1;
             }
             if (shapes[a]->what_is() == "Point") {
@@ -272,57 +315,35 @@ void Geoapp::changeMode(sf::Event e){
 
 int Geoapp::FTCP(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<20)){
-            return i;
-        }
+        if(shapes[i]->what_is()=="Point" && shapes[i]->dist(A)<20){ return i; }
     }
     return -1;
 }
 int Geoapp::FTCL(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Line")&&(shapes[i]->dist(A)<epsilon)){
-            return i;
-        }
-
+        if(shapes[i]->what_is()=="Line" && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
 int Geoapp::FTCS(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Segment")&&(shapes[i]->dist(A)<epsilon)){
-            return i;
-        }
+        if(shapes[i]->what_is()=="Segment" && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
 int Geoapp::FTCC(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if((shapes[i]->what_is()=="Point")&&(shapes[i]->dist(A)<epsilon)){
-            return i;
-        }
+        if(shapes[i]->what_is()=="Point" && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
-int Geoapp::FTCT(Point A){
-    return -1;
-}
+int Geoapp::FTCT(Point A){ return -1; }
 
 int Geoapp::FTCO(Point A){
-    int temp=FTCP(A);
-    if(temp>-1){
-        return temp;
-    }
-    temp=FTCS(A);
-    if(temp>-1){
-        return temp;
-    }
-    temp=FTCL(A);
-    if(temp>-1){
-        return temp;
-    }
-    temp=FTCC(A);
-    if(temp>-1){
-        return temp;
-    }
+    int temp;
+    if((temp=FTCP(A))>-1){ return temp; }
+    if((temp=FTCS(A))>-1){ return temp; }
+    if((temp=FTCL(A))>-1){ return temp; }
+    if((temp=FTCC(A))>-1){ return temp; }
     return FTCT(A);
 }

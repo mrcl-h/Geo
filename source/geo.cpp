@@ -12,12 +12,29 @@ double Point::dist(Point v){
     Point temp=*this-v;
     return temp.abs();
 }
+
+sf::Color getShapeColor (bool active, bool current, bool dependent) {
+    if (dependent) {
+        if (current) {
+            return sf::Color::Yellow;
+        } else if (active) {
+            return sf::Color::Magenta;
+        } else {
+            return sf::Color::Red;
+        }
+    } else {
+        if (current) {
+            return sf::Color::Green;
+        } else if (active) {
+            return sf::Color::Blue;
+        } else {
+            return sf::Color::Black;
+        }
+    }
+}
+
 void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
-        //sf::CircleShape shape(radiusOfDrawing);
-        //sf::Vector2f v(x-radiusOfDrawing,y-radiusOfDrawing);
-        //shape.setPosition(v);
-        //shape.setFillColor(sf::Color::Black);
-        //window->draw(shape);
+
     sf::CircleShape shape (radiusOfDrawing);
     float alpha = (x-visible.left)/visible.width;
     float beta = (y-visible.top)/visible.height;
@@ -25,11 +42,7 @@ void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect 
     v.x -= radiusOfDrawing;
     v.y -= radiusOfDrawing;
     shape.setPosition(v);
-    if (isActive) {
-        shape.setFillColor(sf::Color::Blue);
-    } else {
-        shape.setFillColor(sf::Color::Black);
-    }
+    shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
     window->draw(shape);
 }
 void Point::hull_draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
@@ -183,45 +196,20 @@ void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect b
         to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
     }
     sf::Vertex line[] = { from, to };
-    if (isActive) {
-        line[0].color=sf::Color::Blue;
-        line[1].color=sf::Color::Blue;
+    //sf::Color lineColor = getShapeColor (isActive, isCurrent, isDependent); 
+    sf::Color lineColor;
+    if (isCurrent) {
+        lineColor = sf::Color::Green;
+    } else if (isActive) {
+        lineColor = sf::Color::Blue; 
     } else {
-        line[0].color=sf::Color(0,0,0);
-        line[1].color=sf::Color(0,0,0);
+        lineColor = sf::Color::Black;
     }
+
+    line[0].color = line[1].color = lineColor;
+
     window->draw(line, 2, sf::Lines);
 
-    //double w = window->getSize().x, h = window->getSize().y;
-
-    //double  x1= -c/n.x,
-    //        y1= -c/n.y,
-    //        x2= -(c+n.y*h)/n.x,
-    //        y2= -(c+n.x*w)/n.y;
-    //vector<sf::Vertex> v;
-    //if((x1>0)&&(x1<w)){
-    //    v.push_back(sf::Vertex(sf::Vector2f(x1, 0)));
-    //}
-    //if((y1>=0)&&(y1<=h)){
-    //    v.push_back(sf::Vertex(sf::Vector2f(0, y1)));
-    //}
-    //if((x2>0)&&(x2<w)){
-    //    v.push_back(sf::Vertex(sf::Vector2f(x2, h)));
-    //}
-    //if((y2>=0)&&(y2<=h)){
-    //    v.push_back(sf::Vertex(sf::Vector2f(w, y2)));
-    //}
-    //if(v.size()<2){
-    //    return;
-    //}
-    //sf::Vertex line[] =
-    //{
-    //    v[0],
-    //    v[1]
-    //};
-    //line[0].color=sf::Color(0,0,0);
-    //line[1].color=sf::Color(0,0,0);
-    //window->draw(line, 2, sf::Lines);
 }
 std::string Line::what_is(){
     return "Line";
@@ -279,6 +267,7 @@ Construction *makeSegmentMiddle(std::vector<Shape*> &segment,
     if (segment.size() != 1 || segment[0]->what_is()=="segment")
         return NULL;
     shapes.push_back (new Point ());
+    shapes.back()->isDependent = true;
     Construction *segmid = new segmentMiddle(static_cast<Segment*>(segment[0]), static_cast<Point*>(shapes.back()));
     segmid->adjust();
     return segmid;
@@ -293,6 +282,7 @@ Construction *makePointsMiddle(std::vector<Shape*> &points,
     if (points.size() != 2 || points[0]->what_is() != "Point" || points[1]->what_is() != "Point")
         return NULL;
     shapes.push_back (new Point());
+    shapes.back()->isDependent = true;
     Construction *pointMid = new pointsMiddle (static_cast<Point*>(points[0]), static_cast<Point*>(points[1]), static_cast<Point*>(shapes.back()));
     pointMid->adjust();
     return pointMid;
@@ -308,6 +298,7 @@ Construction *makeOrthogonal(std::vector<Shape*> &input,
     if (input.size() != 2)
         return NULL;
     shapes.push_back (new Line(1,0,0));
+    shapes.back()->isDependent = true;
     Construction *orthogonal = NULL;
     if (input[0]->what_is() == "Line" && input[1]->what_is() == "Point") {
         orthogonal = new orthogonalLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
@@ -329,6 +320,7 @@ Construction *makeParallel(std::vector<Shape*> &input,
     if (input.size() != 2)
         return NULL;
     shapes.push_back (new Line(1,0,0));
+    shapes.back()->isDependent = true;
     Construction *parallel = NULL;
     if (input[0]->what_is() == "Line" && input[1]->what_is() == "Point") {
         parallel = new parallelLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
@@ -342,4 +334,38 @@ void parallelLine::adjust() {
     parallel->n = line->n;
     parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
     //parallel->c=0;
+}
+Construction *makeLineThroughPoints(std::vector<Shape *> &input,
+                                    std::vector<Shape *> &shapes) {
+    if (input.size() != 2)
+        return NULL;
+    shapes.push_back (new Line(1,0,0));
+    shapes.back()->isDependent = true;
+    if (input[0]->what_is() == "Point" && input[1]->what_is() == "Point") {
+        Construction *lineThrough = new lineThroughPoints (static_cast<Point*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
+        lineThrough->adjust();
+        return lineThrough;
+    }
+    return NULL;
+}
+
+void lineThroughPoints::adjust() {
+    if(pointA->x == 0 && pointA->y == 0){
+        line->c=0;
+        line->n.x = pointB->y;
+        line->n.y = -pointB->x;
+    } else if(pointB->x == 0 && pointB->y == 0){
+        line->c=0;
+        line->n.x = pointA->y;
+        line->n.y = -pointA->x;
+    } else {
+        //c=-1;
+        //n=Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
+        line->c=-1;
+        double cross = pointA->x*pointB->y - pointA->y*pointB->x;
+        line->n.x = (pointB->y - pointA->y)/cross;
+        line->n.y = (pointA->x - pointB->x)/cross;
+            //= Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
+	    // self x p = return x*p.y-y*p.x;
+    }
 }
