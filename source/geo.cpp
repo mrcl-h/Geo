@@ -32,6 +32,19 @@ void Point::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect 
     }
     window->draw(shape);
 }
+void Point::hull_draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box){
+
+    sf::CircleShape shape (2*radiusOfDrawing);
+    float alpha = (x-visible.left)/visible.width;
+    float beta = (y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= 2*radiusOfDrawing;
+    v.y -= 2*radiusOfDrawing;
+    shape.setPosition(v);
+    shape.setFillColor(sf::Color(0,0,0,100));
+
+    window->draw(shape);
+}
 std::string Point::what_is(){
     return "Point";
 }
@@ -300,7 +313,7 @@ Construction *makeOrthogonal(std::vector<Shape*> &input,
         orthogonal = new orthogonalLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
     } else if (input[0]->what_is() == "Point" && input[1]->what_is() == "Line")
         orthogonal = new orthogonalLine(static_cast<Line*>(input[1]), static_cast<Point*>(input[0]), static_cast<Line*>(shapes.back()));
-    if (orthogonal != NULL) 
+    if (orthogonal != NULL)
         orthogonal->adjust();
     return orthogonal;
 }
@@ -321,7 +334,7 @@ Construction *makeParallel(std::vector<Shape*> &input,
         parallel = new parallelLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
     } else if (input[0]->what_is() == "Point" && input[1]->what_is() == "Line")
         parallel = new parallelLine(static_cast<Line*>(input[1]), static_cast<Point*>(input[0]), static_cast<Line*>(shapes.back()));
-    if (parallel != NULL) 
+    if (parallel != NULL)
         parallel->adjust();
     return parallel;
 }

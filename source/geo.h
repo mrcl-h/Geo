@@ -17,7 +17,7 @@ inline double doubleAbs (double r) {
 
 class Shape {
 public:
-    //TODO delete 
+    //TODO delete
     bool isActive = false;
     //std::string name;
     virtual double dist(Point)=0;
@@ -39,7 +39,7 @@ typedef Construction* (*constructionMaker)(std::vector<Shape*>&, std::vector<Sha
 
 
 class segmentMiddle : public Construction { //constructs middle point from segment
-    private:                                        
+    private:
         Segment *segment;
         Point *midPoint;
     public:
@@ -99,6 +99,8 @@ public:
     std::string nazwa;
 
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
+
+    void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     double dist(Point) override;
 
