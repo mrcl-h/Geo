@@ -3,17 +3,29 @@
 #include<SFML/Graphics.hpp>
 #include<vector>
 
+template <typename T>
+class shapeTypeId {
+    public:
+        enum {typeId = 0};
+};
+
 //lista figur geometrycznych
 class Segment;
+template <> class shapeTypeId<Segment> { public: enum {typeId = 5}; };
 class Triangle;
+template <> class shapeTypeId<Triangle> { public: enum {typeId = 4}; };
 class Line;
+template <> class shapeTypeId<Line> { public: enum {typeId = 3}; };
 class Circle;
+template <> class shapeTypeId<Circle> { public: enum {typeId = 2}; };
 class Point;
+template <> class shapeTypeId<Point> { public: enum {typeId = 1}; };
 class Shape;
 
 inline double doubleAbs (double r) {
     return r >= 0 ? r : -r;
 }
+
 
 class Shape {
 public:
@@ -25,10 +37,13 @@ public:
     virtual double dist(Point) =0;
     virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
     virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
-    virtual std::string what_is()=0;
+    //virtual std::string what_is()=0;
+    virtual uint32_t what_is() = 0;
     virtual ~Shape() {}
 
 };
+
+
 class Construction {
     public:
     virtual ~Construction () {}
@@ -36,7 +51,6 @@ class Construction {
 };
 
 typedef Construction* (*constructionMaker)(std::vector<Shape*>&, std::vector<Shape*>&);
-//typedef void* (*parseState)(charParsingData&, const char*, parsedstd::string&);
 
 
 
@@ -127,6 +141,7 @@ class circleWithCenter : public Construction {
 Construction *makeCircleWithCenter(std::vector<Shape *> &input,
                                    std::vector<Shape *> &shapes);
 
+
 class Point : public Shape {
     double radiusOfDrawing=3;
 public:
@@ -134,15 +149,14 @@ public:
 
     static Point zero();
 
-    std::string nazwa;
-
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
     double dist(Point) override;
 
-    std::string what_is() override;
+    //std::string what_is() override;
+    virtual uint32_t what_is () override {return shapeTypeId<Point>::typeId;}
 
     friend std::ostream& operator<<(std::ostream&, const Point&);
 
@@ -161,6 +175,8 @@ public:
 
     Point(Line,Line);
 };
+
+
 class Segment : public Shape{
 public:
 	Point p1, p2;
@@ -172,7 +188,8 @@ public:
 
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
-    std::string what_is() override;
+    //std::string what_is() override;
+    virtual uint32_t what_is () override {return shapeTypeId<Segment>::typeId;}
 
     friend std::ostream& operator<<(std::ostream&, const Segment&);
 
@@ -180,6 +197,8 @@ public:
 	double abs();
 
 };
+
+
 class Line : public Shape{
 public:
 
@@ -194,19 +213,23 @@ public:
 
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
 
-    std::string what_is() override;
+    //std::string what_is() override;
+    virtual uint32_t what_is () override {return shapeTypeId<Line>::typeId;}
 
     friend std::ostream& operator<<(std::ostream&, const Line&);
 
     Line(Circle,Circle);
 };
+
+
 class Circle: public Shape {
 public:
     Point middle;
     double r;
     double dist(Point) override;
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
-    std::string what_is() override;
+    //std::string what_is() override;
+    virtual uint32_t what_is () override {return shapeTypeId<Circle>::typeId;}
     friend std::ostream& operator<<(std::ostream&, const Circle&);
     Circle(Point, Point, Point);
     Circle(Point, double);

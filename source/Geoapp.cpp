@@ -136,7 +136,7 @@ void Geoapp::events(sf::Event event){
                     xMovePoints += pointsMoveDist;
                 }
                 for (auto i : hulledShapes) {
-                    if (i->what_is() == "Point" && i->isDependent == false) {
+                    if (i->what_is() == shapeTypeId<Point>::typeId && i->isDependent == false) {
                         Point *pt = static_cast<Point*> (i);
                         pt->x += xMovePoints;
                         pt->y += yMovePoints;
@@ -298,13 +298,13 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.back()->isCurrent = true;
                 selectCount = 1;
             }
-            if (shapes[a]->what_is() == "Point") {
+            if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
                 currentConditions.pointCount += selectCount;
-            } else if (shapes[a]->what_is() == "Line") {
+            } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
                 currentConditions.lineCount += selectCount;
-            } else if (shapes[a]->what_is() == "Segment") {
+            } else if (shapes[a]->what_is() == shapeTypeId<Segment>::typeId) {
                 currentConditions.segmentCount += selectCount;
-            } else if (shapes[a]->what_is() == "Circle") {
+            } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
                 currentConditions.circleCount += selectCount;
             }
         }
@@ -331,25 +331,25 @@ void Geoapp::changeMode(sf::Event e){
 
 int Geoapp::FTCP(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()=="Point" && shapes[i]->dist(A)<20){ return i; }
+        if(shapes[i]->what_is()==shapeTypeId<Point>::typeId && shapes[i]->dist(A)<20){ return i; }
     }
     return -1;
 }
 int Geoapp::FTCL(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()=="Line" && shapes[i]->dist(A)<epsilon){ return i; }
+        if(shapes[i]->what_is()==shapeTypeId<Line>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
 int Geoapp::FTCS(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()=="Segment" && shapes[i]->dist(A)<epsilon){ return i; }
+        if(shapes[i]->what_is()==shapeTypeId<Segment>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
 int Geoapp::FTCC(Point A){
     for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()=="Point" && shapes[i]->dist(A)<epsilon){ return i; }
+        if(shapes[i]->what_is()==shapeTypeId<Point>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
