@@ -169,6 +169,8 @@ public:
     Circle(Point, Point);
 };
 
+//TODO: Triangle class
+
 class Construction {
     public:
     virtual ~Construction () {}
@@ -176,6 +178,8 @@ class Construction {
 };
 
 typedef Construction* (*constructionMaker)(constructionElements&, std::vector<Shape*>&);
+
+//------------------------------------------------
 
 class segmentMiddle : public Construction { //constructs middle point from segment
     private:
@@ -188,7 +192,6 @@ class segmentMiddle : public Construction { //constructs middle point from segme
         }
         virtual void adjust ();
 };
-
 
 class pointsMiddle : public Construction { //constructs middle point from two points
     private:
@@ -263,6 +266,21 @@ class circleWithCenter : public Construction {
         }
         virtual void adjust ();
 };
+
+//TODO: Circle through 3 points construction
+//TODO: Intersections of two circles
+//TODO: Power line of two circles
+//TODO: Intersections of circle and line
+//TODO: Symmetrical line of a segment/two points
+//TODO: bisector of 3 points / bisectors of two Lines
+//TODO: described circle on triangle
+//TODO: inscribed circle in triangle
+//TODO: Orthocenter of triangle
+//TODO: center of mass
+//TODO: nine point circle
+//TODO: Euler's line
+//TODO: Symmedian
+//TODO: Space transformations: HOMOTHETY, ROTATION, SYMMETRY about point/line, SHIFT, INVERSION, AFINIC 
 
 template <typename T>
 Construction *makeConstruction (constructionElements& el, std::vector<Shape*>& shapes) {
