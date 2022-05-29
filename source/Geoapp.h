@@ -16,7 +16,7 @@ class Geoapp{
         uint8_t lineCount, pointCount, circleCount, segmentCount;
         void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
     };
-    uint32_t uiMapId (uiOptionConditions conditions) {
+    const uint32_t uiMapId (uiOptionConditions conditions) const {
         uint32_t mapId = conditions.segmentCount;
         mapId <<= 8;
         mapId += conditions.circleCount;
@@ -42,23 +42,23 @@ class Geoapp{
     double uiBarrier;
     double scalingFactor=1;
 
-    sf::RenderWindow window;
+    mutable sf::RenderWindow window;
 
     void loop();
     void update();
     void events(sf::Event);
     void UIhandling(Point);
-    void drawUI();
-    void drawObjects();
+    void drawUI() const;
+    void drawObjects() const;
     void whenClick(double,double);
     void changeMode(sf::Event);
 
-    int FTCO(Point); //find object closest to mouse
-    int FTCP(Point); //find point closest to mouse
-    int FTCL(Point); //find line closest to mouse
-    int FTCS(Point); //find segment closest to mouse
-    int FTCC(Point); //find circle closest to mouse
-    int FTCT(Point); //find triangle closest to mouse
+    int FTCO(Point) const; //find object closest to mouse
+    int FTCP(Point) const; //find point closest to mouse
+    int FTCL(Point) const; //find line closest to mouse
+    int FTCS(Point) const; //find segment closest to mouse
+    int FTCC(Point) const; //find circle closest to mouse
+    int FTCT(Point) const; //find triangle closest to mouse
 
     void registerUiOption (uiObject obj, uiOptionConditions conditions) {
         uint32_t mapId = uiMapId (conditions);
@@ -72,11 +72,7 @@ public:
     //void pushToConstructions(Construction);
     Geoapp();
     ~Geoapp () {
-        for (auto i : shapes) {
-            delete i;
-        }
-        for (auto i : constructions) {
-            delete i;
-        }
+        for (auto i : shapes) { delete i; }
+        for (auto i : constructions) { delete i; }
     }
 };

@@ -180,7 +180,7 @@ void Geoapp::update(){
     }
 }
 
-void Geoapp::drawUI(){
+void Geoapp::drawUI() const {
     unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
 
     float uiWidth = windowWidth*(1-uiBarrier);
@@ -200,7 +200,7 @@ void Geoapp::drawUI(){
     window.draw(rect);
     window.draw(line, 2, sf::Lines);
 
-    std::vector<uiObject>& currentObjects = uiPages[uiMapId (currentConditions)];
+    const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
     float top = 0;
     float objectHeight = uiWidth/2;
 
@@ -225,7 +225,7 @@ void Geoapp::drawUI(){
     }
 }
 
-void Geoapp::drawObjects(){
+void Geoapp::drawObjects() const{
     float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
     sf::FloatRect visible (centerX - uiBarrier*windowWidth/2, centerY-windowHeight/2,uiBarrier*windowWidth,windowHeight);
     sf::FloatRect box (0,0,window.getSize().x*uiBarrier,window.getSize().y);
@@ -359,33 +359,33 @@ void Geoapp::changeMode(sf::Event e){
 
 
 
-int Geoapp::FTCP(Point A){
+int Geoapp::FTCP(Point A) const {
     for(unsigned int i=0;i<shapes.size();i++){
         if(shapes[i]->what_is()==shapeTypeId<Point>::typeId && shapes[i]->dist(A)<20){ return i; }
     }
     return -1;
 }
-int Geoapp::FTCL(Point A){
+int Geoapp::FTCL(Point A) const{
     for(unsigned int i=0;i<shapes.size();i++){
         if(shapes[i]->what_is()==shapeTypeId<Line>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
-int Geoapp::FTCS(Point A){
+int Geoapp::FTCS(Point A) const{
     for(unsigned int i=0;i<shapes.size();i++){
         if(shapes[i]->what_is()==shapeTypeId<Segment>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
-int Geoapp::FTCC(Point A){
+int Geoapp::FTCC(Point A) const{
     for(unsigned int i=0;i<shapes.size();i++){
         if(shapes[i]->what_is()==shapeTypeId<Point>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
-int Geoapp::FTCT(Point A){ return -1; }
+int Geoapp::FTCT(Point A) const { return -1; }
 
-int Geoapp::FTCO(Point A){
+int Geoapp::FTCO(Point A) const {
     int temp;
     if((temp=FTCP(A))>-1){ return temp; }
     if((temp=FTCS(A))>-1){ return temp; }

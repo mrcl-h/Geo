@@ -2,6 +2,7 @@
 #include<iostream>
 #include<SFML/Graphics.hpp>
 #include<vector>
+#include<cmath>
 
 template <typename T>
 class shapeTypeId {
@@ -29,16 +30,15 @@ inline double doubleAbs (double r) {
 
 class Shape {
 public:
-    //TODO delete
     bool isActive = false;
     bool isCurrent = false;
     bool isDependent = false;
     //std::string name;
-    virtual double dist(Point) =0;
-    virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
-    virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) {}
+    virtual const double dist(Point) const =0;
+    virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
+    virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
     //virtual std::string what_is()=0;
-    virtual uint32_t what_is() = 0;
+    virtual const uint32_t what_is() = 0;
     virtual ~Shape() {}
 
 };
@@ -63,31 +63,48 @@ class Point : public Shape {
 public:
 	double x,y;
 
-    static Point zero();
+    //static Point zero();
 
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
-    void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
+    void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
-    double dist(Point) override;
+    const double dist(Point) const override;
 
     //std::string what_is() override;
-    virtual uint32_t what_is () override {return shapeTypeId<Point>::typeId;}
+    virtual const uint32_t what_is () override {return shapeTypeId<Point>::typeId;}
 
     friend std::ostream& operator<<(std::ostream&, const Point&);
 
 	Point(double=0, double=0);
 
-	bool operator==(Point);
-	Point operator+(Point);
-	Point operator-(Point);
-	Point operator*(double);
-	Point operator/(double);
-	double operator*(Point);
-	double operator%(Point);
+    const bool operator==(Point p) const {
+        return ((dist(p))<0.01);
+    }
 
-	//długość do (0,0) +
-	double abs();
+    const Point operator+(Point p) const {
+        return Point(x+p.x,y+p.y);
+    }
+    const Point operator-(Point p) const {
+        return Point(x-p.x,y-p.y);
+    }
+    const Point operator*(double a) const {
+        return Point(a*x,a*y);
+    }
+    const Point operator/(double a) const {
+        return Point(x/a, y/a);
+    }
+    const double operator*(Point p) const {
+        return x*p.x+y*p.y;
+    }
+    const double operator%(Point p) const {
+        return x*p.y-y*p.x;
+    }
+
+    //długość do (0,0) +
+    const double abs() const {
+        return std::sqrt (x*x+y*y);
+    }
 
     Point(Line,Line);
 };
@@ -100,17 +117,17 @@ public:
 	Segment(Point,Point);
     Segment () {}
 
-    double dist(Point) override;
+    const double dist(Point) const override;
 
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
     //std::string what_is() override;
-    virtual uint32_t what_is () override {return shapeTypeId<Segment>::typeId;}
+    virtual const uint32_t what_is () override {return shapeTypeId<Segment>::typeId;}
 
     friend std::ostream& operator<<(std::ostream&, const Segment&);
 
 	//dlugosc odcinka +
-	double abs();
+	const double abs();
 
 };
 
@@ -125,12 +142,12 @@ public:
 	Line(Point,Point); //line through two points
 	Line(Segment);
 
-    double dist(Point) override;
+    const double dist(Point) const override;
 
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
     //std::string what_is() override;
-    virtual uint32_t what_is () override {return shapeTypeId<Line>::typeId;}
+    virtual const uint32_t what_is () override {return shapeTypeId<Line>::typeId;}
 
     friend std::ostream& operator<<(std::ostream&, const Line&);
 
@@ -142,10 +159,10 @@ class Circle: public Shape {
 public:
     Point middle;
     double r;
-    double dist(Point) override;
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) override;
+    const double dist(Point) const override;
+    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
     //std::string what_is() override;
-    virtual uint32_t what_is () override {return shapeTypeId<Circle>::typeId;}
+    virtual const uint32_t what_is () override {return shapeTypeId<Circle>::typeId;}
     friend std::ostream& operator<<(std::ostream&, const Circle&);
     Circle(Point, Point, Point);
     Circle(Point, double);
