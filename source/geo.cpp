@@ -228,16 +228,6 @@ void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect
     shape.setFillColor(sf::Color(255,255,255,0));
     shape.setPointCount (400);
     window->draw(shape);
-    /*
-    sf::CircleShape shape(r);
-    sf::Vector2f v(middle.x-r,middle.y-r);
-    shape.setPosition(v);
-    shape.setOutlineColor(sf::Color(0,0,0,255));
-    shape.setOutlineThickness(1);
-    shape.setFillColor(sf::Color(255,255,255,0));
-    shape.setPointCount (400);
-    window->draw(shape);
-    */
 }
 Circle::Circle(Point mid, double radius){
     middle=mid;
@@ -255,103 +245,24 @@ Circle::Circle(Point A, Point B, Point C){
     middle=middle+C;
 }
 
-/*
-Point Construction::lengthen(Point A, Point B, double a){
-    double b = a/A.dist(B);
-    return (B-A)*b+A;
-}
-
-Point Construction::middle(Point A, Point B){
-    return (A+B)/2;
-}
-*/
-Construction *makeSegmentMiddle(std::vector<Shape*> &segment,
-        std::vector<Shape*> &shapes) {
-    if (segment.size() != 1 || segment[0]->what_is()==shapeTypeId<Segment>::typeId)
-        return NULL;
-    shapes.push_back (new Point ());
-    shapes.back()->isDependent = true;
-    Construction *segmid = new segmentMiddle(static_cast<Segment*>(segment[0]), static_cast<Point*>(shapes.back()));
-    segmid->adjust();
-    return segmid;
-}
 void segmentMiddle::adjust() {
     midPoint->x = (segment->p1.x + segment->p2.x)/2;
     midPoint->y = (segment->p1.y + segment->p2.y)/2;
 }
 
-Construction *makePointsMiddle(std::vector<Shape*> &points,
-        std::vector<Shape*> &shapes) {
-    if (points.size() != 2 || points[0]->what_is() != shapeTypeId<Point>::typeId || points[1]->what_is() != shapeTypeId<Point>::typeId)
-        return NULL;
-    shapes.push_back (new Point());
-    shapes.back()->isDependent = true;
-    Construction *pointMid = new pointsMiddle (static_cast<Point*>(points[0]), static_cast<Point*>(points[1]), static_cast<Point*>(shapes.back()));
-    pointMid->adjust();
-    return pointMid;
-}
 void pointsMiddle::adjust() {
     midPoint->x = (pointA->x+pointB->x)/2;
     midPoint->y = (pointA->y+pointB->y)/2;
-}
-
-Construction *makeOrthogonal(std::vector<Shape*> &input,
-        std::vector<Shape*> &shapes) {
-    std::cout << "make orthogonal" << std::endl;
-    if (input.size() != 2)
-        return NULL;
-    shapes.push_back (new Line(1,0,0));
-    shapes.back()->isDependent = true;
-    Construction *orthogonal = NULL;
-    if (input[0]->what_is() == shapeTypeId<Line>::typeId && input[1]->what_is() == shapeTypeId<Point>::typeId) {
-        orthogonal = new orthogonalLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
-    } else if (input[0]->what_is() == shapeTypeId<Point>::typeId && input[1]->what_is() == shapeTypeId<Line>::typeId)
-        orthogonal = new orthogonalLine(static_cast<Line*>(input[1]), static_cast<Point*>(input[0]), static_cast<Line*>(shapes.back()));
-    if (orthogonal != NULL)
-        orthogonal->adjust();
-    return orthogonal;
 }
 void orthogonalLine::adjust() {
     orthogonal->n.x = -(line->n.y);
     orthogonal->n.y = line->n.x;
     orthogonal->c = -( point->x * orthogonal->n.x + point->y * orthogonal->n.y);
 }
-
-Construction *makeParallel(std::vector<Shape*> &input,
-        std::vector<Shape*> &shapes) {
-    std::cout << "make parallel" << std::endl;
-    if (input.size() != 2)
-        return NULL;
-    shapes.push_back (new Line(1,0,0));
-    shapes.back()->isDependent = true;
-    Construction *parallel = NULL;
-    if (input[0]->what_is() == shapeTypeId<Line>::typeId && input[1]->what_is() == shapeTypeId<Point>::typeId) {
-        parallel = new parallelLine(static_cast<Line*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
-    } else if (input[0]->what_is() == shapeTypeId<Point>::typeId && input[1]->what_is() == shapeTypeId<Line>::typeId)
-        parallel = new parallelLine(static_cast<Line*>(input[1]), static_cast<Point*>(input[0]), static_cast<Line*>(shapes.back()));
-    if (parallel != NULL)
-        parallel->adjust();
-    return parallel;
-}
 void parallelLine::adjust() {
     parallel->n = line->n;
     parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
-    //parallel->c=0;
 }
-Construction *makeLineThroughPoints(std::vector<Shape *> &input,
-                                    std::vector<Shape *> &shapes) {
-    if (input.size() != 2)
-        return NULL;
-    shapes.push_back (new Line(1,0,0));
-    shapes.back()->isDependent = true;
-    if (input[0]->what_is() == shapeTypeId<Point>::typeId && input[1]->what_is() == shapeTypeId<Point>::typeId) {
-        Construction *lineThrough = new lineThroughPoints (static_cast<Point*>(input[0]), static_cast<Point*>(input[1]), static_cast<Line*>(shapes.back()));
-        lineThrough->adjust();
-        return lineThrough;
-    }
-    return NULL;
-}
-
 void lineThroughPoints::adjust() {
     if(pointA->x == 0 && pointA->y == 0){
         line->c=0;
@@ -362,31 +273,11 @@ void lineThroughPoints::adjust() {
         line->n.x = pointA->y;
         line->n.y = -pointA->x;
     } else {
-        //c=-1;
-        //n=Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
         line->c=-1;
         double cross = pointA->x*pointB->y - pointA->y*pointB->x;
         line->n.x = (pointB->y - pointA->y)/cross;
         line->n.y = (pointA->x - pointB->x)/cross;
-            //= Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
-	    // self x p = return x*p.y-y*p.x;
     }
-}
-
-
-Construction *makeSegmentFromPoints(std::vector<Shape *> &input,
-        std::vector<Shape *> &shapes) {
-    if (input.size() != 2) {
-        return NULL;
-    }
-    shapes.push_back (new Segment);
-    shapes.back()->isDependent = true;
-    if (input[0]->what_is() == shapeTypeId<Point>::typeId && input[1]->what_is() == shapeTypeId<Point>::typeId) {
-        Construction *segment = new segmentFromPoints (static_cast<Point*>(input[0]), static_cast<Point*>(input[1]), static_cast<Segment*>(shapes.back()));
-        segment->adjust();
-        return segment;
-    }
-    return NULL;
 }
 
 void segmentFromPoints::adjust() {
@@ -395,20 +286,6 @@ void segmentFromPoints::adjust() {
     segment->p2.x = pointB->x;
     segment->p2.y = pointB->y;
 }
-
-Construction *makeCircleWithCenter(std::vector<Shape *> &input,
-                                   std::vector<Shape *> &shapes) {
-    if (input.size() != 2) {
-        return NULL;
-    }
-    shapes.push_back (new Circle(Point(), 1));
-    shapes.back()->isDependent = true;
-    if (input[0]->what_is() == shapeTypeId<Point>::typeId && input[1]->what_is() == shapeTypeId<Point>::typeId) {
-        Construction *circle = new circleWithCenter (static_cast<Point*>(input[0]), static_cast<Point*>(input[1]), static_cast<Circle*>(shapes.back()));
-        circle->adjust();
-        return circle;
-    }
-    return NULL; }
 
 void circleWithCenter::adjust() {
     circle->middle.x = center->x;   

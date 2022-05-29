@@ -33,6 +33,7 @@ class Geoapp{
 
     std::vector<Shape*> shapes;
     std::vector<Shape*> hulledShapes;
+    constructionElements hulledElements;
 
     std::vector<Construction*> constructions;
 

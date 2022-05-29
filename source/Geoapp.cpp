@@ -16,12 +16,13 @@ Geoapp::Geoapp(){
     centerX = centerY = 0;
     currentConditions.reset();
     //currentConditions.segmentCount = 1;
+    resetConstructionElements (hulledElements);
 
     uiOptionConditions cond;
 
     //segment mid point
     uiObject segMidObject;
-    segMidObject.creator = makeSegmentMiddle;
+    segMidObject.creator = makeConstruction<segmentMiddle>;
     segMidObject.image.loadFromFile ("resources/segmentMid.png");
     segMidObject.image.setSmooth(true);
 
@@ -31,7 +32,7 @@ Geoapp::Geoapp(){
 
     //points mid point
     uiObject pointMidObject;
-    pointMidObject.creator = makePointsMiddle;
+    pointMidObject.creator = makeConstruction<pointsMiddle>;
     pointMidObject.image.loadFromFile ("resources/pointsMid.png");
     pointMidObject.image.setSmooth(true);
 
@@ -41,7 +42,7 @@ Geoapp::Geoapp(){
 
     //parallel line
     uiObject parallelLineObject;
-    parallelLineObject.creator = makeParallel;
+    parallelLineObject.creator = makeConstruction<parallelLine>;
     parallelLineObject.image.loadFromFile ("resources/parallelLine.png");
     parallelLineObject.image.setSmooth(true);
 
@@ -52,7 +53,7 @@ Geoapp::Geoapp(){
 
     //orthogonal line
     uiObject orthogonalLineObject;
-    orthogonalLineObject.creator = makeOrthogonal;
+    orthogonalLineObject.creator = makeConstruction<orthogonalLine>;
     orthogonalLineObject.image.loadFromFile ("resources/orthogonalLine.png");
     orthogonalLineObject.image.setSmooth (true);
 
@@ -62,7 +63,7 @@ Geoapp::Geoapp(){
     registerUiOption (orthogonalLineObject, cond);
 
     uiObject lineThroughPointsObject;
-    lineThroughPointsObject.creator = makeLineThroughPoints;
+    lineThroughPointsObject.creator = makeConstruction<lineThroughPoints>;
     lineThroughPointsObject.image.loadFromFile("resources/lineThroughPoints.png");
     lineThroughPointsObject.image.setSmooth(true);
     cond.reset();
@@ -70,7 +71,7 @@ Geoapp::Geoapp(){
     registerUiOption (lineThroughPointsObject, cond);
 
     uiObject circleWithCenterObject;
-    circleWithCenterObject.creator = makeCircleWithCenter;
+    circleWithCenterObject.creator = makeConstruction<circleWithCenter>;
     circleWithCenterObject.image.loadFromFile("resources/circleWithCenter.png");
     lineThroughPointsObject.image.setSmooth(true);
     cond.reset();
@@ -78,7 +79,7 @@ Geoapp::Geoapp(){
     registerUiOption (circleWithCenterObject, cond);
 
     uiObject segmentFromPointsObject;
-    segmentFromPointsObject.creator = makeSegmentFromPoints;
+    segmentFromPointsObject.creator = makeConstruction<segmentFromPoints>;
     segmentFromPointsObject.image.loadFromFile("resources/segmentFromPoints.png");
     segmentFromPointsObject.image.setSmooth(true);
     cond.reset();
@@ -247,7 +248,8 @@ void Geoapp::UIhandling(Point mysz){
         return;
     }
     if (clickedOption < 0) return;
-    Construction* constructionMade = currentPage[clickedOption].creator (hulledShapes, shapes);
+    //Construction* constructionMade = currentPage[clickedOption].creator (hulledShapes, shapes);
+    Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
     if (constructionMade != NULL) {
         constructions.push_back(constructionMade);
     }
@@ -259,6 +261,7 @@ void Geoapp::UIhandling(Point mysz){
     }
     hulledShapes.clear();
     currentConditions.reset();
+    resetConstructionElements (hulledElements);
 }
 
 void Geoapp::whenClick(double x, double y){
@@ -286,6 +289,22 @@ void Geoapp::whenClick(double x, double y){
                 shapes[a]->isCurrent = false;
 
                 hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), shapes[a]));
+
+                if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
+                    std::vector<Point*>& vec = hulledElements.points;
+                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a]));
+                } else if (shapes[a]->what_is() == shapeTypeId<Segment>::typeId) {
+                    std::vector<Segment*>& vec = hulledElements.segments;
+                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a]));
+                } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
+                    std::vector<Circle*>& vec = hulledElements.circles;
+                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a]));
+                } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
+                    std::vector<Line*>& vec = hulledElements.lines;
+                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a]));
+                }
+
+
                 if (hulledShapes.size() > 0) {
                     hulledShapes.back()->isCurrent = true;
                 }
@@ -294,8 +313,19 @@ void Geoapp::whenClick(double x, double y){
                 shapes[a]->isActive = true;
                 if (hulledShapes.size() > 0) 
                     hulledShapes.back()->isCurrent = false;
+
                 hulledShapes.push_back(shapes[a]);
                 hulledShapes.back()->isCurrent = true;
+
+                if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
+                    hulledElements.points.push_back (static_cast<Point*>(shapes[a]));
+                } else if (shapes[a]->what_is() == shapeTypeId<Segment>::typeId) {
+                    hulledElements.segments.push_back (static_cast<Segment*>(shapes[a]));
+                } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
+                    hulledElements.circles.push_back (static_cast<Circle*>(shapes[a]));
+                } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
+                    hulledElements.lines.push_back (static_cast<Line*>(shapes[a]));
+                }
                 selectCount = 1;
             }
             if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {

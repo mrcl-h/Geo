@@ -43,103 +43,19 @@ public:
 
 };
 
-
-class Construction {
-    public:
-    virtual ~Construction () {}
-    virtual void adjust () {}
+struct constructionElements {
+    std::vector<Point*> points;
+    std::vector<Line*> lines;
+    std::vector<Circle*> circles;
+    std::vector<Segment*> segments;
 };
 
-typedef Construction* (*constructionMaker)(std::vector<Shape*>&, std::vector<Shape*>&);
-
-
-
-class segmentMiddle : public Construction { //constructs middle point from segment
-    private:
-        Segment *segment;
-        Point *midPoint;
-    public:
-        segmentMiddle (Segment *_segment, Point *_midPoint) : segment(_segment), midPoint(_midPoint) {}
-        virtual void adjust ();
-};
-
-
-Construction *makeSegmentMiddle(std::vector<Shape *> &segment,
-                                std::vector<Shape *> &mid);
-
-class pointsMiddle : public Construction { //constructs middle point from two points
-    private:
-        Point *pointA, *pointB;
-        Point *midPoint;
-    public:
-        pointsMiddle (Point *_pointA, Point *_pointB, Point *_midPoint) : pointA (_pointA), pointB (_pointB), midPoint(_midPoint) {}
-        virtual void adjust ();
-};
-
-Construction *makePointsMiddle(std::vector<Shape *> &points,
-                               std::vector<Shape *> &mid);
-
-class orthogonalLine : public Construction { //constructs orthogonal line from line and a point
-    private:
-        Line *line;
-        Point *point;
-        Line *orthogonal;
-    public:
-        orthogonalLine (Line *_line, Point *_point, Line *_orthogonal) : line(_line), point(_point), orthogonal(_orthogonal) {}
-        virtual void adjust ();
-};
-
-Construction *makeOrthogonal(std::vector<Shape *> &shapes,
-                             std::vector<Shape *> &ortho);
-
-class parallelLine : public Construction { //constructs parallel line from line and a point
-    private:
-        Line *line;
-        Point *point;
-        Line *parallel;
-    public:
-        parallelLine (Line *_line, Point *_point, Line *_parallel) : line(_line), point(_point), parallel(_parallel) {}
-        virtual void adjust ();
-};
-
-Construction *makeParallel(std::vector<Shape *> &shapes,
-                           std::vector<Shape *> &parall);
-
-class lineThroughPoints : public Construction {
-    private:
-        Point *pointA, *pointB;
-        Line *line;
-    public:
-        lineThroughPoints (Point *_pointA, Point *_pointB, Line *_line) : pointA (_pointA), pointB (_pointB), line(_line) {}
-        virtual void adjust ();
-};
-
-Construction *makeLineThroughPoints(std::vector<Shape *> &shapes,
-                                    std::vector<Shape *> &line);
-
-class segmentFromPoints : public Construction {
-    private:
-        Point *pointA, *pointB;
-        Segment *segment;
-    public:
-        segmentFromPoints (Point *_pointA, Point *_pointB, Segment *_segment) : pointA (_pointA), pointB (_pointB), segment(_segment) {}
-        virtual void adjust ();
-};
-
-Construction *makeSegmentFromPoints(std::vector<Shape *> &input,
-                          std::vector<Shape *> &shapes);
-
-class circleWithCenter : public Construction {
-    private:
-        Point *center, *point;
-        Circle *circle;
-    public:
-        circleWithCenter (Point *_center, Point *_point, Circle *_circle) : center(_center), point(_point), circle(_circle) {}
-        virtual void adjust ();
-};
-
-Construction *makeCircleWithCenter(std::vector<Shape *> &input,
-                                   std::vector<Shape *> &shapes);
+inline void resetConstructionElements (constructionElements& el) {
+    el.points.clear();
+    el.lines.clear();
+    el.circles.clear();
+    el.segments.clear();
+}
 
 
 class Point : public Shape {
@@ -235,3 +151,106 @@ public:
     Circle(Point, double);
     Circle(Point, Point);
 };
+
+class Construction {
+    public:
+    virtual ~Construction () {}
+    virtual void adjust () {}
+};
+
+typedef Construction* (*constructionMaker)(constructionElements&, std::vector<Shape*>&);
+
+class segmentMiddle : public Construction { //constructs middle point from segment
+    private:
+        Segment *segment;
+        Point *midPoint;
+    public:
+        segmentMiddle (constructionElements& el, std::vector<Shape*>& shapes) : segment(el.segments[0]), midPoint(new Point) {
+            midPoint->isDependent = true;
+            shapes.push_back(midPoint);
+        }
+        virtual void adjust ();
+};
+
+
+class pointsMiddle : public Construction { //constructs middle point from two points
+    private:
+        Point *pointA, *pointB;
+        Point *midPoint;
+    public:
+        pointsMiddle (constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), midPoint(new Point) {
+            midPoint->isDependent = true;
+            shapes.push_back (midPoint);
+        }
+        virtual void adjust ();
+};
+
+class orthogonalLine : public Construction { //constructs orthogonal line from line and a point
+    private:
+        Line *line;
+        Point *point;
+        Line *orthogonal;
+    public:
+        orthogonalLine (constructionElements& el, std::vector<Shape*>& shapes) : line(el.lines[0]), point(el.points[0]), orthogonal(new Line (1,0,0)) {
+            orthogonal->isDependent = true;
+            shapes.push_back(orthogonal);
+        }
+        virtual void adjust ();
+};
+
+class parallelLine : public Construction { //constructs parallel line from line and a point
+    private:
+        Line *line;
+        Point *point;
+        Line *parallel;
+    public:
+        parallelLine (constructionElements& el, std::vector<Shape*>& shapes) : line(el.lines[0]), point(el.points[0]), parallel(new Line (1,0,0)) {
+            parallel->isDependent = true;
+            shapes.push_back(parallel);
+        }
+        virtual void adjust ();
+};
+
+class lineThroughPoints : public Construction {
+    private:
+        Point *pointA, *pointB;
+        Line *line;
+    public:
+        lineThroughPoints (constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), line(new Line(1,0,0)) {
+            line->isDependent = true;
+            shapes.push_back (line);
+        }
+        virtual void adjust ();
+};
+
+class segmentFromPoints : public Construction {
+    private:
+        Point *pointA, *pointB;
+        Segment *segment;
+    public:
+        segmentFromPoints (constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), segment(new Segment) {
+            segment->isDependent = true;
+            shapes.push_back (segment);
+        }
+        virtual void adjust ();
+};
+
+class circleWithCenter : public Construction {
+    private:
+        Point *center, *point;
+        Circle *circle;
+    public:
+        circleWithCenter (constructionElements& el, std::vector<Shape*>& shapes) : center(el.points[0]), point(el.points[1]), circle(new Circle(0,0,0)) {
+            circle->isDependent = true;
+            shapes.push_back (circle);
+        }
+        virtual void adjust ();
+};
+
+template <typename T>
+Construction *makeConstruction (constructionElements& el, std::vector<Shape*>& shapes) {
+    T* newT = new T (el, shapes);
+    if (newT == NULL) return NULL;
+    newT->adjust();
+    return newT;
+}
