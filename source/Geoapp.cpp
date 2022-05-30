@@ -4,7 +4,7 @@
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
-Geoapp::Geoapp(){
+Geoapp::Geoapp() : inManager (), inWrapper (inManager) {
     //height=300.0;
     //width=300.0;
     //uiwidth=200.0;
@@ -95,6 +95,23 @@ Geoapp::Geoapp(){
     cond.pointCount = 3;
     registerUiOption (centerOfMassObject, cond);
 
+    junctionInputState *mainState = new junctionInputState (&inManager);
+    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0), true);
+    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0), true);
+    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, this,   0, -10), true);
+    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, this,   0,  10), true);
+
+    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -10,   0), true);
+    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  10), true);
+    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -10), true);
+    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  10,   0), true);
+
+    mainState->addState (inputManager::Key::Q, new inputPointCreationState (&inManager, this), true);
+    mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, this), true);
+
+    inManager.setMainState (mainState);
+    inManager.goToMainState();
+
     loop();
 }
 
@@ -125,49 +142,51 @@ void Geoapp::events(sf::Event event){
 
             } else if(event.type == sf::Event::KeyPressed){
 
-                float xMovePoints = 0, yMovePoints = 0;
-                float pointsMoveDist = 10;
+                //float xMovePoints = 0, yMovePoints = 0;
+                //float pointsMoveDist = 10;
             
-                if (event.key.code == sf::Keyboard::Left) {
-                    leftKeyDown=true;
-                } else if (event.key.code == sf::Keyboard::Right) {
-                    rightKeyDown=true;
-                } else if (event.key.code == sf::Keyboard::Up) {
-                    upKeyDown=true;
-                } else if (event.key.code == sf::Keyboard::Down) {
-                    downKeyDown=true;
-                } else if (event.key.code == sf::Keyboard::H) {
-                    xMovePoints -= pointsMoveDist;
-                } else if (event.key.code == sf::Keyboard::J) {
-                    yMovePoints += pointsMoveDist;
-                } else if (event.key.code == sf::Keyboard::K) {
-                    yMovePoints -= pointsMoveDist;
-                } else if (event.key.code == sf::Keyboard::L) {
-                    xMovePoints += pointsMoveDist;
-                }
-                for (auto i : hulledShapes) {
-                    if (i->what_is() == shapeTypeId<Point>::typeId && i->isDependent == false) {
-                        Point *pt = static_cast<Point*> (i);
-                        pt->x += xMovePoints;
-                        pt->y += yMovePoints;
-                    }
-                }
-                for (auto i : constructions) {
-                    i->adjust();
-                }
-                changeMode(event);
+                //if (event.key.code == sf::Keyboard::Left) {
+                //    leftKeyDown=true;
+                //} else if (event.key.code == sf::Keyboard::Right) {
+                //    rightKeyDown=true;
+                //} else if (event.key.code == sf::Keyboard::Up) {
+                //    upKeyDown=true;
+                //} else if (event.key.code == sf::Keyboard::Down) {
+                //    downKeyDown=true;
+                //} else if (event.key.code == sf::Keyboard::H) {
+                //    xMovePoints -= pointsMoveDist;
+                //} else if (event.key.code == sf::Keyboard::J) {
+                //    yMovePoints += pointsMoveDist;
+                //} else if (event.key.code == sf::Keyboard::K) {
+                //    yMovePoints -= pointsMoveDist;
+                //} else if (event.key.code == sf::Keyboard::L) {
+                //    xMovePoints += pointsMoveDist;
+                //}
+                //for (auto i : hulledShapes) {
+                //    if (i->what_is() == shapeTypeId<Point>::typeId && i->isDependent == false) {
+                //        Point *pt = static_cast<Point*> (i);
+                //        pt->x += xMovePoints;
+                //        pt->y += yMovePoints;
+                //    }
+                //}
+                //for (auto i : constructions) {
+                //    i->adjust();
+                //}
+                //changeMode(event);
+                inWrapper.onKeyEvent (event);
             }
             else if(event.type == sf::Event::KeyReleased){
-                if (event.key.code == sf::Keyboard::Left) {
-                    leftKeyDown=false;
-                } else if (event.key.code == sf::Keyboard::Right) {
-                    rightKeyDown=false;
-                } else if (event.key.code == sf::Keyboard::Up) {
-                    upKeyDown=false;
-                } else if (event.key.code == sf::Keyboard::Down) {
-                    downKeyDown=false;
-                }
-                changeMode(event);
+                //if (event.key.code == sf::Keyboard::Left) {
+                //    leftKeyDown=false;
+                //} else if (event.key.code == sf::Keyboard::Right) {
+                //    rightKeyDown=false;
+                //} else if (event.key.code == sf::Keyboard::Up) {
+                //    upKeyDown=false;
+                //} else if (event.key.code == sf::Keyboard::Down) {
+                //    downKeyDown=false;
+                //}
+                //changeMode(event);
+                inWrapper.onKeyEvent (event);
             }
         }
 }
@@ -209,9 +228,6 @@ void Geoapp::drawUI() const {
     window.draw(rect);
     window.draw(line, 2, sf::Lines);
 
-    if (uiPages.find(uiMapId (currentConditions)) == uiPages.end()) {
-        std::cout << "problem is here" << std::endl;
-    }
     const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
     float top = 0;
     float objectHeight = uiWidth/2;
@@ -279,7 +295,7 @@ void Geoapp::UIhandling(Point mysz){
 
 void Geoapp::whenClick(double x, double y){
     Point clickPosition (centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
-    if(mode==0){
+    if(currentMode == mode::pointCreation){
         Shape *S = new Point (clickPosition);;
         shapes.push_back(S);
         /*
@@ -292,7 +308,7 @@ void Geoapp::whenClick(double x, double y){
             }
         }
         */
-    } else if(mode==1){
+    } else if(currentMode == mode::selection){
         int a=FTCO(clickPosition);
         //std::cout<<a;
         if(a>-1){
@@ -362,14 +378,7 @@ void Geoapp::whenClick(double x, double y){
 
 }
 
-void Geoapp::changeMode(sf::Event e){
-    if(e.key.code==sf::Keyboard::Q){
-        mode=0;
-    } else if(e.key.code==sf::Keyboard::W){
-        mode=1;
-    }
-    //cout<<mode<<endl;
-}
+
 
 
 
