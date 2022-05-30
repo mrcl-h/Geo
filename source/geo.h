@@ -267,6 +267,18 @@ class circleWithCenter : public Construction {
         virtual void adjust ();
 };
 
+class centerOfMass : public Construction {
+    private:
+        Point *pointA, *pointB, *pointC;
+        Point *center;
+    public:
+        centerOfMass (constructionElements& el, std::vector<Shape*>& shapes) : pointA(el.points[0]), pointB(el.points[1]), pointC (el.points[2]), center (new Point) {
+            center->isDependent = true;
+            shapes.push_back(center);
+        }
+        virtual void adjust ();
+};
+
 //TODO: Circle through 3 points construction
 //TODO: Intersections of two circles
 //TODO: Power line of two circles
@@ -276,7 +288,6 @@ class circleWithCenter : public Construction {
 //TODO: described circle on triangle
 //TODO: inscribed circle in triangle
 //TODO: Orthocenter of triangle
-//TODO: center of mass
 //TODO: nine point circle
 //TODO: Euler's line
 //TODO: Symmedian

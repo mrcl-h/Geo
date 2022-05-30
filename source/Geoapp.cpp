@@ -15,6 +15,7 @@ Geoapp::Geoapp(){
     scalingFactor=1.0;
     centerX = centerY = 0;
     currentConditions.reset();
+    uiPages[uiMapId(currentConditions)];
     //currentConditions.segmentCount = 1;
     resetConstructionElements (hulledElements);
 
@@ -85,6 +86,14 @@ Geoapp::Geoapp(){
     cond.reset();
     cond.pointCount = 2;
     registerUiOption (segmentFromPointsObject, cond);
+
+    uiObject centerOfMassObject;
+    centerOfMassObject.creator = makeConstruction<centerOfMass>;
+    centerOfMassObject.image.loadFromFile("resources/centerOfMass.png");
+    centerOfMassObject.image.setSmooth(true);
+    cond.reset();
+    cond.pointCount = 3;
+    registerUiOption (centerOfMassObject, cond);
 
     loop();
 }
@@ -200,6 +209,9 @@ void Geoapp::drawUI() const {
     window.draw(rect);
     window.draw(line, 2, sf::Lines);
 
+    if (uiPages.find(uiMapId (currentConditions)) == uiPages.end()) {
+        std::cout << "problem is here" << std::endl;
+    }
     const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
     float top = 0;
     float objectHeight = uiWidth/2;
@@ -338,6 +350,7 @@ void Geoapp::whenClick(double x, double y){
                 currentConditions.circleCount += selectCount;
             }
         }
+        uiPages[uiMapId(currentConditions)];
         /*Shape &s=shapes[a];
         if(findInObjects(&s)>-1){
             hulledShapes.erase(findInObjects(s));

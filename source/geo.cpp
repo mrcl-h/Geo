@@ -265,3 +265,8 @@ void circleWithCenter::adjust() {
     circle->middle.y = center->y;
     circle->r = center->dist (*point);
 }
+
+void centerOfMass::adjust () {
+    center->x = (pointA->x + pointB->x + pointC->x)/3;
+    center->y = (pointA->y + pointB->y + pointC->y)/3;
+}
