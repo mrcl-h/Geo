@@ -245,7 +245,8 @@ void Geoapp::drawObjects() const{
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
     for(unsigned int i=0;i<shapes.size();i++){
-        shapes[i]->draw(&window, visible, box);
+        if (shapes[i]->exists) 
+            shapes[i]->draw(&window, visible, box);
     }
 }
 

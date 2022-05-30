@@ -118,20 +118,7 @@ Line::Line(double a1, double b1, double c1){
     c=c1;
 }
 Line::Line(Point p,Point q){
-	if(p==q){
-        throw std::invalid_argument("Points lay to close to each other");
-	} else {
-		if(p==Point(0,0)){
-			c=0;
-			n=Point(q.y, -q.x);
-		} else if(q==Point(0,0)){
-			c=0;
-			n=Point(p.y, -p.x);
-		} else {
-			c=-1;
-			n=Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
-		}
-	}
+    goThroughPoints (p,q);
 }
 Line::Line(Segment s){
     *this=Line(s.p1,s.p2);
@@ -237,20 +224,7 @@ void parallelLine::adjust() {
     parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
 }
 void lineThroughPoints::adjust() {
-    if(pointA->x == 0 && pointA->y == 0){
-        line->c=0;
-        line->n.x = pointB->y;
-        line->n.y = -pointB->x;
-    } else if(pointB->x == 0 && pointB->y == 0){
-        line->c=0;
-        line->n.x = pointA->y;
-        line->n.y = -pointA->x;
-    } else {
-        line->c=-1;
-        double cross = pointA->x*pointB->y - pointA->y*pointB->x;
-        line->n.x = (pointB->y - pointA->y)/cross;
-        line->n.y = (pointA->x - pointB->x)/cross;
-    }
+    line->goThroughPoints (*pointA, *pointB);
 }
 
 void segmentFromPoints::adjust() {
@@ -269,4 +243,11 @@ void circleWithCenter::adjust() {
 void centerOfMass::adjust () {
     center->x = (pointA->x + pointB->x + pointC->x)/3;
     center->y = (pointA->y + pointB->y + pointC->y)/3;
+}
+
+void bisectorThreePoints::adjust () {
+    Point tmpPoint (pointB->x+pointC->x-pointA->x, pointB->y+pointC->y-pointA->y);
+    if (tmpPoint.abs() < 0.01) {
+
+    }
 }

@@ -30,6 +30,7 @@ inline double doubleAbs (double r) {
 
 class Shape {
 public:
+    bool exists = true;
     bool isActive = false;
     bool isCurrent = false;
     bool isDependent = false;
@@ -143,11 +144,27 @@ public:
 	Line(Segment);
 
     const double dist(Point) const override;
-
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
     //std::string what_is() override;
     virtual const uint32_t what_is () override {return shapeTypeId<Line>::typeId;}
+
+    void goThroughPoints (const Point& p, const Point& q) {
+        if(p==q){
+            throw std::invalid_argument("Points lay to close to each other");
+        } else {
+            if(p==Point(0,0)){
+                c=0;
+                n=Point(q.y, -q.x);
+            } else if(q==Point(0,0)){
+                c=0;
+                n=Point(p.y, -p.x);
+            } else {
+                c=-1;
+                n=Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
+            }
+        }
+    }
 
     friend std::ostream& operator<<(std::ostream&, const Line&);
 
@@ -177,16 +194,16 @@ class Construction {
     virtual void adjust () {}
 };
 
-typedef Construction* (*constructionMaker)(constructionElements&, std::vector<Shape*>&);
+typedef Construction* (*constructionMaker)(const constructionElements&, std::vector<Shape*>&);
 
 //------------------------------------------------
 
 class segmentMiddle : public Construction { //constructs middle point from segment
     private:
-        Segment *segment;
+        Segment * const segment;
         Point *midPoint;
     public:
-        segmentMiddle (constructionElements& el, std::vector<Shape*>& shapes) : segment(el.segments[0]), midPoint(new Point) {
+        segmentMiddle (const constructionElements& el, std::vector<Shape*>& shapes) : segment(el.segments[0]), midPoint(new Point) {
             midPoint->isDependent = true;
             shapes.push_back(midPoint);
         }
@@ -195,10 +212,10 @@ class segmentMiddle : public Construction { //constructs middle point from segme
 
 class pointsMiddle : public Construction { //constructs middle point from two points
     private:
-        Point *pointA, *pointB;
+        Point * const pointA, * const pointB;
         Point *midPoint;
     public:
-        pointsMiddle (constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), midPoint(new Point) {
+        pointsMiddle (const constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), midPoint(new Point) {
             midPoint->isDependent = true;
             shapes.push_back (midPoint);
         }
@@ -207,11 +224,11 @@ class pointsMiddle : public Construction { //constructs middle point from two po
 
 class orthogonalLine : public Construction { //constructs orthogonal line from line and a point
     private:
-        Line *line;
-        Point *point;
+        Line * const line;
+        Point * const point;
         Line *orthogonal;
     public:
-        orthogonalLine (constructionElements& el, std::vector<Shape*>& shapes) : line(el.lines[0]), point(el.points[0]), orthogonal(new Line (1,0,0)) {
+        orthogonalLine (const constructionElements& el, std::vector<Shape*>& shapes) : line(el.lines[0]), point(el.points[0]), orthogonal(new Line (1,0,0)) {
             orthogonal->isDependent = true;
             shapes.push_back(orthogonal);
         }
@@ -220,11 +237,11 @@ class orthogonalLine : public Construction { //constructs orthogonal line from l
 
 class parallelLine : public Construction { //constructs parallel line from line and a point
     private:
-        Line *line;
-        Point *point;
+        Line * const line;
+        Point * const point;
         Line *parallel;
     public:
-        parallelLine (constructionElements& el, std::vector<Shape*>& shapes) : line(el.lines[0]), point(el.points[0]), parallel(new Line (1,0,0)) {
+        parallelLine (const constructionElements& el, std::vector<Shape*>& shapes) : line(el.lines[0]), point(el.points[0]), parallel(new Line (1,0,0)) {
             parallel->isDependent = true;
             shapes.push_back(parallel);
         }
@@ -233,10 +250,10 @@ class parallelLine : public Construction { //constructs parallel line from line 
 
 class lineThroughPoints : public Construction {
     private:
-        Point *pointA, *pointB;
+        Point * const pointA, * const pointB;
         Line *line;
     public:
-        lineThroughPoints (constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), line(new Line(1,0,0)) {
+        lineThroughPoints (const constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), line(new Line(1,0,0)) {
             line->isDependent = true;
             shapes.push_back (line);
         }
@@ -245,10 +262,10 @@ class lineThroughPoints : public Construction {
 
 class segmentFromPoints : public Construction {
     private:
-        Point *pointA, *pointB;
+        Point * const pointA, * const pointB;
         Segment *segment;
     public:
-        segmentFromPoints (constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), segment(new Segment) {
+        segmentFromPoints (const constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB (el.points[1]), segment(new Segment) {
             segment->isDependent = true;
             shapes.push_back (segment);
         }
@@ -257,10 +274,10 @@ class segmentFromPoints : public Construction {
 
 class circleWithCenter : public Construction {
     private:
-        Point *center, *point;
+        Point * const center, * const point;
         Circle *circle;
     public:
-        circleWithCenter (constructionElements& el, std::vector<Shape*>& shapes) : center(el.points[0]), point(el.points[1]), circle(new Circle(0,0,0)) {
+        circleWithCenter (const constructionElements& el, std::vector<Shape*>& shapes) : center(el.points[0]), point(el.points[1]), circle(new Circle(0,0,0)) {
             circle->isDependent = true;
             shapes.push_back (circle);
         }
@@ -269,12 +286,24 @@ class circleWithCenter : public Construction {
 
 class centerOfMass : public Construction {
     private:
-        Point *pointA, *pointB, *pointC;
+        Point * const pointA, * const pointB, * const pointC;
         Point *center;
     public:
-        centerOfMass (constructionElements& el, std::vector<Shape*>& shapes) : pointA(el.points[0]), pointB(el.points[1]), pointC (el.points[2]), center (new Point) {
+        centerOfMass (const constructionElements& el, std::vector<Shape*>& shapes) : pointA(el.points[0]), pointB(el.points[1]), pointC (el.points[2]), center (new Point) {
             center->isDependent = true;
             shapes.push_back(center);
+        }
+        virtual void adjust ();
+};
+
+class bisectorThreePoints : public Construction {
+    private:
+        Point * const pointA, * const pointB, * const pointC;
+        Line *line;
+    public:
+        bisectorThreePoints (const constructionElements& el, std::vector<Shape*>& shapes) : pointA (el.points[0]), pointB(el.points[1]), pointC(el.points[2]), line (new Line (1,0,0)) {
+            line->isDependent = true;
+            shapes.push_back(line);
         }
         virtual void adjust ();
 };
@@ -294,7 +323,7 @@ class centerOfMass : public Construction {
 //TODO: Space transformations: HOMOTHETY, ROTATION, SYMMETRY about point/line, SHIFT, INVERSION, AFINIC 
 
 template <typename T>
-Construction *makeConstruction (constructionElements& el, std::vector<Shape*>& shapes) {
+Construction *makeConstruction (const constructionElements& el, std::vector<Shape*>& shapes) {
     T* newT = new T (el, shapes);
     if (newT == NULL) return NULL;
     newT->adjust();
