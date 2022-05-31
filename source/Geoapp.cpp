@@ -298,16 +298,6 @@ void Geoapp::whenClick(double x, double y){
         //Shape *S = new Point (clickPosition);;
         std::unique_ptr<Shape> S = std::make_unique<Point>(clickPosition);
         shapes.push_back(std::move(S));
-        /*
-        if(shapes.size()>1){
-            if(shapes[shapes.size()-2]->what_is()=="Point"){
-                Point* a=static_cast<Point*>(shapes[shapes.size()-2]);
-                Line *l= new Line(*a,clickPosition);
-                //Shape &L=*l;
-                shapes.push_back(l);
-            }
-        }
-        */
     } else if(currentMode == mode::selection){
         int a=FTCO(clickPosition);
         //std::cout<<a;
@@ -317,21 +307,9 @@ void Geoapp::whenClick(double x, double y){
                 shapes[a]->isActive = false;
                 shapes[a]->isCurrent = false;
 
-                hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), shapes[a].get()));
+                hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), static_cast<Shape*>(shapes[a].get())));
 
-                if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
-                    std::vector<Point*>& vec = hulledElements.points;
-                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a].get()));
-                } else if (shapes[a]->what_is() == shapeTypeId<Segment>::typeId) {
-                    std::vector<Segment*>& vec = hulledElements.segments;
-                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a].get()));
-                } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
-                    std::vector<Circle*>& vec = hulledElements.circles;
-                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a].get()));
-                } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
-                    std::vector<Line*>& vec = hulledElements.lines;
-                    vec.erase (std::find(vec.begin(), vec.end(), shapes[a].get()));
-                }
+                shapes[a]->removeFromConstructionElements (hulledElements);
 
 
                 if (hulledShapes.size() > 0) {
@@ -346,15 +324,7 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.push_back(shapes[a].get());
                 hulledShapes.back()->isCurrent = true;
 
-                if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
-                    hulledElements.points.push_back (static_cast<Point*>(shapes[a].get()));
-                } else if (shapes[a]->what_is() == shapeTypeId<Segment>::typeId) {
-                    hulledElements.segments.push_back (static_cast<Segment*>(shapes[a].get()));
-                } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
-                    hulledElements.circles.push_back (static_cast<Circle*>(shapes[a].get()));
-                } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
-                    hulledElements.lines.push_back (static_cast<Line*>(shapes[a].get()));
-                }
+                shapes[a]->addToConstructionElements (hulledElements);
                 selectCount = 1;
             }
             if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {

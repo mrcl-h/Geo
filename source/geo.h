@@ -28,23 +28,6 @@ inline double doubleAbs (double r) {
     return r >= 0 ? r : -r;
 }
 
-
-class Shape {
-public:
-    bool exists = true;
-    bool isActive = false;
-    bool isCurrent = false;
-    bool isDependent = false;
-    //std::string name;
-    virtual const double dist(Point) const =0;
-    virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
-    virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
-    //virtual std::string what_is()=0;
-    virtual const uint32_t what_is() = 0;
-    virtual ~Shape() {}
-
-};
-
 struct constructionElements {
     std::vector<Point*> points;
     std::vector<Line*> lines;
@@ -58,6 +41,25 @@ inline void resetConstructionElements (constructionElements& el) {
     el.circles.clear();
     el.segments.clear();
 }
+
+class Shape {
+public:
+    bool exists = true;
+    bool isActive = false;
+    bool isCurrent = false;
+    bool isDependent = false;
+    //std::string name;
+    virtual const double dist(Point) const =0;
+    virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
+    virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
+    //virtual std::string what_is()=0;
+    virtual const uint32_t what_is() = 0;
+    virtual void addToConstructionElements (constructionElements&) {}
+    virtual void removeFromConstructionElements (constructionElements&) {}
+    virtual ~Shape() {}
+
+};
+
 
 
 class Point : public Shape {
@@ -108,6 +110,13 @@ public:
         return std::sqrt (x*x+y*y);
     }
 
+    virtual void addToConstructionElements (constructionElements& el) override {
+        el.points.push_back(this); 
+    }
+    virtual void removeFromConstructionElements (constructionElements& el) override {
+        el.points.erase (std::find (el.points.begin(), el.points.end(), this));
+    }
+
     Point(Line,Line);
 };
 
@@ -130,6 +139,12 @@ public:
 
 	//dlugosc odcinka +
 	const double abs();
+    virtual void addToConstructionElements (constructionElements& el) override {
+        el.segments.push_back(this); 
+    }
+    virtual void removeFromConstructionElements (constructionElements& el) override {
+        el.segments.erase (std::find (el.segments.begin(), el.segments.end(), this));
+    }
 
 };
 
@@ -170,6 +185,12 @@ public:
     friend std::ostream& operator<<(std::ostream&, const Line&);
 
     Line(Circle,Circle);
+    virtual void addToConstructionElements (constructionElements& el) override {
+        el.lines.push_back(this); 
+    }
+    virtual void removeFromConstructionElements (constructionElements& el) override {
+        el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
+    }
 };
 
 
@@ -185,6 +206,12 @@ public:
     Circle(Point, Point, Point);
     Circle(Point, double);
     Circle(Point, Point);
+    virtual void addToConstructionElements (constructionElements& el) override {
+        el.circles.push_back(this); 
+    }
+    virtual void removeFromConstructionElements (constructionElements& el) override {
+        el.circles.erase (std::find (el.circles.begin(), el.circles.end(), this));
+    }
 };
 
 //TODO: Triangle class
