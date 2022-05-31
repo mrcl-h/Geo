@@ -2,12 +2,14 @@
 #include"geo.h"
 #include"Input.h"
 #include<unordered_map>
+#include<memory>
 
 //#include<SFML/Graphics.hpp>
 
 class inputSfmlWrapper {
     private:
-        typedef std::unordered_map<sf::Keyboard::Key, inputManager::Key> maptype;
+        //typedef std::unordered_map<sf::Keyboard::Key, inputManager::Key> maptype; //CHANGED
+        typedef std::unordered_map<uint32_t, inputManager::Key> maptype;
         maptype mp;
         inputManager& manager;
     public:
@@ -154,11 +156,11 @@ class Geoapp{
         double centerX, centerY, step=0.25;
         bool leftKeyDown=false, rightKeyDown=false, upKeyDown=false, downKeyDown=false;
 
-        std::vector<Shape*> shapes;
+        std::vector<std::unique_ptr<Shape> > shapes;
         std::vector<Shape*> hulledShapes;
         constructionElements hulledElements;
 
-        std::vector<Construction*> constructions;
+        std::vector<std::unique_ptr<Construction> > constructions;
 
         uiOptionConditions currentConditions;
 
@@ -210,17 +212,18 @@ class Geoapp{
                     pt->y += y;
                 }
             }
-            for (auto i : constructions) {
+            for (auto& i : constructions) {
                 i->adjust();
             }
         }
         enum mode {pointCreation = 1, selection = 2};
 
         //void pushToConstructions(Construction);
+        std::unique_ptr<int> testPtr;
         Geoapp();
         ~Geoapp () {
-            for (auto i : shapes) { delete i; }
-            for (auto i : constructions) { delete i; }
+            //for (auto i : shapes) { delete i; }
+            //for (auto i : constructions) { delete i; }
         }
 
     private:

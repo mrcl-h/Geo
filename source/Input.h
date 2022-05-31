@@ -1,5 +1,7 @@
 #include <unordered_map>
 #include <cstddef>
+#include <cstdint>
+#include <iostream>
 
 class inputManager;
 class inputState;
@@ -75,7 +77,8 @@ class junctionInputState : public inputState {
                     if (responsible) delete state;
                 }
         };
-        typedef std::unordered_map<inputManager::Key, stateObj> maptype;
+        //typedef std::unordered_map<inputManager::Key, stateObj> maptype; CHANGED
+        typedef std::unordered_map<uint32_t, stateObj> maptype; 
         maptype stateMap;
     public:
         junctionInputState (inputManager* _manager) :inputState(_manager){}
