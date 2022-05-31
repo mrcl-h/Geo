@@ -14,7 +14,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     window.create(sf::VideoMode(500, 300), "Geo", sf::Style::Default, settings);
     scalingFactor=1.0;
     centerX = centerY = 0;
-    currentConditions.reset();
+    //currentConditions.reset();
+    resetUiOptionConditions (currentConditions);
     uiPages[uiMapId(currentConditions)];
     //currentConditions.segmentCount = 1;
     resetConstructionElements (hulledElements);
@@ -27,7 +28,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     segMidObject.image.loadFromFile ("resources/segmentMid.png");
     segMidObject.image.setSmooth(true);
 
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.segmentCount = 1;
     registerUiOption (segMidObject, cond);
 
@@ -37,7 +39,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     pointMidObject.image.loadFromFile ("resources/pointsMid.png");
     pointMidObject.image.setSmooth(true);
 
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 2;
     registerUiOption (pointMidObject, cond);
 
@@ -47,7 +50,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     parallelLineObject.image.loadFromFile ("resources/parallelLine.png");
     parallelLineObject.image.setSmooth(true);
 
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 1;
     cond.lineCount = 1;
     registerUiOption (parallelLineObject, cond);
@@ -58,7 +62,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     orthogonalLineObject.image.loadFromFile ("resources/orthogonalLine.png");
     orthogonalLineObject.image.setSmooth (true);
 
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 1;
     cond.lineCount = 1;
     registerUiOption (orthogonalLineObject, cond);
@@ -67,7 +72,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     lineThroughPointsObject.creator = makeConstruction<lineThroughPoints>;
     lineThroughPointsObject.image.loadFromFile("resources/lineThroughPoints.png");
     lineThroughPointsObject.image.setSmooth(true);
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 2;
     registerUiOption (lineThroughPointsObject, cond);
 
@@ -75,7 +81,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     circleWithCenterObject.creator = makeConstruction<circleWithCenter>;
     circleWithCenterObject.image.loadFromFile("resources/circleWithCenter.png");
     lineThroughPointsObject.image.setSmooth(true);
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 2;
     registerUiOption (circleWithCenterObject, cond);
 
@@ -83,7 +90,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     segmentFromPointsObject.creator = makeConstruction<segmentFromPoints>;
     segmentFromPointsObject.image.loadFromFile("resources/segmentFromPoints.png");
     segmentFromPointsObject.image.setSmooth(true);
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 2;
     registerUiOption (segmentFromPointsObject, cond);
 
@@ -91,7 +99,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     centerOfMassObject.creator = makeConstruction<centerOfMass>;
     centerOfMassObject.image.loadFromFile("resources/centerOfMass.png");
     centerOfMassObject.image.setSmooth(true);
-    cond.reset();
+    //cond.reset();
+    resetUiOptionConditions (cond);
     cond.pointCount = 3;
     registerUiOption (centerOfMassObject, cond);
 
@@ -141,51 +150,9 @@ void Geoapp::events(sf::Event event){
             } else if (event.type== sf::Event::Resized){
 
             } else if(event.type == sf::Event::KeyPressed){
-
-                //float xMovePoints = 0, yMovePoints = 0;
-                //float pointsMoveDist = 10;
-            
-                //if (event.key.code == sf::Keyboard::Left) {
-                //    leftKeyDown=true;
-                //} else if (event.key.code == sf::Keyboard::Right) {
-                //    rightKeyDown=true;
-                //} else if (event.key.code == sf::Keyboard::Up) {
-                //    upKeyDown=true;
-                //} else if (event.key.code == sf::Keyboard::Down) {
-                //    downKeyDown=true;
-                //} else if (event.key.code == sf::Keyboard::H) {
-                //    xMovePoints -= pointsMoveDist;
-                //} else if (event.key.code == sf::Keyboard::J) {
-                //    yMovePoints += pointsMoveDist;
-                //} else if (event.key.code == sf::Keyboard::K) {
-                //    yMovePoints -= pointsMoveDist;
-                //} else if (event.key.code == sf::Keyboard::L) {
-                //    xMovePoints += pointsMoveDist;
-                //}
-                //for (auto i : hulledShapes) {
-                //    if (i->what_is() == shapeTypeId<Point>::typeId && i->isDependent == false) {
-                //        Point *pt = static_cast<Point*> (i);
-                //        pt->x += xMovePoints;
-                //        pt->y += yMovePoints;
-                //    }
-                //}
-                //for (auto i : constructions) {
-                //    i->adjust();
-                //}
-                //changeMode(event);
                 inWrapper.onKeyEvent (event);
             }
             else if(event.type == sf::Event::KeyReleased){
-                //if (event.key.code == sf::Keyboard::Left) {
-                //    leftKeyDown=false;
-                //} else if (event.key.code == sf::Keyboard::Right) {
-                //    rightKeyDown=false;
-                //} else if (event.key.code == sf::Keyboard::Up) {
-                //    upKeyDown=false;
-                //} else if (event.key.code == sf::Keyboard::Down) {
-                //    downKeyDown=false;
-                //}
-                //changeMode(event);
                 inWrapper.onKeyEvent (event);
             }
         }
@@ -288,7 +255,8 @@ void Geoapp::UIhandling(Point mysz){
         i->isActive = false;
     }
     hulledShapes.clear();
-    currentConditions.reset();
+    //currentConditions.reset();
+    resetUiOptionConditions (currentConditions);
     resetConstructionElements (hulledElements);
 }
 
@@ -327,6 +295,8 @@ void Geoapp::whenClick(double x, double y){
                 shapes[a]->addToConstructionElements (hulledElements);
                 selectCount = 1;
             }
+            shapes[a]->addToCurrentConditions (currentConditions, selectCount);
+            /*
             if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
                 currentConditions.pointCount += selectCount;
             } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
@@ -336,6 +306,7 @@ void Geoapp::whenClick(double x, double y){
             } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
                 currentConditions.circleCount += selectCount;
             }
+            */
         }
         uiPages[uiMapId(currentConditions)];
         /*Shape &s=shapes[a];

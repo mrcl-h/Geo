@@ -42,6 +42,14 @@ inline void resetConstructionElements (constructionElements& el) {
     el.segments.clear();
 }
 
+struct uiOptionConditions {
+    uint8_t lineCount, pointCount, circleCount, segmentCount;
+};
+
+inline void resetUiOptionConditions (uiOptionConditions& op) {
+    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
+}
+
 class Shape {
 public:
     bool exists = true;
@@ -56,6 +64,7 @@ public:
     virtual const uint32_t what_is() = 0;
     virtual void addToConstructionElements (constructionElements&) {}
     virtual void removeFromConstructionElements (constructionElements&) {}
+    virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
     virtual ~Shape() {}
 
 };
@@ -117,6 +126,10 @@ public:
         el.points.erase (std::find (el.points.begin(), el.points.end(), this));
     }
 
+    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+        op.pointCount += c;
+    }
+
     Point(Line,Line);
 };
 
@@ -144,6 +157,9 @@ public:
     }
     virtual void removeFromConstructionElements (constructionElements& el) override {
         el.segments.erase (std::find (el.segments.begin(), el.segments.end(), this));
+    }
+    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+        op.segmentCount += c;
     }
 
 };
@@ -191,6 +207,9 @@ public:
     virtual void removeFromConstructionElements (constructionElements& el) override {
         el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
     }
+    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+        op.lineCount += c;
+    }
 };
 
 
@@ -211,6 +230,9 @@ public:
     }
     virtual void removeFromConstructionElements (constructionElements& el) override {
         el.circles.erase (std::find (el.circles.begin(), el.circles.end(), this));
+    }
+    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+        op.circleCount += c;
     }
 };
 

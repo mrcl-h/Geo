@@ -135,10 +135,10 @@ class Geoapp{
         };
         std::unordered_map<uint32_t, std::vector<uiObject> > uiPages;
 
-        struct uiOptionConditions {
-            uint8_t lineCount, pointCount, circleCount, segmentCount;
-            void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
-        };
+//        struct uiOptionConditions {
+//            uint8_t lineCount, pointCount, circleCount, segmentCount;
+//            void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
+//        };
         const uint32_t uiMapId (uiOptionConditions conditions) const {
             uint32_t mapId = conditions.segmentCount;
             mapId <<= 8;
@@ -234,17 +234,6 @@ class Geoapp{
         }
 };
 
-//TODO
-//move camera left
-//move camera right
-//move camera up
-//move camera down
-//
-//move points left
-//move points right
-//move points up
-//move points down
-//
 
 class inputCameraMovementState : public inputState {
     private:
