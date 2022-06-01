@@ -3,7 +3,7 @@
 #include"Input.h"
 #include<unordered_map>
 #include<memory>
-
+##include "Construction.h"
 //#include<SFML/Graphics.hpp>
 
 class inputSfmlWrapper {
@@ -14,7 +14,7 @@ class inputSfmlWrapper {
         inputManager& manager;
     public:
         void onKeyEvent (sf::Event& event) {
-            inputManager::action a; 
+            inputManager::action a;
             if (event.type == sf::Event::KeyPressed) {
                 a = inputManager::pressed;
             } else if (event.type == sf::Event::KeyReleased) {
@@ -24,7 +24,7 @@ class inputSfmlWrapper {
             unsigned int mods = (event.key.alt?inputManager::altMod:0) |
                 (event.key.control?inputManager::ctrlMod:0) |
                 (event.key.shift?inputManager::shiftMod:0);
-            
+
             maptype::const_iterator i = mp.find(event.key.code);
             inputManager::keyType k;
             if (i == mp.end()) {
@@ -34,7 +34,7 @@ class inputSfmlWrapper {
             }
 
             manager.onKey (k, a, mods);
-            
+
         }
         inputSfmlWrapper (inputManager& _manager) :manager (_manager){
             mp[sf::Keyboard::A] = inputManager::Key::A;
