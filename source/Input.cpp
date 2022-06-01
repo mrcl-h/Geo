@@ -4,7 +4,7 @@ inputManager::~inputManager () {
     delete mainState;
 }
 
-void inputManager::onKey (Key k, action a, unsigned int mods) {
+void inputManager::onKey (keyType k, action a, unsigned int mods) {
     currentState->onKey (k, a, mods);
 }
 

@@ -9,7 +9,7 @@
 class inputSfmlWrapper {
     private:
         //typedef std::unordered_map<sf::Keyboard::Key, inputManager::Key> maptype; //CHANGED
-        typedef std::unordered_map<uint32_t, inputManager::Key> maptype;
+        typedef std::unordered_map<uint32_t, inputManager::keyType> maptype;
         maptype mp;
         inputManager& manager;
     public:
@@ -26,8 +26,12 @@ class inputSfmlWrapper {
                 (event.key.shift?inputManager::shiftMod:0);
             
             maptype::const_iterator i = mp.find(event.key.code);
-            if (i == mp.end()) {return;}
-            inputManager::Key k = i->second;
+            inputManager::keyType k;
+            if (i == mp.end()) {
+                k = inputManager::Key::unknown;
+            } else {
+                k = i->second;
+            }
 
             manager.onKey (k, a, mods);
             
@@ -156,6 +160,13 @@ class Geoapp{
         double centerX, centerY, step=0.25;
         bool leftKeyDown=false, rightKeyDown=false, upKeyDown=false, downKeyDown=false;
 
+        struct point {
+            double x, y;
+        };
+
+        std::unordered_map <char, Point> markMap;
+
+
         std::vector<std::unique_ptr<Shape> > shapes;
         std::vector<Shape*> hulledShapes;
         constructionElements hulledElements;
@@ -195,6 +206,16 @@ class Geoapp{
         template<typename T>
             void pushToShapes(T);
 
+        const Point * const getMark (char c) const {
+            decltype(markMap)::const_iterator it = markMap.find (c);
+            if (it == markMap.end()) { return NULL; }
+            return &it->second;
+        }
+
+        void setMark (char c, const Point& p) {
+            markMap[c] = p;
+        }
+
         void moveCamera (double x, double y) {
             centerX += x;
             centerY += y;
@@ -202,6 +223,13 @@ class Geoapp{
         void setCamera (double x, double y) {
             centerX = x;
             centerY = y;
+        }
+        void setCamera (const Point& p) {
+            centerX = p.x;
+            centerY = p.y;
+        }
+        const Point getCamera () {
+            return Point (centerX, centerY);
         }
 
         void moveHulledPoints (double x, double y) {
@@ -277,6 +305,43 @@ class inputPointCreationState : public inputState {
         inputPointCreationState (inputManager* manager, Geoapp* _app) :inputState(manager), app(_app) {}
         virtual void onEnter () override {
             app->setCurrentMode (Geoapp::mode::pointCreation);
+            done();
+        }
+};
+
+class inputSetMarkState : public inputState {
+    private:
+        Geoapp* app;
+    public:
+        inputSetMarkState (inputManager* manager, Geoapp* _app) : inputState(manager), app(_app) {}
+        virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods){
+            if (a == inputManager::released) return;
+            char mk = inputManager::keyToChar(k);
+            if (mk == 0) {
+                done();
+                return;
+            }
+            app->setMark (mk,app->getCamera());
+            done();
+        }
+};
+
+class inputGoToMarkState : public inputState {
+    private:
+        Geoapp* app;
+    public:
+        inputGoToMarkState (inputManager* manager, Geoapp* _app) : inputState(manager), app(_app) {}
+        virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods){
+            if (a == inputManager::released) return;
+            char mk = inputManager::keyToChar(k);
+            if (mk == 0) {
+                done();
+                return;
+            }
+            const Point * const pptr = app->getMark (mk);
+            if (pptr != NULL) {
+                app->setCamera (*pptr);
+            }
             done();
         }
 };

@@ -115,8 +115,11 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -10), true);
     mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  10,   0), true);
 
-    mainState->addState (inputManager::Key::Q, new inputPointCreationState (&inManager, this), true);
+    mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, this), true);
     mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, this), true);
+
+    mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, this), true);
+    mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, this), true);
 
     inManager.setMainState (mainState);
     inManager.goToMainState();
