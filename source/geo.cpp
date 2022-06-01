@@ -189,6 +189,21 @@ void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect
     shape.setPointCount (400);
     window->draw(shape);
 }
+void Circle::hull_draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
+    sf::CircleShape shape (r-2);
+    float alpha = (middle.x-visible.left)/visible.width;
+    float beta = (middle.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= r-2;
+    v.y -= r-2;
+    shape.setPosition(v);
+    //shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
+    shape.setOutlineColor(sf::Color(0,0,0,128));
+    shape.setOutlineThickness(5);
+    shape.setFillColor(sf::Color(255,255,255,0));
+    shape.setPointCount (400);
+    window->draw(shape);
+}
 Circle::Circle(Point mid, double radius){
     middle=mid;
     r=radius;

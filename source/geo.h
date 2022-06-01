@@ -114,7 +114,7 @@ public:
         return x*p.y-y*p.x;
     }
 
-    //długość do (0,0) +
+    //długość do (0,0) +
     const double abs() const {
         return std::sqrt (x*x+y*y);
     }
@@ -220,6 +220,7 @@ public:
     const double dist(Point) const override;
     void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
     //std::string what_is() override;
+    void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
     virtual const uint32_t what_is () override {return shapeTypeId<Circle>::typeId;}
     friend std::ostream& operator<<(std::ostream&, const Circle&);
     Circle(Point, Point, Point);
