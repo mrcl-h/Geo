@@ -149,12 +149,12 @@ void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect b
         to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
     }
     sf::Vertex line[] = { from, to };
-    //sf::Color lineColor = getShapeColor (isActive, isCurrent, isDependent); 
+    //sf::Color lineColor = getShapeColor (isActive, isCurrent, isDependent);
     sf::Color lineColor;
     if (isCurrent) {
         lineColor = sf::Color::Green;
     } else if (isActive) {
-        lineColor = sf::Color::Blue; 
+        lineColor = sf::Color::Blue;
     } else {
         lineColor = sf::Color::Black;
     }
@@ -203,51 +203,4 @@ Circle::Circle(Point A, Point B, Point C){
     middle=b*(a.abs()*a.abs())/(a%b)/2-a*(b.abs()*b.abs()/(a%b))/2;
     middle= Point(middle.y,-middle.x);
     middle=middle+C;
-}
-
-void segmentMiddle::adjust() {
-    midPoint->x = (segment->p1.x + segment->p2.x)/2;
-    midPoint->y = (segment->p1.y + segment->p2.y)/2;
-}
-
-void pointsMiddle::adjust() {
-    midPoint->x = (pointA->x+pointB->x)/2;
-    midPoint->y = (pointA->y+pointB->y)/2;
-}
-void orthogonalLine::adjust() {
-    orthogonal->n.x = -(line->n.y);
-    orthogonal->n.y = line->n.x;
-    orthogonal->c = -( point->x * orthogonal->n.x + point->y * orthogonal->n.y);
-}
-void parallelLine::adjust() {
-    parallel->n = line->n;
-    parallel->c = -( point->x * parallel->n.x + point->y * parallel->n.y);
-}
-void lineThroughPoints::adjust() {
-    line->goThroughPoints (*pointA, *pointB);
-}
-
-void segmentFromPoints::adjust() {
-    segment->p1.x = pointA->x;
-    segment->p1.y = pointA->y;
-    segment->p2.x = pointB->x;
-    segment->p2.y = pointB->y;
-}
-
-void circleWithCenter::adjust() {
-    circle->middle.x = center->x;   
-    circle->middle.y = center->y;
-    circle->r = center->dist (*point);
-}
-
-void centerOfMass::adjust () {
-    center->x = (pointA->x + pointB->x + pointC->x)/3;
-    center->y = (pointA->y + pointB->y + pointC->y)/3;
-}
-
-void bisectorThreePoints::adjust () {
-    Point tmpPoint (pointB->x+pointC->x-pointA->x, pointB->y+pointC->y-pointA->y);
-    if (tmpPoint.abs() < 0.01) {
-
-    }
 }

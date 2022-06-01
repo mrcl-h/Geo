@@ -104,6 +104,38 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     cond.pointCount = 3;
     registerUiOption (centerOfMassObject, cond);
 
+    uiObject circleThreePointsObject;
+    circleThreePointsObject.creator = makeConstruction<circleThreePoints>;
+    circleThreePointsObject.image.loadFromFile("resources/circleThreePoints.png");
+    circleThreePointsObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.pointCount = 3;
+    registerUiOption (circleThreePointsObject, cond);
+
+    uiObject powerLineObject;
+    powerLineObject.creator = makeConstruction<powerLine>;
+    powerLineObject.image.loadFromFile("resources/powerLine.png");
+    powerLineObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.circleCount = 2;
+    registerUiOption (powerLineObject, cond);
+
+    uiObject symmetricalOfPointsObject;
+    symmetricalOfPointsObject.creator = makeConstruction<symmetricalOfPoints>;
+    symmetricalOfPointsObject.image.loadFromFile("resources/segmentMid.png");
+    symmetricalOfPointsObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.pointCount = 2;
+    registerUiOption (symmetricalOfPointsObject, cond);
+
+    uiObject symmetricalOfSegmentObject;
+    symmetricalOfSegmentObject.creator = makeConstruction<symmetricalOfSegment>;
+    symmetricalOfSegmentObject.image.loadFromFile("resources/segmentMid.png");
+    symmetricalOfSegmentObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.segmentCount = 1;
+    registerUiOption (symmetricalOfSegmentObject, cond);
+    
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0), true);
     mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0), true);
@@ -228,7 +260,7 @@ void Geoapp::drawObjects() const{
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
     for(unsigned int i=0;i<shapes.size();i++){
-        if (shapes[i]->exists) 
+        if (shapes[i]->exists)
             shapes[i]->draw(&window, visible, box);
     }
 }
@@ -286,7 +318,7 @@ void Geoapp::whenClick(double x, double y){
                 selectCount = -1;
             } else {
                 shapes[a]->isActive = true;
-                if (hulledShapes.size() > 0) 
+                if (hulledShapes.size() > 0)
                     hulledShapes.back()->isCurrent = false;
 
                 hulledShapes.push_back(shapes[a].get());
@@ -343,7 +375,7 @@ int Geoapp::FTCS(Point A) const{
 }
 int Geoapp::FTCC(Point A) const{
     for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()==shapeTypeId<Point>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
+        if(shapes[i]->what_is()==shapeTypeId<Circle>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
     }
     return -1;
 }
