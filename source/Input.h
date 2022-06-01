@@ -20,24 +20,31 @@ class inputManager {
         void setCurrentState (inputState *newCurrent) {
             currentState = newCurrent;
         }
-        enum Key {
-            A = 0, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
-            n1, n2, n3, n4, n5, n6, n7, n8, n9, n0,
-            Escape, LControl, LShift, LAlt, RControl, RShift, RAlt,
-            LBracket, RBracket, Semicolon, Comma, Period, Quote, Slash, Backslash,
-            Tilde, Equal, Hyphen, Space, Enter, Backspace, Tab, Delete,
-            Add, Subtract, Multiply, Divide, // numpad keys
-            Left, Right, Up, Down,
-            p1, p2, p3, p4, p5, p6, p7, p8, p9, p0, // numpad keys
-            f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12
+        class Key {
+            public:
+            static constexpr int A=0,B=1,C=2,D=3,E=4,F=5,G=6,H=7,I=8,J=9,K=10,L=11,M=12,N=13,O=14,P=15,Q=16,R=17,S=18,T=19,U=20,V=21,W=22,X=23,Y=24,Z=25,
+                             n1=26,n2=27,n3=28,n4=29,n5=30,n6=31,n7=32,n8=33,n9=34,n0=35,
+                             Escape=36,LControl=37,LShift=38,LAlt=39,RControl=40,RShift=41,RAlt=42,
+                             LBracket=43,RBracket=44,Semicolon=45,Comma=46,Period=47,Quote=48,Slash=49,Backslash=50,
+                             Tilde=51,Equal=52,Hyphen=53,Space=54,Enter=55,Backspace=56,Tab=57,Delete=58,
+                             Add=59,Subtract=60,Multiply=61,Divide=62,// numpad keys
+                             Left=63,Right=64,Up=65,Down=66,
+                             p1=67,p2=68,p3=69,p4=70,p5=71,p6=72,p7=73,p8=74,p9=75,p0=76,// numpad keys
+                             f1=77,f2=78,f3=79,f4=80,f5=81,f6=82,f7=83,f8=84,f9=85,f10=86,f11=87,f12=88,
+                             unknown=89;
         };
+        typedef int keyType;
+        static char keyToChar (keyType k) {
+            if (k > 25) return 0;
+            return k+'A';
+        }
         enum action {
             pressed = 1, released
         };
         static constexpr unsigned int ctrlMod = 1;
         static constexpr unsigned int shiftMod = 2;
         static constexpr unsigned int altMod = 4;
-        void onKey (Key k, action a, unsigned int mods);
+        void onKey (keyType k, action a, unsigned int mods);
         void onChar (unsigned int unicode);
 };
 
@@ -50,7 +57,7 @@ class inputState {
     public:
         inputState (inputManager * _manager) :manager (_manager) {}
         virtual ~inputState () {}
-        virtual void onKey (inputManager::Key k, inputManager::action a, unsigned int mods){
+        virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods){
 
         }
         virtual void onChar (unsigned int unicode){}
@@ -82,11 +89,11 @@ class junctionInputState : public inputState {
         maptype stateMap;
     public:
         junctionInputState (inputManager* _manager) :inputState(_manager){}
-        void addState (inputManager::Key k, inputState* addedState, bool responsible) {
+        void addState (inputManager::keyType k, inputState* addedState, bool responsible) {
             stateMap[k].set(addedState, responsible); // = stateObj(addedState, responsible);
             //stateMap.emplace(std::make_pair(k, stateObj(addedState, responsible)));
         }
-        virtual void onKey (inputManager::Key k, inputManager::action a, unsigned int mods) {
+        virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
             if (a != inputManager::action::pressed) return;
             maptype::iterator it = stateMap.find (k);
             if (it == stateMap.end()) { return; }

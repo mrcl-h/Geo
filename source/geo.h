@@ -72,7 +72,7 @@ public:
 
 
 class Point : public Shape {
-    double radiusOfDrawing=3;
+    static constexpr double radiusOfDrawing=3;
 public:
 	double x,y;
 
