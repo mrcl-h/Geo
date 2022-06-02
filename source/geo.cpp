@@ -71,7 +71,7 @@ void PointShape::hull_draw(sf::RenderWindow *window, sf::FloatRect visible, sf::
 std::ostream& operator<<(std::ostream& os, const Point& obj){
         return os <<"("<<obj.x<<", "<<obj.y<<")";
 }
-PointShape::PointShape(const Line& l,const Line& m){
+PointShape::PointShape(const LineShape& l,const LineShape& m){
 
 	 //if((m.c==0)&&(l.c==0)){
     if (m.getC()==0 && l.getC() == 0) {
@@ -90,11 +90,11 @@ PointShape::PointShape(const Line& l,const Line& m){
 
 //----------------------------------------------
 
-Segment::Segment(Point A, Point B){
+SegmentShape::SegmentShape(Point A, Point B){
     p1=A;
     p1=B;
 }
-void Segment::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
+void SegmentShape::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
     //float alpha = (x-visible.left)/visible.width;
     //float beta = (y-visible.top)/visible.height;
     //sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
@@ -118,7 +118,7 @@ void Segment::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRec
     line[1].color=sf::Color(0,0,0);
     window->draw(line, 2, sf::Lines);
 }
-const double Segment::distFromPoint(const Point& v) const{
+const double SegmentShape::distFromPoint(const Point& v) const{
     Point D=p2-p1;
 
     if((v-p1)*D<0){
@@ -130,7 +130,7 @@ const double Segment::distFromPoint(const Point& v) const{
     return std::abs(((v-p2)%D)/(dist(p1,p2)));
 }
 //----------------------------------------------------
-Line::Line(double a1, double b1, double c1){
+LineShape::LineShape(double a1, double b1, double c1){
     if((a1==0)&&(b1==0))
         throw std::invalid_argument("First two arguments can not be zero at the same time");
     //n.setX (a1); n.setY (b1);
@@ -138,20 +138,20 @@ Line::Line(double a1, double b1, double c1){
     //Point n(a1, b1);
     c=c1;
 }
-Line::Line(const Point& p,const Point& q){
+LineShape::LineShape(const Point& p,const Point& q){
     goThroughPoints (p,q);
 }
-Line::Line(const Segment& s){
+LineShape::LineShape(const SegmentShape& s){
     //*this=Line(s.p1,s.p2);
     Point p1, p2;
     p1.x = s.getFromX(); p1.y = s.getFromY();
     p2.x = s.getToX(); p2.y = s.getToY();
     goThroughPoints (p1, p2);
 }
-const double Line::distFromPoint(const Point& v) const{
+const double LineShape::distFromPoint(const Point& v) const{
     return doubleAbs((n*v+c)/length(n));
 }
-void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box) const{
+void LineShape::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect box) const{
 
 
     sf::Vector2f from;
@@ -189,7 +189,7 @@ void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect b
     window->draw(line, 2, sf::Lines);
 
 }
-Line::Line(const Circle& o1, const Circle& o2){
+LineShape::LineShape(const CircleShape& o1, const CircleShape& o2){
     Point o1Mid, o2Mid;
     o1Mid.x = o1.getMiddleX(); o1Mid.y = o1.getMiddleY();
     o2Mid.x = o2.getMiddleX(); o2Mid.y = o2.getMiddleY();
@@ -199,10 +199,10 @@ Line::Line(const Circle& o1, const Circle& o2){
 
 //--------------------------------
 
-const double Circle::distFromPoint(const Point& v) const {
+const double CircleShape::distFromPoint(const Point& v) const {
     return std::abs(dist (middle,v)-r);
 }
-void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
+void CircleShape::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
     sf::CircleShape shape (r);
     float alpha = (middle.x-visible.left)/visible.width;
     float beta = (middle.y-visible.top)/visible.height;
@@ -217,7 +217,7 @@ void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect
     shape.setPointCount (400);
     window->draw(shape);
 }
-void Circle::hull_draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
+void CircleShape::hull_draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
     sf::CircleShape shape (r-2);
     float alpha = (middle.x-visible.left)/visible.width;
     float beta = (middle.y-visible.top)/visible.height;
@@ -232,19 +232,19 @@ void Circle::hull_draw(sf::RenderWindow* window, sf::FloatRect visible, sf::Floa
     shape.setPointCount (400);
     window->draw(shape);
 }
-Circle::Circle(const Point& mid, double radius){
+CircleShape::CircleShape(const Point& mid, double radius){
     middle=mid;
     r=radius;
 }
-Circle::Circle(const Point& mid, const Point& A){
+CircleShape::CircleShape(const Point& mid, const Point& A){
     middle=mid;
     r = dist (mid, A);
 }
-Circle::Circle(double x, double y, double _r) {
+CircleShape::CircleShape(double x, double y, double _r) {
     middle.x = x; middle.y = y;
     r = _r;
 }
-Circle::Circle(const Point& A, const Point& B, const Point& C){
+CircleShape::CircleShape(const Point& A, const Point& B, const Point& C){
     Point a = A-C, b=B-C;
     double aLen = length(a), bLen = length(b);
     r=aLen*bLen*length(a-b)/(2*(a%b));

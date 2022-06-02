@@ -20,7 +20,7 @@ typedef Construction* (*constructionMaker)(const constructionElements&, std::vec
 
 class segmentMiddle : public Construction { //constructs middle point from segment
     private:
-        Segment * const segment;
+        SegmentShape * const segment;
         PointShape *midPoint;
     public:
         segmentMiddle (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : segment(el.segments[0]), midPoint(NULL) {
@@ -46,12 +46,12 @@ class pointsMiddle : public Construction { //constructs middle point from two po
 
 class orthogonalLine : public Construction { //constructs orthogonal line from line and a point
     private:
-        Line * const line;
+        LineShape * const line;
         PointShape * const point;
-        Line *orthogonal;
+        LineShape *orthogonal;
     public:
         orthogonalLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line(el.lines[0]), point(el.points[0]), orthogonal(NULL) {
-            orthogonal = new Line (1,0,0);
+            orthogonal = new LineShape (1,0,0);
             shapes.emplace_back (orthogonal);
             orthogonal->isDependent = true;
         }
@@ -60,12 +60,12 @@ class orthogonalLine : public Construction { //constructs orthogonal line from l
 
 class parallelLine : public Construction { //constructs parallel line from line and a point
     private:
-        Line * const line;
+        LineShape * const line;
         PointShape * const point;
-        Line *parallel;
+        LineShape *parallel;
     public:
         parallelLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line(el.lines[0]), point(el.points[0]), parallel(NULL) {
-            parallel = new Line (1,0,0);
+            parallel = new LineShape (1,0,0);
             shapes.emplace_back (parallel);
             parallel->isDependent = true;
         }
@@ -75,10 +75,10 @@ class parallelLine : public Construction { //constructs parallel line from line 
 class lineThroughPoints : public Construction {
     private:
         PointShape * const pointA, * const pointB;
-        Line *line;
+        LineShape *line;
     public:
         lineThroughPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB (el.points[1]), line(NULL) {
-            line = new Line (1,0,0);
+            line = new LineShape (1,0,0);
             shapes.emplace_back (line);
             line->isDependent = true;
         }
@@ -88,10 +88,10 @@ class lineThroughPoints : public Construction {
 class segmentFromPoints : public Construction {
     private:
         PointShape * const pointA, * const pointB;
-        Segment *segment;
+        SegmentShape *segment;
     public:
         segmentFromPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB (el.points[1]), segment(NULL) {
-            segment = new Segment;
+            segment = new SegmentShape;
             shapes.emplace_back (segment);
             segment->isDependent = true;
         }
@@ -101,10 +101,10 @@ class segmentFromPoints : public Construction {
 class circleWithCenter : public Construction {
     private:
         PointShape * const center, * const point;
-        Circle *circle;
+        CircleShape *circle;
     public:
         circleWithCenter (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : center(el.points[0]), point(el.points[1]), circle(NULL) {
-            circle = new Circle (0,0,0);
+            circle = new CircleShape (0,0,0);
             shapes.emplace_back (circle);
             circle->isDependent = true;
         }
@@ -127,10 +127,10 @@ class centerOfMass : public Construction {
 class bisectorThreePoints : public Construction {
     private:
         PointShape * const pointA, * const pointB, * const pointC;
-        Line *line;
+        LineShape *line;
     public:
         bisectorThreePoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB(el.points[1]), pointC(el.points[2]), line (NULL) {
-            line = new Line (1,0,0);
+            line = new LineShape (1,0,0);
             shapes.emplace_back (line);
             line->isDependent = true;
         }
@@ -141,10 +141,10 @@ class bisectorThreePoints : public Construction {
 class circleThreePoints : public Construction {
     private:
         PointShape * const pointA, * const pointB, * const pointC;
-        Circle *circle;
+        CircleShape *circle;
     public:
         circleThreePoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB(el.points[1]), pointC(el.points[2]), circle (NULL) {
-            circle = new Circle (0,0,0);
+            circle = new CircleShape (0,0,0);
             shapes.emplace_back (circle);
             circle->isDependent = true;
         }
@@ -156,11 +156,11 @@ class circleThreePoints : public Construction {
 
 class powerLine : public Construction {
     private:
-        Circle * const circle1, * const circle2;
-        Line *power;
+        CircleShape * const circle1, * const circle2;
+        LineShape *power;
     public:
         powerLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle1(el.circles[0]), circle2(el.circles[1]), power(NULL) {
-            power = new Line (1,0,0);
+            power = new LineShape (1,0,0);
             shapes.emplace_back (power);
             power->isDependent = true;
         }
@@ -170,8 +170,8 @@ class powerLine : public Construction {
 
 class lineCircleIntersection : public Construction {
     private:
-        Circle * const circle;
-        Line * const line;
+        CircleShape * const circle;
+        LineShape * const line;
         PointShape *pointA, *pointB;
     public:
         lineCircleIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle(el.circles[0]), line(el.lines[0]), pointA(NULL), pointB(NULL) {
@@ -188,14 +188,14 @@ class lineCircleIntersection : public Construction {
 class tangentCirclePoint : public Construction {
     private:
         PointShape * const point;
-        Circle * const circle;
-        Line *line1, *line2;
+        CircleShape * const circle;
+        LineShape *line1, *line2;
     public:
         tangentCirclePoint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : point(el.points[0]), circle(el.circles[0]), line1(NULL), line2(NULL) {
-            line1 = new Line (1,0,0);
+            line1 = new LineShape (1,0,0);
             shapes.emplace_back (line1);
             line1->isDependent = true;
-            line2 = new Line (1,0,0);
+            line2 = new LineShape (1,0,0);
             shapes.emplace_back (line2);
             line2->isDependent = true;
         }
@@ -204,11 +204,11 @@ class tangentCirclePoint : public Construction {
 
 class symmetricalOfSegment : public Construction {
     private:
-        Segment * const segment;
-        Line *line;
+        SegmentShape * const segment;
+        LineShape *line;
     public:
         symmetricalOfSegment (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : segment(el.segments[0]), line(NULL) {
-            line = new Line (1,0,0);
+            line = new LineShape (1,0,0);
             shapes.emplace_back (line);
             line->isDependent = true;
         }
@@ -217,10 +217,10 @@ class symmetricalOfSegment : public Construction {
 class symmetricalOfPoints : public Construction {
     private:
         PointShape * const pointA, * const pointB;
-        Line *line;
+        LineShape *line;
     public:
         symmetricalOfPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.points[0]), pointB(el.points[1]), line(NULL) {
-            line = new Line (1,0,0);
+            line = new LineShape (1,0,0);
             shapes.emplace_back (line);
             line->isDependent = true;
         }

@@ -7,10 +7,10 @@
 
 
 //lista figur geometrycznych
-class Segment;
-class Triangle;
-class Line;
-class Circle;
+class SegmentShape;
+class TriangleShape;
+class LineShape;
+class CircleShape;
 class PointShape;
 class Shape;
 
@@ -20,9 +20,9 @@ inline double doubleAbs (double r) {
 
 struct constructionElements {
     std::vector<PointShape*> points;
-    std::vector<Line*> lines;
-    std::vector<Circle*> circles;
-    std::vector<Segment*> segments;
+    std::vector<LineShape*> lines;
+    std::vector<CircleShape*> circles;
+    std::vector<SegmentShape*> segments;
 };
 
 void resetConstructionElements (constructionElements& el);
@@ -126,11 +126,11 @@ class PointShape : public Shape {
             coordinates.y += yMov;
         }
 
-        PointShape(const Line&,const Line&);
+        PointShape(const LineShape&,const LineShape&);
 };
 
 
-class Segment : public Shape{
+class SegmentShape : public Shape{
     private:
         Point p1, p2;
     public:
@@ -144,15 +144,15 @@ class Segment : public Shape{
         void setFromY (double newY) {p1.y = newY;}
         void setToY (double newY) {p2.y = newY;}
 
-        Segment(Point,Point);
-        Segment () {}
+        SegmentShape(Point,Point);
+        SegmentShape () {}
 
         const double distFromPoint(const Point&) const override;
 
         void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
 
-        friend std::ostream& operator<<(std::ostream&, const Segment&);
+        friend std::ostream& operator<<(std::ostream&, const SegmentShape&);
 
         //dlugosc odcinka +
         const double abs();
@@ -173,7 +173,7 @@ class Segment : public Shape{
 };
 
 
-class Line : public Shape{
+class LineShape : public Shape{
     private:
         Point n;
         double c;
@@ -208,9 +208,9 @@ class Line : public Shape{
         void setNormalY (double y) {n.y = y;}
         void setC (double _c) {c = _c;}
 
-        Line(double,double,double); //line ax+by+c=0
-        Line(const Point&,const Point&); //line through two points
-        Line(const Segment&);
+        LineShape(double,double,double); //line ax+by+c=0
+        LineShape(const Point&,const Point&); //line through two points
+        LineShape(const SegmentShape&);
 
         const double distFromPoint(const Point&) const override;
         void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
@@ -224,9 +224,9 @@ class Line : public Shape{
             goThroughPoints (p, q);
         }
 
-        friend std::ostream& operator<<(std::ostream&, const Line&);
+        friend std::ostream& operator<<(std::ostream&, const LineShape&);
 
-        Line(const Circle&,const Circle&);
+        LineShape(const CircleShape&,const CircleShape&);
         virtual void addToConstructionElements (constructionElements& el) override {
             el.lines.push_back(this);
         }
@@ -244,7 +244,7 @@ class Line : public Shape{
 };
 
 
-class Circle: public Shape {
+class CircleShape : public Shape {
         Point middle;
         double r;
     public:
@@ -259,11 +259,11 @@ class Circle: public Shape {
         const double distFromPoint(const Point&) const override;
         void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
         void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-        friend std::ostream& operator<<(std::ostream&, const Circle&);
-        Circle(const Point&, const Point&, const Point&);
-        Circle(const Point&, double);
-        Circle(const Point&, const Point&);
-        Circle (double, double, double);
+        friend std::ostream& operator<<(std::ostream&, const CircleShape&);
+        CircleShape(const Point&, const Point&, const Point&);
+        CircleShape(const Point&, double);
+        CircleShape(const Point&, const Point&);
+        CircleShape (double, double, double);
         virtual void addToConstructionElements (constructionElements& el) override {
             el.circles.push_back(this);
         }
