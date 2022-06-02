@@ -229,8 +229,8 @@ class Geoapp{
             centerY = y;
         }
         void setCamera (const Point& p) {
-            centerX = p.x;
-            centerY = p.y;
+            centerX = p.getX();
+            centerY = p.getY();
         }
         const Point getCamera () {
             return Point (centerX, centerY);

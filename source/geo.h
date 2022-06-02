@@ -65,9 +65,14 @@ class Shape {
 class Point : public Shape {
     private:
         static constexpr double radiusOfDrawing=3;
-    public:
         double x,y;
+    public:
 
+        const double getX () const {return x;}
+        const double getY () const {return y;}
+
+        void setX (double newX) {x = newX;}
+        void setY (double newY) {y = newY;}
         //static Point zero();
 
         void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
@@ -188,13 +193,13 @@ class Line : public Shape{
             } else {
                 if(p==Point(0,0)){
                     c=0;
-                    n=Point(q.y, -q.x);
+                    n=Point(q.getY(), -q.getX());
                 } else if(q==Point(0,0)){
                     c=0;
-                    n=Point(p.y, -p.x);
+                    n=Point(p.getY(), -p.getX());
                 } else {
                     c=-1;
-                    n=Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
+                    n=Point((q.getY()-p.getY())/(p%q), (-q.getX()+p.getX())/(p%q));
                 }
             }
         }

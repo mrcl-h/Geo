@@ -273,7 +273,7 @@ void Geoapp::UIhandling(Point mysz){
     float uiWidth = windowWidth*(1-uiBarrier);
     float top = 0;
     float objectHeight = uiWidth/2;
-    int clickedOption = (mysz.y-top)/objectHeight;
+    int clickedOption = (mysz.getY()-top)/objectHeight;
     std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
     if (clickedOption >= (int)currentPage.size()) {
         return;

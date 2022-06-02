@@ -95,11 +95,11 @@ void Segment::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRec
     //sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
     //v.x -= radiusOfDrawing;
     //v.y -= radiusOfDrawing;
-    float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
-    float tp2x = box.left + (p2.x-visible.left)/visible.width*box.width;
+    float tp1x = box.left + (p1.getX()-visible.left)/visible.width*box.width;
+    float tp2x = box.left + (p2.getX()-visible.left)/visible.width*box.width;
 
-    float tp1y = box.top + (p1.y-visible.top)/visible.height*box.height;
-    float tp2y = box.top + (p2.y-visible.top)/visible.height*box.height;
+    float tp1y = box.top + (p1.getY()-visible.top)/visible.height*box.height;
+    float tp2y = box.top + (p2.getY()-visible.top)/visible.height*box.height;
     sf::Vertex line[] =
     {
         sf::Vertex(sf::Vector2f(tp1x, tp1y)),
@@ -124,7 +124,7 @@ const double Segment::dist(Point v) const{
 Line::Line(double a1, double b1, double c1){
     if((a1==0)&&(b1==0))
         throw std::invalid_argument("First two arguments can not be zero at the same time");
-    n.x = a1; n.y = b1;
+    n.setX (a1); n.setY (b1);
     //Point n(a1, b1);
     c=c1;
 }
@@ -143,21 +143,21 @@ void Line::draw(sf::RenderWindow *window, sf::FloatRect visible, sf::FloatRect b
     sf::Vector2f from;
     sf::Vector2f to;
 
-    unsigned int cond1 = (n.y+n.x)>=0;
-    unsigned int cond2 = (n.y-n.x)<0;
+    unsigned int cond1 = (n.getY()+n.getX())>=0;
+    unsigned int cond2 = (n.getY()-n.getX())<0;
     if (cond1^cond2) { //draw horizontally
         from.x = (box.left);
-        from.y = box.top+box.height/visible.height*((-c-n.x*visible.left)/n.y-visible.top);
+        from.y = box.top+box.height/visible.height*((-c-n.getX()*visible.left)/n.getY()-visible.top);
 
 
         to.x = (box.left+box.width);
-        to.y = box.top+box.height/visible.height*((-c-n.x*(visible.left+visible.width))/n.y-visible.top);
+        to.y = box.top+box.height/visible.height*((-c-n.getX()*(visible.left+visible.width))/n.getY()-visible.top);
     } else { //draw vertically
         from.y = (box.top);
-        from.x = box.left+box.width/visible.width*((-c-n.y*visible.top)/n.x-visible.left);
+        from.x = box.left+box.width/visible.width*((-c-n.getY()*visible.top)/n.getX()-visible.left);
 
         to.y = (box.top+box.height);
-        to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
+        to.x = box.left+box.width/visible.width*((-c-n.getY()*(visible.top+visible.height))/n.getX()-visible.left);
     }
     sf::Vertex line[] = { from, to };
     //sf::Color lineColor = getShapeColor (isActive, isCurrent, isDependent);
@@ -187,8 +187,8 @@ const double Circle::dist(Point v) const {
 }
 void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
     sf::CircleShape shape (r);
-    float alpha = (middle.x-visible.left)/visible.width;
-    float beta = (middle.y-visible.top)/visible.height;
+    float alpha = (middle.getX()-visible.left)/visible.width;
+    float beta = (middle.getY()-visible.top)/visible.height;
     sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
     v.x -= r;
     v.y -= r;
@@ -202,8 +202,8 @@ void Circle::draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect
 }
 void Circle::hull_draw(sf::RenderWindow* window, sf::FloatRect visible, sf::FloatRect box) const{
     sf::CircleShape shape (r-2);
-    float alpha = (middle.x-visible.left)/visible.width;
-    float beta = (middle.y-visible.top)/visible.height;
+    float alpha = (middle.getX()-visible.left)/visible.width;
+    float beta = (middle.getY()-visible.top)/visible.height;
     sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
     v.x -= r-2;
     v.y -= r-2;
@@ -227,6 +227,6 @@ Circle::Circle(Point A, Point B, Point C){
     Point a = A-C, b=B-C;
     r=a.abs()*b.abs()*(a-b).abs()/(2*(a%b));
     middle=b*(a.abs()*a.abs())/(a%b)/2-a*(b.abs()*b.abs()/(a%b))/2;
-    middle= Point(middle.y,-middle.x);
+    middle= Point(middle.getY(),-middle.getX());
     middle=middle+C;
 }
