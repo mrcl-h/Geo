@@ -135,7 +135,25 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     resetUiOptionConditions (cond);
     cond.segmentCount = 1;
     registerUiOption (symmetricalOfSegmentObject, cond);
-    
+
+    uiObject tangentCirclePointObject;
+    tangentCirclePointObject.creator = makeConstruction<tangentCirclePoint>;
+    tangentCirclePointObject.image.loadFromFile("resources/segmentMid.png");
+    tangentCirclePointObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.circleCount = 1;
+    cond.pointCount = 1;
+    registerUiOption (tangentCirclePointObject, cond);
+
+    uiObject lineCircleIntersectionObject;
+    lineCircleIntersectionObject.creator = makeConstruction<lineCircleIntersection>;
+    lineCircleIntersectionObject.image.loadFromFile("resources/segmentMid.png");
+    lineCircleIntersectionObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.circleCount = 1;
+    cond.lineCount = 1;
+    registerUiOption (lineCircleIntersectionObject, cond);
+
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0), true);
     mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0), true);
@@ -273,7 +291,7 @@ void Geoapp::UIhandling(Point mysz){
     float uiWidth = windowWidth*(1-uiBarrier);
     float top = 0;
     float objectHeight = uiWidth/2;
-    int clickedOption = (mysz.y-top)/objectHeight;
+    int clickedOption = (mysz.getY()-top)/objectHeight;
     std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
     if (clickedOption >= (int)currentPage.size()) {
         return;
@@ -302,17 +320,18 @@ void Geoapp::whenClick(double x, double y){
         std::unique_ptr<Shape> S = std::make_unique<Point>(clickPosition);
         shapes.push_back(std::move(S));
     } else if(currentMode == mode::selection){
-        int a=FTCO(clickPosition);
+        //int a=FTCO(clickPosition);
+        Shape *hitShape = findObjectHit (clickPosition);
         //std::cout<<a;
-        if(a>-1){
+        if(hitShape){
             int selectCount;
-            if (shapes[a]->isActive) {
-                shapes[a]->isActive = false;
-                shapes[a]->isCurrent = false;
+            if (hitShape->isActive) {
+                hitShape->isActive = false;
+                hitShape->isCurrent = false;
 
-                hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), static_cast<Shape*>(shapes[a].get())));
+                hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
 
-                shapes[a]->removeFromConstructionElements (hulledElements);
+                hitShape->removeFromConstructionElements (hulledElements);
 
 
                 if (hulledShapes.size() > 0) {
@@ -320,28 +339,17 @@ void Geoapp::whenClick(double x, double y){
                 }
                 selectCount = -1;
             } else {
-                shapes[a]->isActive = true;
+                hitShape->isActive = true;
                 if (hulledShapes.size() > 0)
                     hulledShapes.back()->isCurrent = false;
 
-                hulledShapes.push_back(shapes[a].get());
+                hulledShapes.push_back(hitShape);
                 hulledShapes.back()->isCurrent = true;
 
-                shapes[a]->addToConstructionElements (hulledElements);
+                hitShape->addToConstructionElements (hulledElements);
                 selectCount = 1;
             }
-            shapes[a]->addToCurrentConditions (currentConditions, selectCount);
-            /*
-            if (shapes[a]->what_is() == shapeTypeId<Point>::typeId) {
-                currentConditions.pointCount += selectCount;
-            } else if (shapes[a]->what_is() == shapeTypeId<Line>::typeId) {
-                currentConditions.lineCount += selectCount;
-            } else if (shapes[a]->what_is() == shapeTypeId<Segment>::typeId) {
-                currentConditions.segmentCount += selectCount;
-            } else if (shapes[a]->what_is() == shapeTypeId<Circle>::typeId) {
-                currentConditions.circleCount += selectCount;
-            }
-            */
+            hitShape->addToCurrentConditions (currentConditions, selectCount);
         }
         uiPages[uiMapId(currentConditions)];
         /*Shape &s=shapes[a];
@@ -352,43 +360,4 @@ void Geoapp::whenClick(double x, double y){
         }*/
     }
 
-}
-
-
-
-
-
-int Geoapp::FTCP(Point A) const {
-    for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()==shapeTypeId<Point>::typeId && shapes[i]->dist(A)<20){ return i; }
-    }
-    return -1;
-}
-int Geoapp::FTCL(Point A) const{
-    for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()==shapeTypeId<Line>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
-    }
-    return -1;
-}
-int Geoapp::FTCS(Point A) const{
-    for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()==shapeTypeId<Segment>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
-    }
-    return -1;
-}
-int Geoapp::FTCC(Point A) const{
-    for(unsigned int i=0;i<shapes.size();i++){
-        if(shapes[i]->what_is()==shapeTypeId<Circle>::typeId && shapes[i]->dist(A)<epsilon){ return i; }
-    }
-    return -1;
-}
-int Geoapp::FTCT(Point A) const { return -1; }
-
-int Geoapp::FTCO(Point A) const {
-    int temp;
-    if((temp=FTCP(A))>-1){ return temp; }
-    if((temp=FTCS(A))>-1){ return temp; }
-    if((temp=FTCL(A))>-1){ return temp; }
-    if((temp=FTCC(A))>-1){ return temp; }
-    return FTCT(A);
 }

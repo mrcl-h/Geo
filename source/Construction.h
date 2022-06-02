@@ -168,16 +168,36 @@ class powerLine : public Construction {
 };
 //TODO: Intersections of circle and line
 
-
-class symmetricalOfPoints : public Construction {
+class lineCircleIntersection : public Construction {
     private:
-        Point * const pointA, * const pointB;
-        Line *line;
+        Circle * const circle;
+        Line * const line;
+        Point *pointA, *pointB;
     public:
-        symmetricalOfPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.points[0]), pointB(el.points[1]), line(NULL) {
-            line = new Line (1,0,0);
-            shapes.emplace_back (line);
-            line->isDependent = true;
+        lineCircleIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle(el.circles[0]), line(el.lines[0]), pointA(NULL), pointB(NULL) {
+            pointA = new Point ();
+            shapes.emplace_back (pointA);
+            pointA->isDependent = true;
+            pointB = new Point ();
+            shapes.emplace_back (pointB);
+            pointB->isDependent = true;
+        }
+        virtual void adjust ();
+};
+
+class tangentCirclePoint : public Construction {
+    private:
+        Point * const point;
+        Circle * const circle;
+        Line *line1, *line2;
+    public:
+        tangentCirclePoint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : point(el.points[0]), circle(el.circles[0]), line1(NULL), line2(NULL) {
+            line1 = new Line (1,0,0);
+            shapes.emplace_back (line1);
+            line1->isDependent = true;
+            line2 = new Line (1,0,0);
+            shapes.emplace_back (line2);
+            line2->isDependent = true;
         }
         virtual void adjust ();
 };
@@ -194,7 +214,20 @@ class symmetricalOfSegment : public Construction {
         }
         virtual void adjust ();
 };
+class symmetricalOfPoints : public Construction {
+    private:
+        Point * const pointA, * const pointB;
+        Line *line;
+    public:
+        symmetricalOfPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.points[0]), pointB(el.points[1]), line(NULL) {
+            line = new Line (1,0,0);
+            shapes.emplace_back (line);
+            line->isDependent = true;
+        }
+        virtual void adjust ();
+};
 //TODO: tangents to circle through point
+
 //TODO: bisector of 3 points / bisectors of two Lines
 //TODO: described circle on triangle
 //TODO: inscribed circle in triangle
