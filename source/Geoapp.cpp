@@ -282,7 +282,8 @@ void Geoapp::drawObjects() const{
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
     for(unsigned int i=0;i<shapes.size();i++){
-        if (shapes[i]->exists)
+        //if (shapes[i]->exists)
+        if (shapes[i]->getExistance())
             shapes[i]->draw(&window, visible, box);
     }
 }
@@ -303,10 +304,12 @@ void Geoapp::UIhandling(const Point& mysz){
     constructions.emplace_back (constructionMade);
 
     if (hulledShapes.size() > 0) {
-        hulledShapes.back()->isCurrent = false;
+        //hulledShapes.back()->isCurrent = false;
+        hulledShapes.back()->setCurrent (false);
     }
     for (auto i : hulledShapes) {
-        i->isActive = false;
+        //i->isActive = false;
+        i->setActivity (false);
     }
     hulledShapes.clear();
     //currentConditions.reset();
@@ -321,7 +324,8 @@ void Geoapp::whenClick(double x, double y){
     clickPosition.y = centerY+y-float(window.getSize().y)/2;
     if(currentMode == mode::pointCreation){
         //Shape *S = new Point (clickPosition);;
-        std::unique_ptr<Shape> S = std::make_unique<PointShape>(clickPosition.x, clickPosition.y);
+        //std::unique_ptr<Shape> S = std::make_unique<PointShape>(clickPosition.x, clickPosition.y);
+        std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
         shapes.push_back(std::move(S));
     } else if(currentMode == mode::selection){
         //int a=FTCO(clickPosition);
@@ -329,9 +333,12 @@ void Geoapp::whenClick(double x, double y){
         //std::cout<<a;
         if(hitShape){
             int selectCount;
-            if (hitShape->isActive) {
-                hitShape->isActive = false;
-                hitShape->isCurrent = false;
+            //if (hitShape->isActive) {
+            if (hitShape->getActivity()) {
+                //hitShape->isActive = false;
+                //hitShape->isCurrent = false;
+                hitShape->setActivity (false);
+                hitShape->setCurrent (false);
 
                 hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
 
@@ -339,16 +346,20 @@ void Geoapp::whenClick(double x, double y){
 
 
                 if (hulledShapes.size() > 0) {
-                    hulledShapes.back()->isCurrent = true;
+                    //hulledShapes.back()->isCurrent = true;
+                    hulledShapes.back()->setCurrent (true);
                 }
                 selectCount = -1;
             } else {
-                hitShape->isActive = true;
+                //hitShape->isActive = true;
+                hitShape->setActivity (true);
                 if (hulledShapes.size() > 0)
-                    hulledShapes.back()->isCurrent = false;
+                    //hulledShapes.back()->isCurrent = false;
+                    hulledShapes.back()->setCurrent (false);
 
                 hulledShapes.push_back(hitShape);
-                hulledShapes.back()->isCurrent = true;
+                //hulledShapes.back()->isCurrent = true;
+                hulledShapes.back()->setCurrent (true);
 
                 hitShape->addToConstructionElements (hulledElements);
                 selectCount = 1;

@@ -1,9 +1,8 @@
 #pragma once
-#include<iostream>
-#include<SFML/Graphics.hpp>
 #include<vector>
 #include<cmath>
 #include<memory>
+#include <SFML/Graphics.hpp>
 
 
 //lista figur geometrycznych
@@ -41,14 +40,18 @@ class Shape {
     protected:
         constexpr static double hitEpsilon = 4;
     public:
-        bool exists = true;
-        bool isActive = false;
-        bool isCurrent = false;
-        bool isDependent = false;
+        virtual void setExistance (bool) = 0;
+        const virtual bool getExistance () const = 0;
+        virtual void setActivity (bool) = 0;
+        const virtual bool getActivity () const = 0;
+        virtual void setCurrent (bool) = 0;
+        const virtual bool getCurrent () const = 0;
+        virtual void setDependent (bool) = 0; 
+        const virtual bool getDependent () const = 0;
         //std::string name;
         virtual const double distFromPoint(const Point&) const =0;
-        virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
-        virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
+        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
         virtual void addToConstructionElements (constructionElements&) {}
         virtual void removeFromConstructionElements (constructionElements&) {}
         virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
@@ -73,210 +76,81 @@ const double operator%(const Point &p1, const Point &p2);
 const bool operator==(const Point &p1, const Point &p2);
 
 class PointShape : public Shape {
-    private:
-        static constexpr double radiusOfDrawing=3;
-        //double x,y;
-        Point coordinates;
     public:
+        virtual ~PointShape () {}
 
-        const double getX () const {return coordinates.x;}
-        const double getY () const {return coordinates.y;}
+        virtual const double getX () const = 0;
+        virtual const double getY () const = 0;
 
-        void setX (double newX) {coordinates.x = newX;}
-        void setY (double newY) {coordinates.y = newY;}
-        //static Point zero();
-
-        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-
-        void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-
-        const double distFromPoint(const Point&) const override;
-
-
-        friend std::ostream& operator<<(std::ostream&, const Point&);
-
-        PointShape(double=0, double=0);
-
-
+        virtual void setX (double newX) = 0;
+        virtual void setY (double newY) = 0;
 
         //długość do (0,0) +
-        const double abs() const {
-            return std::sqrt (coordinates.x*coordinates.x+coordinates.y*coordinates.y);
-        }
-
-        virtual void addToConstructionElements (constructionElements& el) override {
-            el.points.push_back(this);
-        }
-        virtual void removeFromConstructionElements (constructionElements& el) override {
-            el.points.erase (std::find (el.points.begin(), el.points.end(), this));
-        }
-
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-            op.pointCount += c;
-        }
-        virtual bool isHit (const Point& p) override {
-            return distFromPoint(p) < hitEpsilon;
-        }
-
-        virtual unsigned int getHitPriority () override {return 10;}
-
-        virtual void moveShape (double xMov, double yMov) override {
-            if (isDependent) return;
-            coordinates.x += xMov; 
-            coordinates.y += yMov;
-        }
-
-        PointShape(const LineShape&,const LineShape&);
+        virtual const double abs() const = 0;
 };
 
+PointShape* makePointShape (double = 0, double = 0);
+PointShape* makePointShape (const LineShape&, const LineShape&);
 
 class SegmentShape : public Shape{
-    private:
-        Point p1, p2;
     public:
-        const double getFromX () const {return p1.x;}
-        const double getToX () const {return p2.x;}
-        const double getFromY () const {return p1.y;}
-        const double getToY () const {return p2.y;}
+        virtual ~SegmentShape () {}
 
-        void setFromX (double newX) {p1.x = newX;}
-        void setToX (double newX) {p2.x = newX;}
-        void setFromY (double newY) {p1.y = newY;}
-        void setToY (double newY) {p2.y = newY;}
+        virtual const double getFromX () const = 0;
+        virtual const double getToX () const = 0;
+        virtual const double getFromY () const = 0;
+        virtual const double getToY () const = 0;
 
-        SegmentShape(Point,Point);
-        SegmentShape () {}
+        virtual void setFromX (double newX) = 0;
+        virtual void setToX (double newX) = 0;
+        virtual void setFromY (double newY) = 0;
+        virtual void setToY (double newY) = 0;
 
-        const double distFromPoint(const Point&) const override;
-
-        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-
-
-        friend std::ostream& operator<<(std::ostream&, const SegmentShape&);
 
         //dlugosc odcinka +
-        const double abs();
-        virtual void addToConstructionElements (constructionElements& el) override {
-            el.segments.push_back(this);
-        }
-        virtual void removeFromConstructionElements (constructionElements& el) override {
-            el.segments.erase (std::find (el.segments.begin(), el.segments.end(), this));
-        }
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-            op.segmentCount += c;
-        }
-        virtual bool isHit (const Point& p) override {
-            return distFromPoint(p) < hitEpsilon;
-        }
-        virtual unsigned int getHitPriority () override {return 8;}
-
+        virtual const double abs() const = 0;
 };
+
+SegmentShape* makeSegmentShape ();
+SegmentShape* makeSegmentShape (const Point&, const Point&);
 
 
 class LineShape : public Shape{
-    private:
-        Point n;
-        double c;
-        void goThroughPoints (const Point& p, const Point& q) {
-            if(p==q){
-                throw std::invalid_argument("Points lay to close to each other");
-            } else {
-                if(p.x == 0 && p.y == 0){
-                    c=0;
-                    //n=Point(q.getY(), -q.getX());
-                    n.x = q.y; n.y = -q.x;
-                } else if(q.x == 0 && q.y == 0){
-                    c=0;
-                    //n=Point(p.getY(), -p.getX());
-                    n.x = p.y; n.y = -p.x;
-                } else {
-                    c=-1;
-                    //n=Point((q.getY()-p.getY())/(p%q), (-q.getX()+p.getX())/(p%q));
-                    n.x = (q.y-p.y)/(p%q);
-                    n.y = (-q.x+p.x)/(p%q);
-
-                }
-            }
-        }
     public:
+        virtual ~LineShape () {}
+        virtual const double getNormalX () const = 0;
+        virtual const double getNormalY () const = 0;
+        virtual const double getC () const = 0;
 
-        const double getNormalX () const {return n.x;}
-        const double getNormalY () const {return n.y;}
-        const double getC () const {return c;}
-
-        void setNormalX (double x) {n.x = x;}
-        void setNormalY (double y) {n.y = y;}
-        void setC (double _c) {c = _c;}
-
-        LineShape(double,double,double); //line ax+by+c=0
-        LineShape(const Point&,const Point&); //line through two points
-        LineShape(const SegmentShape&);
-
-        const double distFromPoint(const Point&) const override;
-        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-
+        virtual void setNormalX (double x) = 0;
+        virtual void setNormalY (double y) = 0;
+        virtual void setC (double _c) = 0;
 
         //void goThroughPoints (const Point& p, const Point& q) {
-        void goThroughPoints (const double px, const double py, const double qx, const double qy) {
-            Point p, q;
-            p.x = px; p.y = py;
-            q.x = qx; q.y = qy;
-            goThroughPoints (p, q);
-        }
+        virtual void goThroughPoints (const double px, const double py, const double qx, const double qy) = 0;
 
-        friend std::ostream& operator<<(std::ostream&, const LineShape&);
-
-        LineShape(const CircleShape&,const CircleShape&);
-        virtual void addToConstructionElements (constructionElements& el) override {
-            el.lines.push_back(this);
-        }
-        virtual void removeFromConstructionElements (constructionElements& el) override {
-            el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
-        }
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-            op.lineCount += c;
-        }
-        virtual bool isHit (const Point& p) override {
-            return distFromPoint(p) < hitEpsilon;
-        }
-
-        virtual unsigned int getHitPriority () override {return 6;}
 };
 
+LineShape* makeLineShape (double, double, double);
+LineShape* makeLineShape (const SegmentShape&);
+LineShape* makeLineShape (const Point&, const Point&);
 
 class CircleShape : public Shape {
-        Point middle;
-        double r;
     public:
-        const double getMiddleX () const {return middle.x;}
-        const double getMiddleY () const {return middle.y;}
-        const double getR () const {return r;}
+        virtual ~CircleShape () {}
+        virtual const double getMiddleX () const = 0;
+        virtual const double getMiddleY () const = 0;
+        virtual const double getR () const = 0;
 
-        void setMiddleX (double x) {middle.x = x;}
-        void setMiddleY (double y) {middle.y = y;}
-        void setR (double _r) {r = _r;}
+        virtual void setMiddleX (double x) = 0;
+        virtual void setMiddleY (double y) = 0;
+        virtual void setR (double _r) = 0;
 
-        const double distFromPoint(const Point&) const override;
-        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-        void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-        friend std::ostream& operator<<(std::ostream&, const CircleShape&);
-        CircleShape(const Point&, const Point&, const Point&);
-        CircleShape(const Point&, double);
-        CircleShape(const Point&, const Point&);
-        CircleShape (double, double, double);
-        virtual void addToConstructionElements (constructionElements& el) override {
-            el.circles.push_back(this);
-        }
-        virtual void removeFromConstructionElements (constructionElements& el) override {
-            el.circles.erase (std::find (el.circles.begin(), el.circles.end(), this));
-        }
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-            op.circleCount += c;
-        }
-        virtual bool isHit (const Point& p) override {
-            return distFromPoint(p) < hitEpsilon;
-        }
-        virtual unsigned int getHitPriority () override {return 4;}
 };
+
+CircleShape* makeCircleShape (const Point&, double);
+CircleShape* makeCircleShape (const Point&, const Point&);
+CircleShape* makeCircleShape (double, double, double);
+CircleShape* makeCircleShape (const Point&, const Point&, const Point&);
 
 //TODO: Triangle class
