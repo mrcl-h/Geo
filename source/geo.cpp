@@ -3,6 +3,17 @@
 #include<cmath>
 #include<SFML/Graphics.hpp>
 
+void resetConstructionElements (constructionElements& el) {
+    el.points.clear();
+    el.lines.clear();
+    el.circles.clear();
+    el.segments.clear();
+}
+
+void resetUiOptionConditions (uiOptionConditions& op) {
+    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
+}
+
 //----------------------------------------
 Point::Point(double x1, double y2){
 	x=x1;

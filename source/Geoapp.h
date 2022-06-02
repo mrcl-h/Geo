@@ -189,13 +189,17 @@ class Geoapp{
         void whenClick(double,double);
         void changeMode(sf::Event);
 
-
-        int FTCO(Point) const; //find object closest to mouse
-        int FTCP(Point) const; //find point closest to mouse
-        int FTCL(Point) const; //find line closest to mouse
-        int FTCS(Point) const; //find segment closest to mouse
-        int FTCC(Point) const; //find circle closest to mouse
-        int FTCT(Point) const; //find triangle closest to mouse
+        Shape* findObjectHit (const Point& p) const {
+            Shape *shapeHit = NULL;
+            for (auto& i : shapes) {
+                if (i->isHit (p)) {
+                    if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
+                        shapeHit = i.get();
+                    }
+                }
+            }
+            return shapeHit;
+        }
 
         void registerUiOption (uiObject obj, uiOptionConditions conditions) {
             uint32_t mapId = uiMapId (conditions);
@@ -233,12 +237,8 @@ class Geoapp{
         }
 
         void moveHulledPoints (double x, double y) {
-            for (auto i : hulledShapes) {
-                if (i->what_is() == shapeTypeId<Point>::typeId && i->isDependent == false) {
-                    Point *pt = static_cast<Point*> (i);
-                    pt->x += x;
-                    pt->y += y;
-                }
+            for (auto& i : hulledShapes) {
+                i->moveShape (x,y);
             }
             for (auto& i : constructions) {
                 i->adjust();
