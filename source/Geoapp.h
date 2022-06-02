@@ -183,7 +183,7 @@ class Geoapp{
         void loop();
         void update();
         void events(sf::Event);
-        void UIhandling(Point);
+        void UIhandling(const Point& point);
         void drawUI() const;
         void drawObjects() const;
         void whenClick(double,double);
@@ -229,11 +229,17 @@ class Geoapp{
             centerY = y;
         }
         void setCamera (const Point& p) {
-            centerX = p.getX();
-            centerY = p.getY();
+            //centerX = p.getX();
+            //centerY = p.getY();
+            centerX = p.x;
+            centerY = p.y;
         }
         const Point getCamera () {
-            return Point (centerX, centerY);
+            //return Point (centerX, centerY);
+            Point camera;
+            camera.x = centerX;
+            camera.y = centerY;
+            return camera;
         }
 
         void moveHulledPoints (double x, double y) {

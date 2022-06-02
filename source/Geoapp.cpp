@@ -193,12 +193,13 @@ void Geoapp::events(sf::Event event){
             if (event.type == sf::Event::Closed){
                 window.close();
             } else if (event.type == sf::Event::MouseButtonPressed){
-                double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
-                Point mysz (x,y);
-                if(x>uiBarrier*window.getSize().x){
+                //double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
+                Point mysz;
+                mysz.x =(double)sf::Mouse::getPosition(window).x; mysz.y=(double)sf::Mouse::getPosition(window).y;
+                if(mysz.x>uiBarrier*window.getSize().x){
                     UIhandling(mysz);
                 } else {
-                    whenClick(x,y);
+                    whenClick(mysz.x,mysz.y);
                 }
             } else if (event.type== sf::Event::Resized){
 
@@ -286,12 +287,12 @@ void Geoapp::drawObjects() const{
     }
 }
 
-void Geoapp::UIhandling(Point mysz){
+void Geoapp::UIhandling(const Point& mysz){
     unsigned int windowWidth = window.getSize().x;
     float uiWidth = windowWidth*(1-uiBarrier);
     float top = 0;
     float objectHeight = uiWidth/2;
-    int clickedOption = (mysz.getY()-top)/objectHeight;
+    int clickedOption = (mysz.y-top)/objectHeight;
     std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
     if (clickedOption >= (int)currentPage.size()) {
         return;
@@ -314,10 +315,13 @@ void Geoapp::UIhandling(Point mysz){
 }
 
 void Geoapp::whenClick(double x, double y){
-    Point clickPosition (centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
+    //Point clickPosition (centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
+    Point clickPosition;
+    clickPosition.x = centerX+x-float(window.getSize().x*uiBarrier)/2;
+    clickPosition.y = centerY+y-float(window.getSize().y)/2;
     if(currentMode == mode::pointCreation){
         //Shape *S = new Point (clickPosition);;
-        std::unique_ptr<Shape> S = std::make_unique<Point>(clickPosition);
+        std::unique_ptr<Shape> S = std::make_unique<PointShape>(clickPosition.x, clickPosition.y);
         shapes.push_back(std::move(S));
     } else if(currentMode == mode::selection){
         //int a=FTCO(clickPosition);
