@@ -13,15 +13,10 @@ class shapeTypeId {
 
 //lista figur geometrycznych
 class Segment;
-template <> class shapeTypeId<Segment> { public: enum {typeId = 5}; };
 class Triangle;
-template <> class shapeTypeId<Triangle> { public: enum {typeId = 4}; };
 class Line;
-template <> class shapeTypeId<Line> { public: enum {typeId = 3}; };
 class Circle;
-template <> class shapeTypeId<Circle> { public: enum {typeId = 2}; };
 class Point;
-template <> class shapeTypeId<Point> { public: enum {typeId = 1}; };
 class Shape;
 
 inline double doubleAbs (double r) {
@@ -35,206 +30,224 @@ struct constructionElements {
     std::vector<Segment*> segments;
 };
 
-inline void resetConstructionElements (constructionElements& el) {
-    el.points.clear();
-    el.lines.clear();
-    el.circles.clear();
-    el.segments.clear();
-}
+void resetConstructionElements (constructionElements& el);
 
 struct uiOptionConditions {
     uint8_t lineCount, pointCount, circleCount, segmentCount;
 };
 
-inline void resetUiOptionConditions (uiOptionConditions& op) {
-    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
-}
+void resetUiOptionConditions (uiOptionConditions& op);
 
 class Shape {
-public:
-    bool exists = true;
-    bool isActive = false;
-    bool isCurrent = false;
-    bool isDependent = false;
-    //std::string name;
-    virtual const double dist(Point) const =0;
-    virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
-    virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
-    //virtual std::string what_is()=0;
-    virtual const uint32_t what_is() = 0;
-    virtual void addToConstructionElements (constructionElements&) {}
-    virtual void removeFromConstructionElements (constructionElements&) {}
-    virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
-    virtual ~Shape() {}
+    protected:
+        constexpr static double hitEpsilon = 4;
+    public:
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+        //std::string name;
+        virtual const double dist(Point) const =0;
+        virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
+        virtual void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const {}
+        virtual void addToConstructionElements (constructionElements&) {}
+        virtual void removeFromConstructionElements (constructionElements&) {}
+        virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
+        virtual unsigned int getHitPriority () = 0;
+        virtual bool isHit (const Point& p) = 0;
+        virtual void moveShape (double x, double y) {}
+        virtual ~Shape() {}
 
 };
 
 
 
 class Point : public Shape {
-    static constexpr double radiusOfDrawing=3;
-public:
-	double x,y;
+    private:
+        static constexpr double radiusOfDrawing=3;
+        double x,y;
+    public:
 
-    //static Point zero();
+        const double getX () const {return x;}
+        const double getY () const {return y;}
 
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
+        void setX (double newX) {x = newX;}
+        void setY (double newY) {y = newY;}
+        //static Point zero();
 
-    void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
+        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
-    const double dist(Point) const override;
+        void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
-    //std::string what_is() override;
-    virtual const uint32_t what_is () override {return shapeTypeId<Point>::typeId;}
+        const double dist(Point) const override;
 
-    friend std::ostream& operator<<(std::ostream&, const Point&);
 
-	Point(double=0, double=0);
+        friend std::ostream& operator<<(std::ostream&, const Point&);
 
-    const bool operator==(Point p) const {
-        return ((dist(p))<0.01);
-    }
+        Point(double=0, double=0);
 
-    const Point operator+(Point p) const {
-        return Point(x+p.x,y+p.y);
-    }
-    const Point operator-(Point p) const {
-        return Point(x-p.x,y-p.y);
-    }
-    const Point operator*(double a) const {
-        return Point(a*x,a*y);
-    }
-    const Point operator/(double a) const {
-        return Point(x/a, y/a);
-    }
-    const double operator*(Point p) const {
-        return x*p.x+y*p.y;
-    }
-    const double operator%(Point p) const {
-        return x*p.y-y*p.x;
-    }
+        const bool operator==(Point p) const {
+            return ((dist(p))<0.01);
+        }
 
-    //długość do (0,0) +
-    const double abs() const {
-        return std::sqrt (x*x+y*y);
-    }
+        const Point operator+(Point p) const {
+            return Point(x+p.x,y+p.y);
+        }
+        const Point operator-(Point p) const {
+            return Point(x-p.x,y-p.y);
+        }
+        const Point operator*(double a) const {
+            return Point(a*x,a*y);
+        }
+        const Point operator/(double a) const {
+            return Point(x/a, y/a);
+        }
+        const double operator*(Point p) const {
+            return x*p.x+y*p.y;
+        }
+        const double operator%(Point p) const {
+            return x*p.y-y*p.x;
+        }
 
-    virtual void addToConstructionElements (constructionElements& el) override {
-        el.points.push_back(this);
-    }
-    virtual void removeFromConstructionElements (constructionElements& el) override {
-        el.points.erase (std::find (el.points.begin(), el.points.end(), this));
-    }
+        //długość do (0,0) +
+        const double abs() const {
+            return std::sqrt (x*x+y*y);
+        }
 
-    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-        op.pointCount += c;
-    }
+        virtual void addToConstructionElements (constructionElements& el) override {
+            el.points.push_back(this);
+        }
+        virtual void removeFromConstructionElements (constructionElements& el) override {
+            el.points.erase (std::find (el.points.begin(), el.points.end(), this));
+        }
 
-    Point(Line,Line);
+        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+            op.pointCount += c;
+        }
+        virtual bool isHit (const Point& p) override {
+            return dist(p) < hitEpsilon;
+        }
+
+        virtual unsigned int getHitPriority () override {return 10;}
+
+        virtual void moveShape (double xMov, double yMov) override {
+            if (isDependent) return;
+            x += xMov; 
+            y += yMov;
+        }
+
+        Point(Line,Line);
 };
 
 
 class Segment : public Shape{
-public:
-	Point p1, p2;
+    public:
+        Point p1, p2;
 
-	Segment(Point,Point);
-    Segment () {}
+        Segment(Point,Point);
+        Segment () {}
 
-    const double dist(Point) const override;
+        const double dist(Point) const override;
 
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
+        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
-    //std::string what_is() override;
-    virtual const uint32_t what_is () override {return shapeTypeId<Segment>::typeId;}
 
-    friend std::ostream& operator<<(std::ostream&, const Segment&);
+        friend std::ostream& operator<<(std::ostream&, const Segment&);
 
-	//dlugosc odcinka +
-	const double abs();
-    virtual void addToConstructionElements (constructionElements& el) override {
-        el.segments.push_back(this);
-    }
-    virtual void removeFromConstructionElements (constructionElements& el) override {
-        el.segments.erase (std::find (el.segments.begin(), el.segments.end(), this));
-    }
-    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-        op.segmentCount += c;
-    }
+        //dlugosc odcinka +
+        const double abs();
+        virtual void addToConstructionElements (constructionElements& el) override {
+            el.segments.push_back(this);
+        }
+        virtual void removeFromConstructionElements (constructionElements& el) override {
+            el.segments.erase (std::find (el.segments.begin(), el.segments.end(), this));
+        }
+        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+            op.segmentCount += c;
+        }
+        virtual bool isHit (const Point& p) override {
+            return dist(p) < hitEpsilon;
+        }
+        virtual unsigned int getHitPriority () override {return 8;}
 
 };
 
 
 class Line : public Shape{
-public:
+    public:
 
-    Point n;
-	double c;
+        Point n;
+        double c;
 
-	Line(double,double,double); //line ax+by+c=0
-	Line(Point,Point); //line through two points
-	Line(Segment);
+        Line(double,double,double); //line ax+by+c=0
+        Line(Point,Point); //line through two points
+        Line(Segment);
 
-    const double dist(Point) const override;
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
+        const double dist(Point) const override;
+        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
 
-    //std::string what_is() override;
-    virtual const uint32_t what_is () override {return shapeTypeId<Line>::typeId;}
 
-    void goThroughPoints (const Point& p, const Point& q) {
-        if(p==q){
-            throw std::invalid_argument("Points lay to close to each other");
-        } else {
-            if(p==Point(0,0)){
-                c=0;
-                n=Point(q.y, -q.x);
-            } else if(q==Point(0,0)){
-                c=0;
-                n=Point(p.y, -p.x);
+        void goThroughPoints (const Point& p, const Point& q) {
+            if(p==q){
+                throw std::invalid_argument("Points lay to close to each other");
             } else {
-                c=-1;
-                n=Point((q.y-p.y)/(p%q), (-q.x+p.x)/(p%q));
+                if(p==Point(0,0)){
+                    c=0;
+                    n=Point(q.getY(), -q.getX());
+                } else if(q==Point(0,0)){
+                    c=0;
+                    n=Point(p.getY(), -p.getX());
+                } else {
+                    c=-1;
+                    n=Point((q.getY()-p.getY())/(p%q), (-q.getX()+p.getX())/(p%q));
+                }
             }
         }
-    }
 
-    friend std::ostream& operator<<(std::ostream&, const Line&);
+        friend std::ostream& operator<<(std::ostream&, const Line&);
 
-    Line(Circle,Circle);
-    virtual void addToConstructionElements (constructionElements& el) override {
-        el.lines.push_back(this);
-    }
-    virtual void removeFromConstructionElements (constructionElements& el) override {
-        el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
-    }
-    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-        op.lineCount += c;
-    }
+        Line(Circle,Circle);
+        virtual void addToConstructionElements (constructionElements& el) override {
+            el.lines.push_back(this);
+        }
+        virtual void removeFromConstructionElements (constructionElements& el) override {
+            el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
+        }
+        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+            op.lineCount += c;
+        }
+        virtual bool isHit (const Point& p) override {
+            return dist(p) < hitEpsilon;
+        }
+
+        virtual unsigned int getHitPriority () override {return 6;}
 };
 
 
 class Circle: public Shape {
-public:
-    Point middle;
-    double r;
-    const double dist(Point) const override;
-    void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-    //std::string what_is() override;
-    void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
-    virtual const uint32_t what_is () override {return shapeTypeId<Circle>::typeId;}
-    friend std::ostream& operator<<(std::ostream&, const Circle&);
-    Circle(Point, Point, Point);
-    Circle(Point, double);
-    Circle(Point, Point);
-    virtual void addToConstructionElements (constructionElements& el) override {
-        el.circles.push_back(this);
-    }
-    virtual void removeFromConstructionElements (constructionElements& el) override {
-        el.circles.erase (std::find (el.circles.begin(), el.circles.end(), this));
-    }
-    virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
-        op.circleCount += c;
-    }
+    public:
+        Point middle;
+        double r;
+        const double dist(Point) const override;
+        void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
+        void hull_draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
+        friend std::ostream& operator<<(std::ostream&, const Circle&);
+        Circle(Point, Point, Point);
+        Circle(Point, double);
+        Circle(Point, Point);
+        virtual void addToConstructionElements (constructionElements& el) override {
+            el.circles.push_back(this);
+        }
+        virtual void removeFromConstructionElements (constructionElements& el) override {
+            el.circles.erase (std::find (el.circles.begin(), el.circles.end(), this));
+        }
+        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override {
+            op.circleCount += c;
+        }
+        virtual bool isHit (const Point& p) override {
+            return dist(p) < hitEpsilon;
+        }
+        virtual unsigned int getHitPriority () override {return 4;}
 };
 
 //TODO: Triangle class
