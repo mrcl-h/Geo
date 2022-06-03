@@ -79,7 +79,7 @@ void circleThreePoints::adjust () {
     //circle->middle= Point(circle->middle.getY(),-circle->middle.getX())+*pointC;
     double aLen = length(a);
     double bLen = length(b);
-    circle->setR (aLen*bLen*length(a-b)/2*(a%b));
+    circle->setR (aLen*bLen*length(a-b)/2/(a%b));
     Point mid = b*(aLen*aLen)/(a%b)/2-a*(bLen*bLen/(a%b))/2;
     circle->setMiddleX (mid.y+pointC->getX());
     circle->setMiddleY (-mid.x+pointC->getY());
@@ -88,13 +88,17 @@ void circleThreePoints::adjust () {
 void powerLine::adjust() {
     //power->n = circle2->middle-circle1->middle;
     //power->c = (circle1->middle*circle1->middle-circle2->middle*circle2->middle-circle1->r*circle1->r+circle2->r*circle2->r)/2;
-    power->setNormalX (circle2->getMiddleX() - circle1->getMiddleX());
     Point c1Mid, c2Mid;
     c1Mid.x = circle1->getMiddleX();
     c1Mid.y = circle1->getMiddleY();
     c2Mid.x = circle2->getMiddleX();
     c2Mid.y = circle2->getMiddleY();
-    power->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1->getR()*circle1->getR()+circle2->getR()*circle2->getR()/2);
+    power->setNormalX(2*c2Mid.x-2*c1Mid.x);
+    power->setNormalY(2*c2Mid.y-2*c1Mid.y);
+
+    
+    power->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1->getR()*circle1->getR()+circle2->getR()*circle2->getR());
+    
 }
 void symmetricalOfPoints::adjust() {
     line->setNormalX (pointA->getX() - pointB->getX());
@@ -135,13 +139,40 @@ void tangentCirclePoint::adjust() {
 }
 
 void lineCircleIntersection::adjust() {
-    //Line l = Line(line->n.getX(), line->n.getY(), line->c+(line->n*circle->middle));
-    //double sqrtdelta = l.n.getX() * sqrt( circle->r * circle->r * ( l.n * l.n ) - l.c * l.c);
-    //double y = ( - l.n.getY() * l.c + sqrtdelta)/( l.n * l.n );
-    //double x = -( l.c + l.n.getY() * y)/l.n.getX();
-    //*pointA = Point(x,y) + circle->middle;
+    LineShape *l = makeLineShape(line->getNormalX(), line->getNormalY(), circle->getMiddleX() * line->getNormalX() + circle->getMiddleY() * line->getNormalY() +  line->getC());
+    double sqrtdelta = l->getNormalX() * sqrt( circle->getR() * circle->getR() * ( l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY() ) - l->getC() * l->getC());
+    double y = (-l->getNormalY() * l->getC() + sqrtdelta) / (l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
+    double x = - ( l->getC() + l->getNormalY() * y)/l->getNormalX();
+    pointA->setX(x + circle->getMiddleX());
+    pointA->setY(y + circle->getMiddleY());
 
-    //y = ( - l.n.getY()*l.c-sqrtdelta)/(l.n*l.n);
-    //x = -(l.c+l.n.getY()*y)/l.n.getX();
-    //*pointB = Point(x,y) + circle->middle;
+    y = (- l->getNormalY() * l->getC() - sqrtdelta)/(l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
+    x = - (l->getC() + l->getNormalY() * y) / l->getNormalX();
+    pointB->setX(x + circle->getMiddleX());
+    pointB->setY(y + circle->getMiddleY());
+    
+}
+
+void circlesIntersection::adjust() {
+    LineShape * l = makeLineShape(1,0,1); 
+    Point c1Mid, c2Mid;
+    c1Mid.x = circle1->getMiddleX();
+    c1Mid.y = circle1->getMiddleY();
+    c2Mid.x = circle2->getMiddleX();
+    c2Mid.y = circle2->getMiddleY();
+    l->setNormalX(2*c2Mid.x-2*c1Mid.x);
+    l->setNormalY(2*c2Mid.y-2*c1Mid.y);
+    l->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1->getR()*circle1->getR()+circle2->getR()*circle2->getR() + circle1->getMiddleX() * l->getNormalX() + circle1->getMiddleY() * l->getNormalY()); 
+    
+    
+    double sqrtdelta = l->getNormalX() * sqrt( circle1->getR() * circle1->getR() * ( l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY() ) - l->getC() * l->getC());
+    double y = (-l->getNormalY() * l->getC() + sqrtdelta) / (l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
+    double x = - ( l->getC() + l->getNormalY() * y)/l->getNormalX();
+    pointA->setX(x + circle1->getMiddleX());
+    pointA->setY(y + circle1->getMiddleY());
+
+    y = (- l->getNormalY() * l->getC() - sqrtdelta)/(l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
+    x = - (l->getC() + l->getNormalY() * y) / l->getNormalX();
+    pointB->setX(x + circle1->getMiddleX());
+    pointB->setY(y + circle1->getMiddleY());
 }

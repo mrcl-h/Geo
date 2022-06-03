@@ -154,6 +154,14 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     cond.lineCount = 1;
     registerUiOption (lineCircleIntersectionObject, cond);
 
+    uiObject circlesIntersectionObject;
+    circlesIntersectionObject.creator = makeConstruction<circlesIntersection>;
+    circlesIntersectionObject.image.loadFromFile("resources/segmentMid.png");
+    circlesIntersectionObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.circleCount = 2;
+    registerUiOption (circlesIntersectionObject, cond);
+
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0), true);
     mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0), true);

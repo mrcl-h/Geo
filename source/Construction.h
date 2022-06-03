@@ -172,6 +172,25 @@ class circleThreePoints : public Construction {
 
 //TODO: Intersections of two circles
 
+class circlesIntersection : public Construction {
+    private:
+        CircleShape * const circle1, * const circle2;
+        PointShape *pointA, *pointB;
+    public:
+        circlesIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle1(el.circles[0]), circle2(el.circles[1]), pointA(NULL), pointB(NULL) {
+            //pointA = new PointShape ();
+            pointA = makePointShape ();
+            shapes.emplace_back (pointA);
+            //pointA->isDependent = true;
+            pointA->setDependent(true);
+            //pointB = new PointShape ();
+            pointB = makePointShape ();
+            shapes.emplace_back (pointB);
+            //pointB->isDependent = true;
+            pointB->setDependent(true);
+        }
+        virtual void adjust ();
+};
 
 class powerLine : public Construction {
     private:
