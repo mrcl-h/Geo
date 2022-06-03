@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   sodipodi:docname="everything.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.77828446"
+     inkscape:cx="136.83943"
+     inkscape:cy="596.82549"
+     inkscape:window-width="1916"
+     inkscape:window-height="1036"
+     inkscape:window-x="0"
+     inkscape:window-y="20"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showguides="true" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path569-1"
+       id="use4706-7"
+       transform="rotate(45,55.817499,38.008428)"
+       inkscape:export-filename="orthogonalLine.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round"
+       id="rect184"
+       width="31.683971"
+       height="31.683971"
+       x="3.4268432"
+       y="15.419947"
+       inkscape:tile-cx="19.268828"
+       inkscape:tile-cy="76.770306"
+       inkscape:tile-w="33.683971"
+       inkscape:tile-h="33.683971"
+       inkscape:tile-x0="2.4268431"
+       inkscape:tile-y0="59.92832" />
+    <circle
+       style="stroke:none;stroke-width:0.885237;stroke-linecap:round"
+       id="path392"
+       cx="76.532166"
+       cy="12.332551"
+       r="2.2937145" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path392"
+       id="use502"
+       transform="translate(-24.874203,21.659433)"
+       style="fill:#000000" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path392"
+       id="use504"
+       transform="translate(-12.541223,21.868523)"
+       style="fill:#ff0000" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 101.28365,34.097422 h 26.52481"
+       id="path569" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 131.43532,34.097422 h 26.52481"
+       id="path1130" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       id="use1608"
+       transform="translate(0,45.508356)"
+       inkscape:export-filename="segmentMid.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(0,85.929127)"
+       id="use1610"
+       inkscape:export-filename="segmentFromPoints.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(0,126.35004)"
+       id="use1612"
+       inkscape:export-filename="powerLine.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(0,166.77091)"
+       id="use1614"
+       inkscape:export-filename="circleCircleIntersection.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(0,207.19168)"
+       id="use1616" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(40.420765,45.508356)"
+       id="use1618"
+       inkscape:export-filename="pointsMid.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(40.420765,85.929127)"
+       id="use1620"
+       inkscape:export-filename="circleWithCenter.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(40.420765,126.35004)"
+       id="use1622"
+       inkscape:export-filename="lineCircleIntersection.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(40.420765,166.77091)"
+       id="use1624"
+       inkscape:export-filename="bisectorTwoLines.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(40.420765,207.19168)"
+       id="use1626" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(80.84153,45.508356)"
+       id="use1628" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(80.84153,85.929127)"
+       id="use1630"
+       inkscape:export-filename="centerOfMass.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(80.84153,126.35004)"
+       id="use1632"
+       inkscape:export-filename="tangentsThroughPoint.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(80.84153,166.77091)"
+       id="use1634"
+       inkscape:export-filename="describedCircle.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(80.84153,207.19168)"
+       id="use1636" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(121.26229,45.508356)"
+       id="use1638"
+       inkscape:export-filename="parallelLine.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(121.26229,85.929127)"
+       id="use1640"
+       inkscape:export-filename="bisectorThreePoints.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(121.26229,126.35004)"
+       id="use1642"
+       inkscape:export-filename="symmetricalOfSegment.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(121.26229,166.77091)"
+       id="use1644"
+       inkscape:export-filename="inscribedCircle.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(121.26229,207.19168)"
+       id="use1646" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(161.68306,45.508356)"
+       id="use1648"
+       inkscape:export-filename="lineThroughPoints.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(161.68306,85.929127)"
+       id="use1650"
+       inkscape:export-filename="circleThreePoints.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(161.68306,126.35004)"
+       id="use1652"
+       inkscape:export-filename="symmetricalOfPoints.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(161.68306,166.77091)"
+       id="use1654"
+       inkscape:export-filename="orthocenter.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect184"
+       xlink:href="#rect184"
+       transform="translate(161.68306,207.19168)"
+       id="use1656" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 101.28365,34.097422 h 26.52481"
+       id="path569-1" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="M 13.58556,71.08702 24.952096,82.453556"
+       id="path569-1-75" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 135.98178,153.06263 9.09867,9.09868"
+       id="path569-1-7" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use504"
+       id="use4717"
+       transform="translate(-44.722115,42.569215)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use5467"
+       transform="translate(-1.3463048,33.400369)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use5469"
+       transform="translate(17.409568,52.156242)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use504"
+       id="use5471"
+       transform="translate(-4.301349,42.569215)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use7012"
+       transform="rotate(-45,173.91475,109.25557)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 131.15318,73.079406 13.06881,13.068816"
+       id="path7088" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="M 149.90906,80.461168 136.84025,67.392352"
+       id="path7088-6" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use7988"
+       transform="rotate(45,111.3141,99.196502)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use8773"
+       transform="rotate(45,-18.319619,-75.761835)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path392"
+       id="use10278"
+       transform="translate(-0.23994196,21.889101)"
+       style="fill:#0000ff" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use11090"
+       transform="translate(8.0316306,83.199076)" />
+    <circle
+       style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1;vector-effect:none;-inkscape-stroke:none"
+       id="path11060"
+       cx="59.689594"
+       cy="117.19106"
+       r="11.197947" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path11060-2"
+       cx="100.11036"
+       cy="198.03284"
+       r="11.197947" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path11060-4"
+       cx="180.95189"
+       cy="117.19106"
+       r="11.197947" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use7010"
+       transform="translate(53.655975,37.574726)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use7213"
+       transform="translate(91.716693,39.934776)" />
+    <g
+       id="g8023"
+       transform="translate(0.55861575,0.55860796)">
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use502"
+         id="use7990"
+         transform="translate(123.82402,37.3084)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use502"
+         id="use7990-3"
+         transform="translate(133.64661,47.130994)" />
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use9548"
+       transform="translate(-41.767074,73.821139)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use9550"
+       transform="translate(-23.011201,92.577013)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use10278"
+       id="use11092"
+       transform="translate(-27.800576,82.969411)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12093"
+       transform="translate(42.04965,77.405056)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12095"
+       transform="translate(56.671541,80.551149)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12097"
+       transform="translate(46.635999,91.641032)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use504"
+       id="use12099"
+       transform="translate(36.119416,82.989986)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12166"
+       transform="rotate(-23.883656,312.49459,-156.27252)"
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12166-8"
+       transform="rotate(-23.883656,274.66875,-148.27252)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use12202"
+       transform="rotate(-23.883656,343.82104,86.502079)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use10278"
+       id="use12200"
+       transform="rotate(-23.883656,313.29334,-56.38911)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12226"
+       transform="translate(129.86889,72.015903)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12228"
+       transform="translate(137.98343,90.262113)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use12230"
+       transform="translate(118.19175,81.737649)" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;font-variation-settings:normal;opacity:1;vector-effect:none;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       d="M 30.632965,147.99915 9.6560191,168.97613"
+       id="path12841" />
+    <circle
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="path12328"
+       cx="24.076353"
+       cy="162.41949"
+       r="7.6879759" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path12328-4"
+       cx="104.11036"
+       cy="161.61197"
+       r="7.6879759" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.49999;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path12328-0"
+       cx="61.689594"
+       cy="159.61197"
+       r="10.013474" />
+    <circle
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="path12330"
+       cx="15.772544"
+       cy="154.11569"
+       r="8.1495676" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path12328-9"
+       cx="24.076351"
+       cy="202.84036"
+       r="7.6879759" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path12330-6"
+       cx="15.772544"
+       cy="194.53656"
+       r="8.1495676" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path569-1"
+       id="use13705"
+       transform="rotate(-45,236.21307,162.0723)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use504"
+       id="use13707" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13707"
+       id="use13709"
+       transform="translate(2.4907425,116.61854)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13707"
+       id="use13711"
+       transform="translate(-11.093705,130.20299)" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 88.022132,148.08287 23.677358,7.91699"
+       id="path1130-4" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 90.566633,145.48235 7.927713,23.72001"
+       id="path1130-4-4" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use13735"
+       transform="translate(40.452396,115.61999)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use13924"
+       transform="rotate(-45,291.70967,100.88424)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use13926" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use5467-1"
+       transform="translate(119.91599,114.24206)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use502"
+       id="use5469-7"
+       transform="translate(138.67186,132.99793)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use14047"
+       transform="rotate(-45,311.92006,52.092051)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13707"
+       id="use14088"
+       transform="translate(-40.092393,160.95337)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13707"
+       id="use14090"
+       transform="translate(-47.600511,168.46149)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path569-1"
+       id="use14100"
+       transform="rotate(25,-282.61462,-7.6556162)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path569-1"
+       id="use14102"
+       transform="rotate(65,-41.545705,73.011437)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use14096"
+       transform="rotate(45,-95.693898,13.451239)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path1130"
+       id="use14098"
+       transform="rotate(-45,300.08122,218.67902)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;font-variation-settings:normal;opacity:1;vector-effect:none;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       d="m 97.111567,187.24389 13.956603,13.09554 -21.167411,2.2932 z"
+       id="path14130" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       d="m 177.57902,190.33846 13.9566,13.09554 -21.16741,2.2932 z"
+       id="path14130-4" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       d="m 137.15825,190.33846 13.95659,13.09554 -21.1674,2.2932 z"
+       id="path14130-5" />
+    <circle
+       style="font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="path11060-2-7"
+       cx="138.88464"
+       cy="199.34319"
+       r="5.3841057" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 177.57903,190.33847 1.55603,14.43896"
+       id="path15106" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 191.53562,203.434 -16.47621,-7.71841"
+       id="path15108" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 170.36821,205.7272 11.05491,-11.7818"
+       id="path15154" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13707"
+       id="use15156"
+       transform="translate(114.33526,163.04487)" />
+  </g>
+</svg>
