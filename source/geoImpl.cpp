@@ -439,3 +439,35 @@ CircleShapeImpl::CircleShapeImpl(const Point& A, const Point& B, const Point& C)
     middle=b*(aLen*aLen)/(a%b)/2-a*(bLen*bLen/(a%b))/2;
     middle.x = middle.y+C.x; middle.y = -middle.x + C.y;
 }
+
+//helper outside functions
+
+Point getPointLocation (PointShape& ps) {
+    Point p;
+    p.x = ps.getX(); p.y = ps.getY();
+    return p;
+}
+
+Point getSegmentFrom (const SegmentShape& seg) {
+    Point p;
+    p.x = seg.getFromX(); p.y = seg.getFromY();
+    return p;
+}
+
+Point getSegmentTo (const SegmentShape& seg) {
+    Point p;
+    p.x = seg.getToX(); p.y = seg.getToY();
+    return p;
+}
+
+Point getLineNormal (const LineShape& ls) {
+    Point n;
+    n.x = ls.getNormalX (); n.y = ls.getNormalY();
+    return n;
+}
+
+Point getCircleCenter (CircleShape& cs) {
+    Point center;
+    center.x = cs.getMiddleX(); center.y = cs.getMiddleY();
+    return center;
+}

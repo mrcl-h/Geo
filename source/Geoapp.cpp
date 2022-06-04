@@ -122,7 +122,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
 
     uiObject symmetricalOfPointsObject;
     symmetricalOfPointsObject.creator = makeConstruction<symmetricalOfPoints>;
-    symmetricalOfPointsObject.image.loadFromFile("resources/segmentMid.png");
+    symmetricalOfPointsObject.image.loadFromFile("resources/symmetricalOfPoints.png");
     symmetricalOfPointsObject.image.setSmooth(true);
     resetUiOptionConditions (cond);
     cond.pointCount = 2;
@@ -130,7 +130,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
 
     uiObject symmetricalOfSegmentObject;
     symmetricalOfSegmentObject.creator = makeConstruction<symmetricalOfSegment>;
-    symmetricalOfSegmentObject.image.loadFromFile("resources/segmentMid.png");
+    symmetricalOfSegmentObject.image.loadFromFile("resources/symmetricalOfSegment.png");
     symmetricalOfSegmentObject.image.setSmooth(true);
     resetUiOptionConditions (cond);
     cond.segmentCount = 1;
@@ -147,7 +147,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
 
     uiObject lineCircleIntersectionObject;
     lineCircleIntersectionObject.creator = makeConstruction<lineCircleIntersection>;
-    lineCircleIntersectionObject.image.loadFromFile("resources/segmentMid.png");
+    lineCircleIntersectionObject.image.loadFromFile("resources/lineCircleIntersection.png");
     lineCircleIntersectionObject.image.setSmooth(true);
     resetUiOptionConditions (cond);
     cond.circleCount = 1;
@@ -156,7 +156,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
 
     uiObject circlesIntersectionObject;
     circlesIntersectionObject.creator = makeConstruction<circlesIntersection>;
-    circlesIntersectionObject.image.loadFromFile("resources/segmentMid.png");
+    circlesIntersectionObject.image.loadFromFile("resources/circleCircleIntersection.png");
     circlesIntersectionObject.image.setSmooth(true);
     resetUiOptionConditions (cond);
     cond.circleCount = 2;

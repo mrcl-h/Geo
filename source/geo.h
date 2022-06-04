@@ -92,6 +92,8 @@ class PointShape : public Shape {
 PointShape* makePointShape (double = 0, double = 0);
 PointShape* makePointShape (const LineShape&, const LineShape&);
 
+Point getPointLocation (PointShape&);
+
 class SegmentShape : public Shape{
     public:
         virtual ~SegmentShape () {}
@@ -114,6 +116,8 @@ class SegmentShape : public Shape{
 SegmentShape* makeSegmentShape ();
 SegmentShape* makeSegmentShape (const Point&, const Point&);
 
+Point getSegmentFrom (const SegmentShape& seg);
+Point getSegmentTo (const SegmentShape& seg);
 
 class LineShape : public Shape{
     public:
@@ -135,6 +139,8 @@ LineShape* makeLineShape (double, double, double);
 LineShape* makeLineShape (const SegmentShape&);
 LineShape* makeLineShape (const Point&, const Point&);
 
+Point getLineNormal (const LineShape&);
+
 class CircleShape : public Shape {
     public:
         virtual ~CircleShape () {}
@@ -152,5 +158,7 @@ CircleShape* makeCircleShape (const Point&, double);
 CircleShape* makeCircleShape (const Point&, const Point&);
 CircleShape* makeCircleShape (double, double, double);
 CircleShape* makeCircleShape (const Point&, const Point&, const Point&);
+
+Point getCircleCenter (CircleShape&);
 
 //TODO: Triangle class
