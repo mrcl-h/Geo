@@ -93,18 +93,14 @@ class junctionInputState : public inputState {
                 return key < r.key;
             }
         };
-        //typedef std::unordered_map<inputManager::Key, stateObj> maptype; CHANGED
-        //typedef std::unordered_map<uint32_t, stateObj> maptype; 
         typedef std::map<keyComb, stateObj> maptype;
         maptype stateMap;
     public:
         junctionInputState (inputManager* _manager) :inputState(_manager){}
         void addState (inputManager::keyType k, inputState* addedState, unsigned int mods = 0, bool responsible = true) {
-            //stateMap[k].set(addedState, responsible); // = stateObj(addedState, responsible);
             keyComb newComb;
             newComb.key = k; newComb.mods = mods;
-            stateMap[newComb].set(addedState, responsible); // = stateObj(addedState, responsible);
-            //stateMap.emplace(std::make_pair(k, stateObj(addedState, responsible)));
+            stateMap[newComb].set(addedState, responsible); 
         }
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
             if (a != inputManager::action::pressed) return;

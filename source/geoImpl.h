@@ -3,7 +3,6 @@
 class PointShapeImpl : public PointShape {
     private:
         static constexpr double radiusOfDrawing=3;
-        //double x,y;
         Point coordinates;
         bool exists = true;
         bool isActive = false;
@@ -25,7 +24,6 @@ class PointShapeImpl : public PointShape {
 
         virtual void setX (double newX) override;
         virtual void setY (double newY) override;
-        //static Point zero();
 
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
@@ -35,7 +33,6 @@ class PointShapeImpl : public PointShape {
 
         PointShapeImpl(double=0, double=0);
 
-        //długość do (0,0) +
         virtual double abs() const override;
 
         virtual void addToConstructionElements (constructionElements& el) override;
@@ -85,10 +82,8 @@ class SegmentShapeImpl : public SegmentShape{
 
         virtual double distFromPoint(const Point&) const override;
 
-        //virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
-        //dlugosc odcinka +
         virtual double abs() const override;
         virtual void addToConstructionElements (constructionElements& el) override;
         virtual void removeFromConstructionElements (constructionElements& el) override;
@@ -131,7 +126,6 @@ class LineShapeImpl : public LineShape{
         LineShapeImpl(const SegmentShape&);
 
         double distFromPoint(const Point&) const override;
-        //void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
 

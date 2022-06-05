@@ -48,7 +48,6 @@ class Shape {
         virtual bool getCurrent () const = 0;
         virtual void setDependent (bool) = 0; 
         virtual bool getDependent () const = 0;
-        //std::string name;
         virtual double distFromPoint(const Point&) const =0;
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
@@ -85,7 +84,6 @@ class PointShape : public Shape {
         virtual void setX (double newX) = 0;
         virtual void setY (double newY) = 0;
 
-        //długość do (0,0) +
         virtual double abs() const = 0;
 };
 
@@ -109,7 +107,6 @@ class SegmentShape : public Shape{
         virtual void setToY (double newY) = 0;
 
 
-        //dlugosc odcinka +
         virtual double abs() const = 0;
 };
 
@@ -130,7 +127,6 @@ class LineShape : public Shape{
         virtual void setNormalY (double y) = 0;
         virtual void setC (double _c) = 0;
 
-        //void goThroughPoints (const Point& p, const Point& q) {
         virtual void goThroughPoints (const double px, const double py, const double qx, const double qy) = 0;
 
 };

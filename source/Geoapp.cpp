@@ -5,19 +5,14 @@ constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
 Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
-    //height=300.0;
-    //width=300.0;
-    //uiwidth=200.0;
     uiBarrier = 0.6;
     sf::ContextSettings settings;
     settings.antialiasingLevel = antialias;
     window.create(sf::VideoMode(500, 300), "Geo", sf::Style::Default, settings);
     scalingFactor=1.0;
     centerX = centerY = 0;
-    //currentConditions.reset();
     resetUiOptionConditions (currentConditions);
     uiPages[uiMapId(currentConditions)];
-    //currentConditions.segmentCount = 1;
     resetConstructionElements (hulledElements);
 
 
@@ -38,158 +33,6 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     makeOption<bisectorThreePoints> ("resources/bisectorThreePoints.png", uiPointObject (3));
 
 
-    /*
-    uiOptionConditions cond;
-
-    //segment mid point
-    uiObject segMidObject;
-    segMidObject.creator = makeConstruction<segmentMiddle>;
-    segMidObject.image.loadFromFile ("resources/segmentMid.png");
-    segMidObject.image.setSmooth(true);
-
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.segmentCount = 1;
-    registerUiOption (segMidObject, cond);
-
-    //points mid point
-    uiObject pointMidObject;
-    pointMidObject.creator = makeConstruction<pointsMiddle>;
-    pointMidObject.image.loadFromFile ("resources/pointsMid.png");
-    pointMidObject.image.setSmooth(true);
-
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 2;
-    registerUiOption (pointMidObject, cond);
-
-    //parallel line
-    uiObject parallelLineObject;
-    parallelLineObject.creator = makeConstruction<parallelLine>;
-    parallelLineObject.image.loadFromFile ("resources/parallelLine.png");
-    parallelLineObject.image.setSmooth(true);
-
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 1;
-    cond.lineCount = 1;
-    registerUiOption (parallelLineObject, cond);
-
-    //orthogonal line
-    uiObject orthogonalLineObject;
-    orthogonalLineObject.creator = makeConstruction<orthogonalLine>;
-    orthogonalLineObject.image.loadFromFile ("resources/orthogonalLine.png");
-    orthogonalLineObject.image.setSmooth (true);
-
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 1;
-    cond.lineCount = 1;
-    registerUiOption (orthogonalLineObject, cond);
-
-    uiObject lineThroughPointsObject;
-    lineThroughPointsObject.creator = makeConstruction<lineThroughPoints>;
-    lineThroughPointsObject.image.loadFromFile("resources/lineThroughPoints.png");
-    lineThroughPointsObject.image.setSmooth(true);
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 2;
-    registerUiOption (lineThroughPointsObject, cond);
-
-    uiObject circleWithCenterObject;
-    circleWithCenterObject.creator = makeConstruction<circleWithCenter>;
-    circleWithCenterObject.image.loadFromFile("resources/circleWithCenter.png");
-    lineThroughPointsObject.image.setSmooth(true);
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 2;
-    registerUiOption (circleWithCenterObject, cond);
-    //makeOption<circleWithCenter> ("resources/circleWithCenter.png", uiPointObject (2));
-
-    uiObject segmentFromPointsObject;
-    segmentFromPointsObject.creator = makeConstruction<segmentFromPoints>;
-    segmentFromPointsObject.image.loadFromFile("resources/segmentFromPoints.png");
-    segmentFromPointsObject.image.setSmooth(true);
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 2;
-    registerUiOption (segmentFromPointsObject, cond);
-
-    uiObject centerOfMassObject;
-    centerOfMassObject.creator = makeConstruction<centerOfMass>;
-    centerOfMassObject.image.loadFromFile("resources/centerOfMass.png");
-    centerOfMassObject.image.setSmooth(true);
-    //cond.reset();
-    resetUiOptionConditions (cond);
-    cond.pointCount = 3;
-    registerUiOption (centerOfMassObject, cond);
-
-    uiObject circleThreePointsObject;
-    circleThreePointsObject.creator = makeConstruction<circleThreePoints>;
-    circleThreePointsObject.image.loadFromFile("resources/circleThreePoints.png");
-    circleThreePointsObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.pointCount = 3;
-    registerUiOption (circleThreePointsObject, cond);
-
-    uiObject powerLineObject;
-    powerLineObject.creator = makeConstruction<powerLine>;
-    powerLineObject.image.loadFromFile("resources/powerLine.png");
-    powerLineObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.circleCount = 2;
-    registerUiOption (powerLineObject, cond);
-
-    uiObject symmetricalOfPointsObject;
-    symmetricalOfPointsObject.creator = makeConstruction<symmetricalOfPoints>;
-    symmetricalOfPointsObject.image.loadFromFile("resources/symmetricalOfPoints.png");
-    symmetricalOfPointsObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.pointCount = 2;
-    registerUiOption (symmetricalOfPointsObject, cond);
-
-    uiObject symmetricalOfSegmentObject;
-    symmetricalOfSegmentObject.creator = makeConstruction<symmetricalOfSegment>;
-    symmetricalOfSegmentObject.image.loadFromFile("resources/symmetricalOfSegment.png");
-    symmetricalOfSegmentObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.segmentCount = 1;
-    registerUiOption (symmetricalOfSegmentObject, cond);
-
-    uiObject tangentCirclePointObject;
-    tangentCirclePointObject.creator = makeConstruction<tangentCirclePoint>;
-    tangentCirclePointObject.image.loadFromFile("resources/segmentMid.png");
-    tangentCirclePointObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.circleCount = 1;
-    cond.pointCount = 1;
-    registerUiOption (tangentCirclePointObject, cond);
-
-    uiObject lineCircleIntersectionObject;
-    lineCircleIntersectionObject.creator = makeConstruction<lineCircleIntersection>;
-    lineCircleIntersectionObject.image.loadFromFile("resources/lineCircleIntersection.png");
-    lineCircleIntersectionObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.circleCount = 1;
-    cond.lineCount = 1;
-    registerUiOption (lineCircleIntersectionObject, cond);
-
-    uiObject circlesIntersectionObject;
-    circlesIntersectionObject.creator = makeConstruction<circlesIntersection>;
-    circlesIntersectionObject.image.loadFromFile("resources/circleCircleIntersection.png");
-    circlesIntersectionObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.circleCount = 2;
-    registerUiOption (circlesIntersectionObject, cond);
-
-    uiObject bisectorThreePointsObject;
-    bisectorThreePointsObject.creator = makeConstruction<bisectorThreePoints>;
-    bisectorThreePointsObject.image.loadFromFile("resources/bisectorThreePoints.png");
-    bisectorThreePointsObject.image.setSmooth(true);
-    resetUiOptionConditions (cond);
-    cond.pointCount = 3;
-    registerUiOption (bisectorThreePointsObject, cond);
-    */
 
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0));
@@ -280,13 +123,10 @@ void Geoapp::moveCamera (double x, double y) {
     centerY += y;
 }
 void Geoapp::setCamera (const Point& p) {
-    //centerX = p.getX();
-    //centerY = p.getY();
     centerX = p.x;
     centerY = p.y;
 }
 const Point Geoapp::getCamera () {
-    //return Point (centerX, centerY);
     Point camera;
     camera.x = centerX;
     camera.y = centerY;
@@ -334,7 +174,6 @@ void Geoapp::events(sf::Event event){
             if (event.type == sf::Event::Closed){
                 window.close();
             } else if (event.type == sf::Event::MouseButtonPressed){
-                //double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
                 Point mysz;
                 mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
                 if(mysz.x>uiBarrier*window.getSize().x){
@@ -422,7 +261,6 @@ void Geoapp::drawObjects() const{
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
     for(unsigned int i=0;i<shapes.size();i++){
-        //if (shapes[i]->exists)
         if (shapes[i]->getExistance())
             shapes[i]->draw(&window, visible, box);
     }
@@ -441,45 +279,33 @@ void Geoapp::UIhandling(const Point& mysz){
     if (clickedOption >= currentPage.size()) {
         return;
     }
-    //Construction* constructionMade = currentPage[clickedOption].creator (hulledShapes, shapes);
     Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
     constructions.emplace_back (constructionMade);
 
     if (hulledShapes.size() > 0) {
-        //hulledShapes.back()->isCurrent = false;
         hulledShapes.back()->setCurrent (false);
     }
     for (auto i : hulledShapes) {
-        //i->isActive = false;
         i->setActivity (false);
     }
     hulledShapes.clear();
     resetUIPosition();
-    //currentConditions.reset();
     resetUiOptionConditions (currentConditions);
     resetConstructionElements (hulledElements);
 }
 
 void Geoapp::whenClick(double x, double y){
-    //Point clickPosition (centerX+x-float(window.getSize().x*uiBarrier)/2,centerY+y-float(window.getSize().y)/2);
     Point clickPosition;
     clickPosition.x = centerX+x-float(window.getSize().x*uiBarrier)/2;
     clickPosition.y = centerY+y-float(window.getSize().y)/2;
     if(currentMode == mode::pointCreation){
-        //Shape *S = new Point (clickPosition);;
-        //std::unique_ptr<Shape> S = std::make_unique<PointShape>(clickPosition.x, clickPosition.y);
         std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
         shapes.push_back(std::move(S));
     } else if(currentMode == mode::selection){
-        //int a=FTCO(clickPosition);
         Shape *hitShape = findObjectHit (clickPosition);
-        //std::cout<<a;
         if(hitShape){
             int selectCount;
-            //if (hitShape->isActive) {
             if (hitShape->getActivity()) {
-                //hitShape->isActive = false;
-                //hitShape->isCurrent = false;
                 hitShape->setActivity (false);
                 hitShape->setCurrent (false);
 
@@ -489,19 +315,15 @@ void Geoapp::whenClick(double x, double y){
 
 
                 if (hulledShapes.size() > 0) {
-                    //hulledShapes.back()->isCurrent = true;
                     hulledShapes.back()->setCurrent (true);
                 }
                 selectCount = -1;
             } else {
-                //hitShape->isActive = true;
                 hitShape->setActivity (true);
                 if (hulledShapes.size() > 0)
-                    //hulledShapes.back()->isCurrent = false;
                     hulledShapes.back()->setCurrent (false);
 
                 hulledShapes.push_back(hitShape);
-                //hulledShapes.back()->isCurrent = true;
                 hulledShapes.back()->setCurrent (true);
 
                 hitShape->addToConstructionElements (hulledElements);
@@ -511,12 +333,6 @@ void Geoapp::whenClick(double x, double y){
             resetUIPosition();
         }
         uiPages[uiMapId(currentConditions)];
-        /*Shape &s=shapes[a];
-        if(findInObjects(&s)>-1){
-            hulledShapes.erase(findInObjects(s));
-        } else{
-            hulledShapes.push_back(&s);
-        }*/
     }
 
 }

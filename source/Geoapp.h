@@ -4,11 +4,9 @@
 #include<unordered_map>
 #include<memory>
 #include "Construction.h"
-//#include<SFML/Graphics.hpp>
 
 class inputSfmlWrapper {
     private:
-        //typedef std::unordered_map<sf::Keyboard::Key, inputManager::Key> maptype; //CHANGED
         typedef std::unordered_map<uint32_t, inputManager::keyType> maptype;
         maptype mp;
         inputManager& manager;
@@ -139,10 +137,6 @@ class Geoapp{
         };
         std::unordered_map<uint32_t, std::vector<uiObject> > uiPages;
 
-//        struct uiOptionConditions {
-//            uint8_t lineCount, pointCount, circleCount, segmentCount;
-//            void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
-//        };
         uint32_t uiMapId (const uiOptionConditions& conditions) const;
 
         inputManager inManager;
@@ -236,10 +230,6 @@ class Geoapp{
             obj.pushToConditions(op);
             setUpCondition (op, rest...);
         }
-        //void setUpCondition (uiOptionConditions& op, const uiOptionObject& obj) {
-        //    obj.pushToConditions(op);
-        //    setUpCondition (op);
-        //}
         void setUpCondition (uiOptionConditions& op) {}
 
         template <typename U, typename... T>
@@ -274,12 +264,9 @@ class Geoapp{
         void moveHulledPoints (double x, double y);
         enum mode {pointCreation = 1, selection = 2};
 
-        //void pushToConstructions(Construction);
         std::unique_ptr<int> testPtr;
         Geoapp();
         ~Geoapp () {
-            //for (auto i : shapes) { delete i; }
-            //for (auto i : constructions) { delete i; }
         }
 
     private:

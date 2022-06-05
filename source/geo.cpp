@@ -29,7 +29,6 @@ double length(const Point &p) {
   return sqrt(p.x * p.x + p.y * p.y);
 }
 
-//Point::Point (double _x, double _y) :x(_x), y(_y) {}
 
 const Point operator+(const Point &p1, const Point &p2) {
   Point sum;

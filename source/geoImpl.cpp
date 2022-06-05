@@ -148,19 +148,14 @@ void LineShapeImpl::goThroughPoints (const Point& p, const Point& q) {
     if(p==q){
         throw std::invalid_argument("Points lay to close to each other");
     } else {
-        //if(p.x == 0 && p.y == 0){
         if(p.x < 1 && p.x > -1 && p.y < 1 && p.y > -1){
             c=0;
-            //n=Point(q.getY(), -q.getX());
             n.x = q.y; n.y = -q.x;
-        //} else if(q.x == 0 && q.y == 0){
         } else if(q.x < 1 && q.x > -1 && q.y < 1 && q.y > -1){
             c=0;
-            //n=Point(p.getY(), -p.getX());
             n.x = p.y; n.y = -p.x;
         } else {
             c=-1;
-            //n=Point((q.getY()-p.getY())/(p%q), (-q.getX()+p.getX())/(p%q));
             n.x = (q.y-p.y)/(p%q);
             n.y = (-q.x+p.x)/(p%q);
 
@@ -259,8 +254,6 @@ void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& vi
 }
 PointShapeImpl::PointShapeImpl(const LineShape& l,const LineShape& m){
 
-	 //if((m.c==0)&&(l.c==0)){
-    //if (m.getC()==0 && l.getC() == 0) {
     if (m.getC() < 1 && m.getC() > -1 && l.getC() < 1 && l.getC() > -1) {
         coordinates.x=0;
         coordinates.y=0;
@@ -282,19 +275,10 @@ SegmentShapeImpl::SegmentShapeImpl(const Point& A, const Point& B){
     p1=B;
 }
 void SegmentShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    //float alpha = (x-visible.left)/visible.width;
-    //float beta = (y-visible.top)/visible.height;
-    //sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    //v.x -= radiusOfDrawing;
-    //v.y -= radiusOfDrawing;
-    //float tp1x = box.left + (p1.getX()-visible.left)/visible.width*box.width;
     float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
-    //float tp2x = box.left + (p2.getX()-visible.left)/visible.width*box.width;
     float tp2x = box.left + (p2.x-visible.left)/visible.width*box.width;
 
-    //float tp1y = box.top + (p1.getY()-visible.top)/visible.height*box.height;
     float tp1y = box.top + (p1.y-visible.top)/visible.height*box.height;
-    //float tp2y = box.top + (p2.getY()-visible.top)/visible.height*box.height;
     float tp2y = box.top + (p2.y-visible.top)/visible.height*box.height;
     sf::Vertex line[] =
     {
@@ -321,19 +305,15 @@ double SegmentShapeImpl::abs() const {
 }
 //----------------------------------------------------
 LineShapeImpl::LineShapeImpl(double a1, double b1, double c1){
-    //if((a1==0)&&(b1==0))
     if(a1 < 1 && a1 > -1 && b1 < 1 && b1 > -1)
         throw std::invalid_argument("First two arguments can not be zero at the same time");
-    //n.setX (a1); n.setY (b1);
     n.x = a1; n.y = b1;
-    //Point n(a1, b1);
     c=c1;
 }
 LineShapeImpl::LineShapeImpl(const Point& p,const Point& q){
     goThroughPoints (p,q);
 }
 LineShapeImpl::LineShapeImpl(const SegmentShape& s){
-    //*this=Line(s.p1,s.p2);
     Point p1, p2;
     p1.x = s.getFromX(); p1.y = s.getFromY();
     p2.x = s.getToX(); p2.y = s.getToY();
@@ -366,7 +346,6 @@ void LineShapeImpl::draw(sf::RenderWindow *window, const sf::FloatRect& visible,
         to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
     }
     sf::Vertex line[] = { from, to };
-    //sf::Color lineColor = getShapeColor (isActive, isCurrent, isDependent);
     sf::Color lineColor;
     if (isCurrent) {
         lineColor = sf::Color::Green;
@@ -402,7 +381,6 @@ void CircleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visibl
     v.x -= r;
     v.y -= r;
     shape.setPosition(v);
-    //shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
     shape.setOutlineColor(sf::Color(0,0,0,255));
     shape.setOutlineThickness(1);
     shape.setFillColor(sf::Color(255,255,255,0));
@@ -417,7 +395,6 @@ void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& v
     v.x -= r-2;
     v.y -= r-2;
     shape.setPosition(v);
-    //shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
     shape.setOutlineColor(sf::Color(0,0,0,128));
     shape.setOutlineThickness(5);
     shape.setFillColor(sf::Color(255,255,255,0));
