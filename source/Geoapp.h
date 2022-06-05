@@ -94,7 +94,7 @@ class Geoapp{
             public:
                 explicit uiCircleObject (unsigned int _count) :count(_count) {}
                 void pushToConditions (uiOptionConditions& op) const {
-                    op.segmentCount += count;
+                    op.circleCount += count;
                 }
         };
 

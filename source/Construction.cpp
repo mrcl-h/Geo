@@ -64,7 +64,7 @@ void circleThreePoints::adjust () {
 
     double aLen = length(a);
     double bLen = length(b);
-    circle->setR (aLen*bLen*length(a-b)/2/(a%b));
+    circle->setR (std::abs(aLen*bLen*length(a-b)/2/(a%b)));
     Point mid = b*(aLen*aLen)/(a%b)/2-a*(bLen*bLen/(a%b))/2;
     circle->setMiddleX (mid.y+pointC->getX());
     circle->setMiddleY (-mid.x+pointC->getY());
@@ -112,7 +112,7 @@ void tangentCirclePoint::adjust() {
 }
 
 void lineCircleIntersection::adjust() {
-    LineShape *l = makeLineShape(line->getNormalX(), line->getNormalY(), circle->getMiddleX() * line->getNormalX() + circle->getMiddleY() * line->getNormalY() +  line->getC());
+    std::unique_ptr<LineShape> l (makeLineShape(line->getNormalX(), line->getNormalY(), circle->getMiddleX() * line->getNormalX() + circle->getMiddleY() * line->getNormalY() +  line->getC()));
     double sqrtdelta = l->getNormalX() * sqrt( circle->getR() * circle->getR() * ( l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY() ) - l->getC() * l->getC());
     double y = (-l->getNormalY() * l->getC() + sqrtdelta) / (l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
     double x = - ( l->getC() + l->getNormalY() * y)/l->getNormalX();
@@ -127,7 +127,7 @@ void lineCircleIntersection::adjust() {
 }
 
 void circlesIntersection::adjust() {
-    LineShape * l = makeLineShape(1,0,1); 
+    std::unique_ptr<LineShape> l (makeLineShape(1,0,1));
     Point c1Mid, c2Mid;
     c1Mid.x = circle1->getMiddleX();
     c1Mid.y = circle1->getMiddleY();

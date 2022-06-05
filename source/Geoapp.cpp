@@ -31,7 +31,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     makeOption<lineCircleIntersection> ("resources/lineCircleIntersection.png", uiLineObject(1), uiCircleObject(1));
     makeOption<circlesIntersection> ("resources/circleCircleIntersection.png", uiCircleObject (2));
     makeOption<bisectorThreePoints> ("resources/bisectorThreePoints.png", uiPointObject (3));
-
+    makeOption<tangentCirclePoint> ("resources/tangentsThroughPoint.png", uiPointObject(1), uiCircleObject(1));
 
 
     junctionInputState *mainState = new junctionInputState (&inManager);
