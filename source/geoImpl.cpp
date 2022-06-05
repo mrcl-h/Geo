@@ -3,32 +3,32 @@
 #include <algorithm>
 
 void PointShapeImpl::setExistance (bool ex) {exists = ex;}
-const bool PointShapeImpl::getExistance () const {return exists;}
+bool PointShapeImpl::getExistance () const {return exists;}
 void PointShapeImpl::setActivity (bool ac) {isActive = ac;}
-const bool PointShapeImpl::getActivity () const {return isActive;}
+bool PointShapeImpl::getActivity () const {return isActive;}
 void PointShapeImpl::setCurrent (bool cu) {isCurrent = cu;}
-const bool PointShapeImpl::getCurrent () const {return isCurrent;}
+bool PointShapeImpl::getCurrent () const {return isCurrent;}
 void PointShapeImpl::setDependent (bool de) {isDependent = de;}
-const bool PointShapeImpl::getDependent () const {return isDependent;}
-const double PointShapeImpl::getX () const {return coordinates.x;}
-const double PointShapeImpl::getY () const {return coordinates.y;}
+bool PointShapeImpl::getDependent () const {return isDependent;}
+double PointShapeImpl::getX () const {return coordinates.x;}
+double PointShapeImpl::getY () const {return coordinates.y;}
 
 void PointShapeImpl::setX (double newX) {coordinates.x = newX;}
 void PointShapeImpl::setY (double newY) {coordinates.y = newY;}
 
 void SegmentShapeImpl::setExistance (bool ex) {exists = ex;}
-const bool SegmentShapeImpl::getExistance () const {return exists;}
+bool SegmentShapeImpl::getExistance () const {return exists;}
 void SegmentShapeImpl::setActivity (bool ac) {isActive = ac;}
-const bool SegmentShapeImpl::getActivity () const {return isActive;}
+bool SegmentShapeImpl::getActivity () const {return isActive;}
 void SegmentShapeImpl::setCurrent (bool cu) {isCurrent = cu;}
-const bool SegmentShapeImpl::getCurrent () const {return isCurrent;}
+bool SegmentShapeImpl::getCurrent () const {return isCurrent;}
 void SegmentShapeImpl::setDependent (bool de) {isDependent = de;}
-const bool SegmentShapeImpl::getDependent () const {return isDependent;}
+bool SegmentShapeImpl::getDependent () const {return isDependent;}
 
-const double SegmentShapeImpl::getFromX () const {return p1.x;}
-const double SegmentShapeImpl::getToX () const {return p2.x;}
-const double SegmentShapeImpl::getFromY () const {return p1.y;}
-const double SegmentShapeImpl::getToY () const {return p2.y;}
+double SegmentShapeImpl::getFromX () const {return p1.x;}
+double SegmentShapeImpl::getToX () const {return p2.x;}
+double SegmentShapeImpl::getFromY () const {return p1.y;}
+double SegmentShapeImpl::getToY () const {return p2.y;}
 
 void SegmentShapeImpl::setFromX (double newX) {p1.x = newX;}
 void SegmentShapeImpl::setToX (double newX) {p2.x = newX;}
@@ -36,34 +36,34 @@ void SegmentShapeImpl::setFromY (double newY) {p1.y = newY;}
 void SegmentShapeImpl::setToY (double newY) {p2.y = newY;}
 
 void LineShapeImpl::setExistance (bool ex) {exists = ex;}
-const bool LineShapeImpl::getExistance () const {return exists;}
+bool LineShapeImpl::getExistance () const {return exists;}
 void LineShapeImpl::setActivity (bool ac) {isActive = ac;}
-const bool LineShapeImpl::getActivity () const {return isActive;}
+bool LineShapeImpl::getActivity () const {return isActive;}
 void LineShapeImpl::setCurrent (bool cu) {isCurrent = cu;}
-const bool LineShapeImpl::getCurrent () const {return isCurrent;}
+bool LineShapeImpl::getCurrent () const {return isCurrent;}
 void LineShapeImpl::setDependent (bool de) {isDependent = de;}
-const bool LineShapeImpl::getDependent () const {return isDependent;}
+bool LineShapeImpl::getDependent () const {return isDependent;}
 
-const double LineShapeImpl::getNormalX () const {return n.x;}
-const double LineShapeImpl::getNormalY () const {return n.y;}
-const double LineShapeImpl::getC () const {return c;}
+double LineShapeImpl::getNormalX () const {return n.x;}
+double LineShapeImpl::getNormalY () const {return n.y;}
+double LineShapeImpl::getC () const {return c;}
 
 void LineShapeImpl::setNormalX (double x) {n.x = x;}
 void LineShapeImpl::setNormalY (double y) {n.y = y;}
 void LineShapeImpl::setC (double _c) {c = _c;}
 
 void CircleShapeImpl::setExistance (bool ex) {exists = ex;}
-const bool CircleShapeImpl::getExistance () const {return exists;}
+bool CircleShapeImpl::getExistance () const {return exists;}
 void CircleShapeImpl::setActivity (bool ac) {isActive = ac;}
-const bool CircleShapeImpl::getActivity () const {return isActive;}
+bool CircleShapeImpl::getActivity () const {return isActive;}
 void CircleShapeImpl::setCurrent (bool cu) {isCurrent = cu;}
-const bool CircleShapeImpl::getCurrent () const {return isCurrent;}
+bool CircleShapeImpl::getCurrent () const {return isCurrent;}
 void CircleShapeImpl::setDependent (bool de) {isDependent = de;}
-const bool CircleShapeImpl::getDependent () const {return isDependent;}
+bool CircleShapeImpl::getDependent () const {return isDependent;}
 
-const double CircleShapeImpl::getMiddleX () const {return middle.x;}
-const double CircleShapeImpl::getMiddleY () const {return middle.y;}
-const double CircleShapeImpl::getR () const {return r;}
+double CircleShapeImpl::getMiddleX () const {return middle.x;}
+double CircleShapeImpl::getMiddleY () const {return middle.y;}
+double CircleShapeImpl::getR () const {return r;}
 
 void CircleShapeImpl::setMiddleX (double x) {middle.x = x;}
 void CircleShapeImpl::setMiddleY (double y) {middle.y = y;}
@@ -106,7 +106,7 @@ CircleShape* makeCircleShape (const Point& a, const Point& b, const Point& c) {
 }
 
 
-const double PointShapeImpl::abs() const {
+double PointShapeImpl::abs() const {
     return std::sqrt (coordinates.x*coordinates.x+coordinates.y*coordinates.y);
 }
 void PointShapeImpl::addToConstructionElements (constructionElements& el) {
@@ -148,11 +148,13 @@ void LineShapeImpl::goThroughPoints (const Point& p, const Point& q) {
     if(p==q){
         throw std::invalid_argument("Points lay to close to each other");
     } else {
-        if(p.x == 0 && p.y == 0){
+        //if(p.x == 0 && p.y == 0){
+        if(p.x < 1 && p.x > -1 && p.y < 1 && p.y > -1){
             c=0;
             //n=Point(q.getY(), -q.getX());
             n.x = q.y; n.y = -q.x;
-        } else if(q.x == 0 && q.y == 0){
+        //} else if(q.x == 0 && q.y == 0){
+        } else if(q.x < 1 && q.x > -1 && q.y < 1 && q.y > -1){
             c=0;
             //n=Point(p.getY(), -p.getX());
             n.x = p.y; n.y = -p.x;
@@ -179,8 +181,8 @@ void LineShapeImpl::addToConstructionElements (constructionElements& el) {
 void LineShapeImpl::removeFromConstructionElements (constructionElements& el) {
     el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
 }
-void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
-    op.lineCount += c;
+void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int m) {
+    op.lineCount += m;
 }
 bool LineShapeImpl::isHit (const Point& p) {
     return distFromPoint(p) < hitEpsilon;
@@ -206,7 +208,7 @@ PointShapeImpl::PointShapeImpl(double x1, double y2){
 	coordinates.x=x1;
 	coordinates.y=y2;
 }
-const double PointShapeImpl::distFromPoint(const Point& v) const {
+double PointShapeImpl::distFromPoint(const Point& v) const {
     Point temp=coordinates-v;
     return length(temp); 
 }
@@ -258,7 +260,8 @@ void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& vi
 PointShapeImpl::PointShapeImpl(const LineShape& l,const LineShape& m){
 
 	 //if((m.c==0)&&(l.c==0)){
-    if (m.getC()==0 && l.getC() == 0) {
+    //if (m.getC()==0 && l.getC() == 0) {
+    if (m.getC() < 1 && m.getC() > -1 && l.getC() < 1 && l.getC() > -1) {
         coordinates.x=0;
         coordinates.y=0;
     } else {
@@ -302,7 +305,7 @@ void SegmentShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visib
     line[1].color=sf::Color(0,0,0);
     window->draw(line, 2, sf::Lines);
 }
-const double SegmentShapeImpl::distFromPoint(const Point& v) const{
+double SegmentShapeImpl::distFromPoint(const Point& v) const{
     Point D=p2-p1;
 
     if((v-p1)*D<0){
@@ -313,12 +316,13 @@ const double SegmentShapeImpl::distFromPoint(const Point& v) const{
     }
     return std::abs(((v-p2)%D)/(dist(p1,p2)));
 }
-const double SegmentShapeImpl::abs() const {
+double SegmentShapeImpl::abs() const {
     return dist (p1, p2);
 }
 //----------------------------------------------------
 LineShapeImpl::LineShapeImpl(double a1, double b1, double c1){
-    if((a1==0)&&(b1==0))
+    //if((a1==0)&&(b1==0))
+    if(a1 < 1 && a1 > -1 && b1 < 1 && b1 > -1)
         throw std::invalid_argument("First two arguments can not be zero at the same time");
     //n.setX (a1); n.setY (b1);
     n.x = a1; n.y = b1;
@@ -336,7 +340,7 @@ LineShapeImpl::LineShapeImpl(const SegmentShape& s){
     goThroughPoints (p1, p2);
 }
 
-const double LineShapeImpl::distFromPoint(const Point& v) const{
+double LineShapeImpl::distFromPoint(const Point& v) const{
     return doubleAbs((n*v+c)/length(n));
 }
 void LineShapeImpl::draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
@@ -387,7 +391,7 @@ LineShapeImpl::LineShapeImpl(const CircleShape& o1, const CircleShape& o2){
 
 //--------------------------------
 
-const double CircleShapeImpl::distFromPoint(const Point& v) const {
+double CircleShapeImpl::distFromPoint(const Point& v) const {
     return std::abs(dist (middle,v)-r);
 }
 void CircleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{

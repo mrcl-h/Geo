@@ -13,15 +13,15 @@ class PointShapeImpl : public PointShape {
         virtual ~PointShapeImpl () {}
 
         virtual void setExistance (bool ex) override;
-        const virtual bool getExistance () const override;
+        virtual bool getExistance () const override;
         virtual void setActivity (bool ac) override;
-        const virtual bool getActivity () const override;
+        virtual bool getActivity () const override;
         virtual void setCurrent (bool cu) override;
-        const virtual bool getCurrent () const override;
+        virtual bool getCurrent () const override;
         virtual void setDependent (bool de) override;
-        const virtual bool getDependent () const override;
-        virtual const double getX () const override;
-        virtual const double getY () const override;
+        virtual bool getDependent () const override;
+        virtual double getX () const override;
+        virtual double getY () const override;
 
         virtual void setX (double newX) override;
         virtual void setY (double newY) override;
@@ -31,12 +31,12 @@ class PointShapeImpl : public PointShape {
 
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
-        virtual const double distFromPoint(const Point&) const override;
+        virtual double distFromPoint(const Point&) const override;
 
         PointShapeImpl(double=0, double=0);
 
         //długość do (0,0) +
-        virtual const double abs() const override;
+        virtual double abs() const override;
 
         virtual void addToConstructionElements (constructionElements& el) override;
         virtual void removeFromConstructionElements (constructionElements& el) override;
@@ -62,18 +62,18 @@ class SegmentShapeImpl : public SegmentShape{
         virtual ~SegmentShapeImpl () {}
 
         virtual void setExistance (bool ex) override;
-        const virtual bool getExistance () const override;
+        virtual bool getExistance () const override;
         virtual void setActivity (bool ac) override;
-        const virtual bool getActivity () const override;
+        virtual bool getActivity () const override;
         virtual void setCurrent (bool cu) override;
-        const virtual bool getCurrent () const override;
+        virtual bool getCurrent () const override;
         virtual void setDependent (bool de) override;
-        const virtual bool getDependent () const override;
+        virtual bool getDependent () const override;
 
-        virtual const double getFromX () const override;
-        virtual const double getToX () const override;
-        virtual const double getFromY () const override;
-        virtual const double getToY () const override;
+        virtual double getFromX () const override;
+        virtual double getToX () const override;
+        virtual double getFromY () const override;
+        virtual double getToY () const override;
 
         virtual void setFromX (double newX) override;
         virtual void setToX (double newX) override;
@@ -83,13 +83,13 @@ class SegmentShapeImpl : public SegmentShape{
         SegmentShapeImpl(const Point&, const Point&);
         SegmentShapeImpl () {}
 
-        virtual const double distFromPoint(const Point&) const override;
+        virtual double distFromPoint(const Point&) const override;
 
         //virtual void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
         //dlugosc odcinka +
-        virtual const double abs() const override;
+        virtual double abs() const override;
         virtual void addToConstructionElements (constructionElements& el) override;
         virtual void removeFromConstructionElements (constructionElements& el) override;
         virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
@@ -110,17 +110,17 @@ class LineShapeImpl : public LineShape{
     public:
         virtual ~LineShapeImpl () {}
         virtual void setExistance (bool ex) override;
-        const virtual bool getExistance () const override;
+        virtual bool getExistance () const override;
         virtual void setActivity (bool ac) override;
-        const virtual bool getActivity () const override;
+        virtual bool getActivity () const override;
         virtual void setCurrent (bool cu) override;
-        const virtual bool getCurrent () const override;
+        virtual bool getCurrent () const override;
         virtual void setDependent (bool de) override;
-        const virtual bool getDependent () const override;
+        virtual bool getDependent () const override;
 
-        virtual const double getNormalX () const override;
-        virtual const double getNormalY () const override;
-        virtual const double getC () const override;
+        virtual double getNormalX () const override;
+        virtual double getNormalY () const override;
+        virtual double getC () const override;
 
         virtual void setNormalX (double x) override;
         virtual void setNormalY (double y) override;
@@ -130,7 +130,7 @@ class LineShapeImpl : public LineShape{
         LineShapeImpl(const Point&,const Point&); //line through two points
         LineShapeImpl(const SegmentShape&);
 
-        const double distFromPoint(const Point&) const override;
+        double distFromPoint(const Point&) const override;
         //void draw(sf::RenderWindow*, sf::FloatRect visible, sf::FloatRect box) const override;
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
@@ -158,23 +158,23 @@ class CircleShapeImpl : public CircleShape {
         virtual ~CircleShapeImpl () {}
         
         virtual void setExistance (bool ex) override;
-        const virtual bool getExistance () const override;
+        virtual bool getExistance () const override;
         virtual void setActivity (bool ac) override;
-        const virtual bool getActivity () const override;
+        virtual bool getActivity () const override;
         virtual void setCurrent (bool cu) override;
-        const virtual bool getCurrent () const override;
+        virtual bool getCurrent () const override;
         virtual void setDependent (bool de) override;
-        const virtual bool getDependent () const override;
+        virtual bool getDependent () const override;
 
-        virtual const double getMiddleX () const override;
-        virtual const double getMiddleY () const override;
-        virtual const double getR () const override;
+        virtual double getMiddleX () const override;
+        virtual double getMiddleY () const override;
+        virtual double getR () const override;
 
         virtual void setMiddleX (double x) override;
         virtual void setMiddleY (double y) override;
         virtual void setR (double _r) override;
 
-        virtual const double distFromPoint(const Point&) const override;
+        virtual double distFromPoint(const Point&) const override;
         virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
         CircleShapeImpl(const Point&, const Point&, const Point&);
@@ -187,3 +187,5 @@ class CircleShapeImpl : public CircleShape {
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
 };
+
+sf::Color getShapeColor (bool active, bool current, bool dependent);

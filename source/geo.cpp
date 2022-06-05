@@ -15,17 +15,17 @@ void resetUiOptionConditions (uiOptionConditions& op) {
 }
 
 //----------------------------------------
-const double dist(const Point &p1, const Point &p2) {
+double dist(const Point &p1, const Point &p2) {
   double diffX = p1.x - p2.x;
   double diffY = p1.y - p2.y;
   return sqrt(diffX * diffX + diffY * diffY);
 }
-const double dist (double x1, double y1, double x2, double y2) {
+double dist (double x1, double y1, double x2, double y2) {
   double diffX = x1 - x2;
   double diffY = y1 - y2;
   return sqrt(diffX * diffX + diffY * diffY);
 }
-const double length(const Point &p) {
+double length(const Point &p) {
   return sqrt(p.x * p.x + p.y * p.y);
 }
 
@@ -61,13 +61,12 @@ const Point operator/(const Point &p, double a) {
   quotient.y /= a;
   return quotient;
 }
-const double operator*(const Point &p1, const Point &p2) {
+double operator*(const Point &p1, const Point &p2) {
   return p1.x * p2.x + p1.y * p2.y;
 }
-const double operator%(const Point &p1, const Point &p2) {
+double operator%(const Point &p1, const Point &p2) {
   return p1.x * p2.y - p1.y * p2.x;
 }
-const bool operator==(const Point &p1, const Point &p2) {
+bool operator==(const Point &p1, const Point &p2) {
   return dist(p1, p2) < 0.01;
 }
-const double abs(const Point &p) { return sqrt(p.x * p.x + p.y * p.y); }

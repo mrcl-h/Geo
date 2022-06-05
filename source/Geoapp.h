@@ -143,16 +143,7 @@ class Geoapp{
 //            uint8_t lineCount, pointCount, circleCount, segmentCount;
 //            void reset () {lineCount = pointCount = circleCount = segmentCount = 0;}
 //        };
-        const uint32_t uiMapId (uiOptionConditions conditions) const {
-            uint32_t mapId = conditions.segmentCount;
-            mapId <<= 8;
-            mapId += conditions.circleCount;
-            mapId <<= 8;
-            mapId += conditions.pointCount;
-            mapId <<= 8;
-            mapId += conditions.lineCount;
-            return mapId;
-        }
+        uint32_t uiMapId (const uiOptionConditions& conditions) const;
 
         inputManager inManager;
         inputSfmlWrapper inWrapper;
@@ -178,6 +169,8 @@ class Geoapp{
         double uiBarrier;
         double scalingFactor=1;
 
+        float uiTop = 0;
+
         mutable sf::RenderWindow window;
 
         void loop();
@@ -189,67 +182,30 @@ class Geoapp{
         void whenClick(double,double);
         void changeMode(sf::Event);
 
-        Shape* findObjectHit (const Point& p) const {
-            Shape *shapeHit = NULL;
-            for (auto& i : shapes) {
-                if (i->isHit (p)) {
-                    if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
-                        shapeHit = i.get();
-                    }
-                }
-            }
-            return shapeHit;
-        }
+        float findUIScrollMin () const;
 
-        void registerUiOption (uiObject obj, uiOptionConditions conditions) {
-            uint32_t mapId = uiMapId (conditions);
-            uiPages[mapId].push_back(obj);
-        }
+        Shape* findObjectHit (const Point& p) const;
+
+        void registerUiOption (uiObject obj, uiOptionConditions conditions);
 
     public:
         template<typename T>
             void pushToShapes(T);
 
-        const Point * const getMark (char c) const {
-            decltype(markMap)::const_iterator it = markMap.find (c);
-            if (it == markMap.end()) { return NULL; }
-            return &it->second;
-        }
+        const Point * getMark (char c) const;
 
-        void setMark (char c, const Point& p) {
-            markMap[c] = p;
-        }
+        void setMark (char c, const Point& p);
 
-        void moveCamera (double x, double y) {
-            centerX += x;
-            centerY += y;
-        }
-        void setCamera (double x, double y) {
-            centerX = x;
-            centerY = y;
-        }
-        void setCamera (const Point& p) {
-            //centerX = p.getX();
-            //centerY = p.getY();
-            centerX = p.x;
-            centerY = p.y;
-        }
-        const Point getCamera () {
-            //return Point (centerX, centerY);
-            Point camera;
-            camera.x = centerX;
-            camera.y = centerY;
-            return camera;
-        }
+        void moveCamera (double x, double y);
+        void setCamera (double x, double y);
+        void setCamera (const Point& p);
+        const Point getCamera ();
 
-        void moveHulledPoints (double x, double y) {
-            for (auto& i : hulledShapes) {
-                i->moveShape (x,y);
-            }
-            for (auto& i : constructions) {
-                i->adjust();
-            }
-        }
+        void scrollUI (double s);
+
+        void resetUIPosition ();
+
+        void moveHulledPoints (double x, double y);
         enum mode {pointCreation = 1, selection = 2};
 
         //void pushToConstructions(Construction);
@@ -274,7 +230,7 @@ class inputCameraMovementState : public inputState {
         Geoapp* app;
         double x, y;
     public:
-        inputCameraMovementState (inputManager* manager, Geoapp* _app, double _x, double _y) : inputState(manager), app(_app), x(_x), y(_y) {}
+        inputCameraMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y) : inputState(_manager), app(_app), x(_x), y(_y) {}
         virtual void onEnter () override {
             app->moveCamera (x,y);
             done();
@@ -286,7 +242,7 @@ class inputPointMovementState : public inputState {
         Geoapp* app;
         double x, y;
     public:
-        inputPointMovementState (inputManager* manager, Geoapp* _app, double _x, double _y) : inputState (manager), app(_app), x(_x), y(_y) {}
+        inputPointMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y) : inputState (_manager), app(_app), x(_x), y(_y) {}
         virtual void onEnter () override {
             app->moveHulledPoints(x,y);
             done();
@@ -297,7 +253,7 @@ class inputPointSelectionState : public inputState {
     private:
         Geoapp* app;
     public:
-        inputPointSelectionState (inputManager* manager, Geoapp* _app) :inputState(manager), app(_app) {}
+        inputPointSelectionState (inputManager* _manager, Geoapp* _app) :inputState(_manager), app(_app) {}
         virtual void onEnter () override {
             app->setCurrentMode (Geoapp::mode::selection);
             done();
@@ -308,7 +264,7 @@ class inputPointCreationState : public inputState {
     private:
         Geoapp* app;
     public:
-        inputPointCreationState (inputManager* manager, Geoapp* _app) :inputState(manager), app(_app) {}
+        inputPointCreationState (inputManager* _manager, Geoapp* _app) :inputState(_manager), app(_app) {}
         virtual void onEnter () override {
             app->setCurrentMode (Geoapp::mode::pointCreation);
             done();
@@ -319,7 +275,7 @@ class inputSetMarkState : public inputState {
     private:
         Geoapp* app;
     public:
-        inputSetMarkState (inputManager* manager, Geoapp* _app) : inputState(manager), app(_app) {}
+        inputSetMarkState (inputManager* _manager, Geoapp* _app) : inputState(_manager), app(_app) {}
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods){
             if (a == inputManager::released) return;
             char mk = inputManager::keyToChar(k);
@@ -336,7 +292,7 @@ class inputGoToMarkState : public inputState {
     private:
         Geoapp* app;
     public:
-        inputGoToMarkState (inputManager* manager, Geoapp* _app) : inputState(manager), app(_app) {}
+        inputGoToMarkState (inputManager* _manager, Geoapp* _app) : inputState(_manager), app(_app) {}
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods){
             if (a == inputManager::released) return;
             char mk = inputManager::keyToChar(k);
@@ -348,6 +304,18 @@ class inputGoToMarkState : public inputState {
             if (pptr != NULL) {
                 app->setCamera (*pptr);
             }
+            done();
+        }
+};
+
+class inputUIScrollState : public inputState {
+    private:
+        Geoapp* app;
+        double scrollValue;
+    public:
+        inputUIScrollState (inputManager* _manager, Geoapp* _app, double _scrollValue) : inputState(_manager), app(_app), scrollValue (_scrollValue){}
+        virtual void onEnter () override {
+            app->scrollUI (scrollValue);
             done();
         }
 };

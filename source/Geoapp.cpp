@@ -196,10 +196,104 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, this));
     mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, this));
 
+    mainState->addState (inputManager::Key::U, new inputUIScrollState (&inManager, this,  10));
+    mainState->addState (inputManager::Key::D, new inputUIScrollState (&inManager, this, -10));
+
     inManager.setMainState (mainState);
     inManager.goToMainState();
 
     loop();
+}
+
+float Geoapp::findUIScrollMin () const {
+    unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+    float uiWidth = windowWidth*(1-uiBarrier);
+    std::unordered_map<uint32_t, std::vector<uiObject> >::const_iterator it;
+    it = uiPages.find(uiMapId (currentConditions));
+    if (it == uiPages.end()) return 0;
+    float objectHeight = uiWidth/2;
+    return -(objectHeight*it->second.size()-windowHeight);
+}
+
+uint32_t Geoapp::uiMapId (const uiOptionConditions& conditions) const {
+    uint32_t mapId = conditions.segmentCount;
+    mapId <<= 8;
+    mapId += conditions.circleCount;
+    mapId <<= 8;
+    mapId += conditions.pointCount;
+    mapId <<= 8;
+    mapId += conditions.lineCount;
+    return mapId;
+}
+
+Shape* Geoapp::findObjectHit (const Point& p) const {
+    Shape *shapeHit = NULL;
+    for (auto& i : shapes) {
+        if (i->isHit (p)) {
+            if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
+                shapeHit = i.get();
+            }
+        }
+    }
+    return shapeHit;
+}
+
+void Geoapp::registerUiOption (uiObject obj, uiOptionConditions conditions) {
+    uint32_t mapId = uiMapId (conditions);
+    uiPages[mapId].push_back(obj);
+}
+
+const Point * Geoapp::getMark (char c) const {
+    decltype(markMap)::const_iterator it = markMap.find (c);
+    if (it == markMap.end()) { return NULL; }
+    return &it->second;
+}
+
+void Geoapp::setMark (char c, const Point& p) {
+    markMap[c] = p;
+}
+
+void Geoapp::moveCamera (double x, double y) {
+    centerX += x;
+    centerY += y;
+}
+void Geoapp::setCamera (const Point& p) {
+    //centerX = p.getX();
+    //centerY = p.getY();
+    centerX = p.x;
+    centerY = p.y;
+}
+const Point Geoapp::getCamera () {
+    //return Point (centerX, centerY);
+    Point camera;
+    camera.x = centerX;
+    camera.y = centerY;
+    return camera;
+}
+
+void Geoapp::scrollUI (double s) {
+    uiTop += s;
+    float min = findUIScrollMin();
+    if (uiTop > 0 || min > 0) {
+        uiTop = 0;
+        return;
+    }
+    if (uiTop < min) {
+        uiTop = min; 
+    }
+}
+
+void Geoapp::resetUIPosition () {
+    uiTop = 0;
+}
+
+void Geoapp::moveHulledPoints (double x, double y) {
+    for (auto& i : hulledShapes) {
+        i->moveShape (x,y);
+    }
+    for (auto& i : constructions) {
+        i->adjust();
+    }
 }
 
 void Geoapp::loop(){
@@ -220,14 +314,14 @@ void Geoapp::events(sf::Event event){
             } else if (event.type == sf::Event::MouseButtonPressed){
                 //double x=(double)sf::Mouse::getPosition(window).x, y=(double)sf::Mouse::getPosition(window).y;
                 Point mysz;
-                mysz.x =(double)sf::Mouse::getPosition(window).x; mysz.y=(double)sf::Mouse::getPosition(window).y;
+                mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
                 if(mysz.x>uiBarrier*window.getSize().x){
                     UIhandling(mysz);
                 } else {
                     whenClick(mysz.x,mysz.y);
                 }
             } else if (event.type== sf::Event::Resized){
-
+                resetUIPosition();
             } else if(event.type == sf::Event::KeyPressed){
                 inWrapper.onKeyEvent (event);
             }
@@ -275,14 +369,13 @@ void Geoapp::drawUI() const {
     window.draw(line, 2, sf::Lines);
 
     const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
-    float top = 0;
     float objectHeight = uiWidth/2;
 
     sf::Sprite currentIcon;
-    currentIcon.setPosition (uiLeft+uiWidth*0.3, top+objectHeight*0.1);
+    currentIcon.setPosition (uiLeft+uiWidth*0.3, uiTop+objectHeight*0.1);
 
-    sf::Vector2f leftSeparator (uiLeft, top+objectHeight);
-    sf::Vector2f rightSeparator (windowWidth, top+objectHeight);
+    sf::Vector2f leftSeparator (uiLeft, uiTop+objectHeight);
+    sf::Vector2f rightSeparator (windowWidth, uiTop+objectHeight);
     for (auto& i : currentObjects) {
         currentIcon.setTexture (i.image);
         float texWidth = i.image.getSize().x, texHeight = i.image.getSize().y;
@@ -318,12 +411,14 @@ void Geoapp::UIhandling(const Point& mysz){
     float uiWidth = windowWidth*(1-uiBarrier);
     float top = 0;
     float objectHeight = uiWidth/2;
-    int clickedOption = (mysz.y-top)/objectHeight;
-    std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
-    if (clickedOption >= (int)currentPage.size()) {
+    if (mysz.y < uiTop) {
         return;
     }
-    if (clickedOption < 0) return;
+    unsigned int clickedOption = (mysz.y-uiTop)/objectHeight;
+    std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
+    if (clickedOption >= currentPage.size()) {
+        return;
+    }
     //Construction* constructionMade = currentPage[clickedOption].creator (hulledShapes, shapes);
     Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
     constructions.emplace_back (constructionMade);
@@ -337,6 +432,7 @@ void Geoapp::UIhandling(const Point& mysz){
         i->setActivity (false);
     }
     hulledShapes.clear();
+    resetUIPosition();
     //currentConditions.reset();
     resetUiOptionConditions (currentConditions);
     resetConstructionElements (hulledElements);
@@ -390,6 +486,7 @@ void Geoapp::whenClick(double x, double y){
                 selectCount = 1;
             }
             hitShape->addToCurrentConditions (currentConditions, selectCount);
+            resetUIPosition();
         }
         uiPages[uiMapId(currentConditions)];
         /*Shape &s=shapes[a];
