@@ -20,6 +20,25 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     //currentConditions.segmentCount = 1;
     resetConstructionElements (hulledElements);
 
+
+    makeOption<segmentMiddle> ("resources/segmentMid.png", uiSegmentObject (1));
+    makeOption<pointsMiddle> ("resources/pointsMid.png", uiPointObject (2));
+    makeOption<parallelLine> ("resources/parallelLine.png", uiLineObject (1), uiPointObject (1));
+    makeOption<orthogonalLine> ("resources/orthogonalLine.png", uiLineObject (1), uiPointObject (1));
+    makeOption<lineThroughPoints> ("resources/lineThroughPoints.png", uiPointObject (2));
+    makeOption<circleWithCenter> ("resources/circleWithCenter.png", uiPointObject (2));
+    makeOption<segmentFromPoints> ("resources/segmentFromPoints.png", uiPointObject (2));
+    makeOption<centerOfMass> ("resources/centerOfMass.png", uiPointObject (3));
+    makeOption<circleThreePoints> ("resources/circleThreePoints.png", uiPointObject (3));
+    makeOption<powerLine> ("resources/powerLine.png", uiCircleObject (2));
+    makeOption<symmetricalOfPoints> ("resources/symmetricalOfPoints.png", uiPointObject (2));
+    makeOption<symmetricalOfSegment> ("resources/symmetricalOfSegment.png", uiSegmentObject (1));
+    makeOption<lineCircleIntersection> ("resources/lineCircleIntersection.png", uiLineObject(1), uiCircleObject(1));
+    makeOption<circlesIntersection> ("resources/circleCircleIntersection.png", uiCircleObject (2));
+    makeOption<bisectorThreePoints> ("resources/bisectorThreePoints.png", uiPointObject (3));
+
+
+    /*
     uiOptionConditions cond;
 
     //segment mid point
@@ -85,6 +104,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     resetUiOptionConditions (cond);
     cond.pointCount = 2;
     registerUiOption (circleWithCenterObject, cond);
+    //makeOption<circleWithCenter> ("resources/circleWithCenter.png", uiPointObject (2));
 
     uiObject segmentFromPointsObject;
     segmentFromPointsObject.creator = makeConstruction<segmentFromPoints>;
@@ -169,6 +189,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     resetUiOptionConditions (cond);
     cond.pointCount = 3;
     registerUiOption (bisectorThreePointsObject, cond);
+    */
+
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0));
     mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0));

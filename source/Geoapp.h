@@ -188,6 +188,72 @@ class Geoapp{
 
         void registerUiOption (uiObject obj, uiOptionConditions conditions);
 
+        //TODO somehow move this classes outside geoapp
+        class uiOptionObject {
+            public:
+                virtual ~uiOptionObject () {}
+                virtual void pushToConditions (uiOptionConditions& op) const = 0;
+        };
+        class uiPointObject : public uiOptionObject{
+            private:
+                unsigned int count;
+            public:
+                explicit uiPointObject (unsigned int _count) :count(_count) {}
+                virtual void pushToConditions (uiOptionConditions& op) const {
+                    op.pointCount += count;
+                }
+        };
+        class uiLineObject : public uiOptionObject{
+            private:
+                unsigned int count;
+            public:
+                explicit uiLineObject (unsigned int _count) :count(_count) {}
+                virtual void pushToConditions (uiOptionConditions& op) const {
+                    op.lineCount += count;
+                }
+        };
+        class uiSegmentObject : public uiOptionObject{
+            private:
+                unsigned int count;
+            public:
+                explicit uiSegmentObject (unsigned int _count) :count(_count) {}
+                virtual void pushToConditions (uiOptionConditions& op) const {
+                    op.segmentCount += count;
+                }
+        };
+        class uiCircleObject : public uiOptionObject{
+            private:
+                unsigned int count;
+            public:
+                explicit uiCircleObject (unsigned int _count) :count(_count) {}
+                virtual void pushToConditions (uiOptionConditions& op) const {
+                    op.segmentCount += count;
+                }
+        };
+
+        template <typename... T>
+        void setUpCondition (uiOptionConditions& op, const uiOptionObject& obj, const T&... rest) {
+            obj.pushToConditions(op);
+            setUpCondition (op, rest...);
+        }
+        //void setUpCondition (uiOptionConditions& op, const uiOptionObject& obj) {
+        //    obj.pushToConditions(op);
+        //    setUpCondition (op);
+        //}
+        void setUpCondition (uiOptionConditions& op) {}
+
+        template <typename U, typename... T>
+        void makeOption (const char* fileName, const T&... con) {
+            uiObject obj; 
+            obj.creator = makeConstruction<U>;
+            obj.image.loadFromFile (fileName);
+            obj.image.setSmooth (true);
+            uiOptionConditions opCond;
+            resetUiOptionConditions (opCond);
+            setUpCondition (opCond, con...);
+            registerUiOption (obj, opCond);
+        }
+
     public:
         template<typename T>
             void pushToShapes(T);
