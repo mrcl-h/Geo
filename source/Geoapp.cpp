@@ -170,21 +170,31 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     cond.pointCount = 3;
     registerUiOption (bisectorThreePointsObject, cond);
     junctionInputState *mainState = new junctionInputState (&inManager);
-    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0), true);
-    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0), true);
-    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, this,   0, -10), true);
-    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, this,   0,  10), true);
+    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0));
+    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0));
+    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, this,   0, -10));
+    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, this,   0,  10));
 
-    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -10,   0), true);
-    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  10), true);
-    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -10), true);
-    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  10,   0), true);
+    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, this,   0, -100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, this,   0,  100), inputManager::ctrlMod);
 
-    mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, this), true);
-    mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, this), true);
+    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -10,   0));
+    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  10));
+    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -10));
+    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  10,   0));
 
-    mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, this), true);
-    mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, this), true);
+    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  100,   0), inputManager::ctrlMod);
+
+    mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, this));
+    mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, this));
+
+    mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, this));
+    mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, this));
 
     inManager.setMainState (mainState);
     inManager.goToMainState();

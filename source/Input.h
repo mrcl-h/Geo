@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <map>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -84,18 +85,32 @@ class junctionInputState : public inputState {
                     if (responsible) delete state;
                 }
         };
+        struct keyComb {
+            int key;
+            unsigned int mods;
+            bool operator < (const keyComb& r) const {
+                if (key == r.key) return mods < r.mods;
+                return key < r.key;
+            }
+        };
         //typedef std::unordered_map<inputManager::Key, stateObj> maptype; CHANGED
-        typedef std::unordered_map<uint32_t, stateObj> maptype; 
+        //typedef std::unordered_map<uint32_t, stateObj> maptype; 
+        typedef std::map<keyComb, stateObj> maptype;
         maptype stateMap;
     public:
         junctionInputState (inputManager* _manager) :inputState(_manager){}
-        void addState (inputManager::keyType k, inputState* addedState, bool responsible) {
-            stateMap[k].set(addedState, responsible); // = stateObj(addedState, responsible);
+        void addState (inputManager::keyType k, inputState* addedState, unsigned int mods = 0, bool responsible = true) {
+            //stateMap[k].set(addedState, responsible); // = stateObj(addedState, responsible);
+            keyComb newComb;
+            newComb.key = k; newComb.mods = mods;
+            stateMap[newComb].set(addedState, responsible); // = stateObj(addedState, responsible);
             //stateMap.emplace(std::make_pair(k, stateObj(addedState, responsible)));
         }
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
             if (a != inputManager::action::pressed) return;
-            maptype::iterator it = stateMap.find (k);
+            keyComb newComb;
+            newComb.key = k; newComb.mods = mods;
+            maptype::iterator it = stateMap.find (newComb);
             if (it == stateMap.end()) { return; }
             changeState (it->second.getState());
         }
