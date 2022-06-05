@@ -60,10 +60,14 @@ void centerOfMass::adjust () {
 }
 
 void bisectorThreePoints::adjust () {
-    //Point tmpPoint (pointB->getX()+pointC->getX()-pointA->getX(), pointB->getY()+pointC->getY()-pointA->getY());
-    //if (tmpPoint.abs() < 0.01) {
+    double ratio = dist(pointA->getX(), pointA->getY(), pointC->getX(), pointC->getY())/dist(pointB->getX(), pointB->getY(), pointC->getX(), pointC->getY());    
+    Point temp;
+               //= (pointB-pointA)/(ratio+1)+pointA;
+    temp.x=((pointA->getX()-pointB->getX())/(ratio+1)+pointB->getX());
+    temp.y=((pointA->getY()-pointB->getY())/(ratio+1)+pointB->getY());
+    line->goThroughPoints(pointC->getX(), pointC->getY(), temp.x, temp.y);
 
-    //}
+    
 }
 
 void circleThreePoints::adjust () {

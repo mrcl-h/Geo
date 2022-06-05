@@ -162,6 +162,13 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     cond.circleCount = 2;
     registerUiOption (circlesIntersectionObject, cond);
 
+    uiObject bisectorThreePointsObject;
+    bisectorThreePointsObject.creator = makeConstruction<bisectorThreePoints>;
+    bisectorThreePointsObject.image.loadFromFile("resources/bisectorThreePoints.png");
+    bisectorThreePointsObject.image.setSmooth(true);
+    resetUiOptionConditions (cond);
+    cond.pointCount = 3;
+    registerUiOption (bisectorThreePointsObject, cond);
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0), true);
     mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0), true);
