@@ -130,6 +130,8 @@ class Geoapp{
         void setCamera (const Point& p);
         const Point getCamera ();
 
+        void changeScale (double rat);
+
         void scrollUI (double s);
 
         void resetUIPosition ();
@@ -242,6 +244,18 @@ class inputUIScrollState : public inputState {
         inputUIScrollState (inputManager* _manager, Geoapp* _app, double _scrollValue) : inputState(_manager), app(_app), scrollValue (_scrollValue){}
         virtual void onEnter () override {
             app->scrollUI (scrollValue);
+            done();
+        }
+};
+
+class inputScalingState : public inputState {
+    private:
+        Geoapp* app;
+        double scaleValue;
+    public:
+        inputScalingState (inputManager* _manager, Geoapp* _app, double _scaleValue) : inputState (_manager), app(_app), scaleValue (_scaleValue) {}
+        virtual void onEnter () override {
+            app->changeScale (scaleValue);
             done();
         }
 };

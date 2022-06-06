@@ -1,6 +1,7 @@
 #include "geoImpl.h"
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
 
 void PointShapeImpl::setExistance (bool ex) {exists = ex;}
 bool PointShapeImpl::getExistance () const {return exists;}
@@ -113,7 +114,7 @@ void PointShapeImpl::addToConstructionElements (constructionElements& el) {
     el.points.push_back(this);
 }
 void PointShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.points.erase (std::find (el.points.begin(), el.points.end(), this));
+    el.points.erase (std::find (el.points.begin(), el.points.end(), static_cast<Shape*>(this)));
 }
 void PointShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.pointCount += c;
@@ -134,7 +135,7 @@ void SegmentShapeImpl::addToConstructionElements (constructionElements& el) {
     el.segments.push_back(this);
 }
 void SegmentShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.segments.erase (std::find (el.segments.begin(), el.segments.end(), this));
+    el.segments.erase (std::find (el.segments.begin(), el.segments.end(), static_cast<Shape*>(this)));
 }
 void SegmentShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.segmentCount += c;
@@ -174,7 +175,7 @@ void LineShapeImpl::addToConstructionElements (constructionElements& el) {
     el.lines.push_back(this);
 }
 void LineShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.lines.erase (std::find (el.lines.begin(), el.lines.end(), this));
+    el.lines.erase (std::find (el.lines.begin(), el.lines.end(), static_cast<Shape*>(this)));
 }
 void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int m) {
     op.lineCount += m;
@@ -189,7 +190,7 @@ void CircleShapeImpl::addToConstructionElements (constructionElements& el) {
     el.circles.push_back(this);
 }
 void CircleShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.circles.erase (std::find (el.circles.begin(), el.circles.end(), this));
+    el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
 }
 void CircleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.circleCount += c;
@@ -374,31 +375,37 @@ double CircleShapeImpl::distFromPoint(const Point& v) const {
     return std::abs(dist (middle,v)-r);
 }
 void CircleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    sf::CircleShape shape (r);
+    // i hope this works.
+    sf::CircleShape shape (r, 400);
+    sf::Vector2f scaling;
+    scaling.x = box.width/visible.width;
+    scaling.y = box.height/visible.height;
+    shape.scale (scaling);
     float alpha = (middle.x-visible.left)/visible.width;
     float beta = (middle.y-visible.top)/visible.height;
     sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= r;
-    v.y -= r;
+    v.x -= r*scaling.x;
+    v.y -= r*scaling.y;
     shape.setPosition(v);
     shape.setOutlineColor(sf::Color(0,0,0,255));
-    shape.setOutlineThickness(1);
+    shape.setOutlineThickness(1/scaling.x);
     shape.setFillColor(sf::Color(255,255,255,0));
-    shape.setPointCount (400);
+    //shape.setPointCount (400);
     window->draw(shape);
 }
 void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    sf::CircleShape shape (r-2);
+    float scaling = box.width/visible.width;
+    sf::CircleShape shape (r*scaling-2, 400);
     float alpha = (middle.x-visible.left)/visible.width;
     float beta = (middle.y-visible.top)/visible.height;
     sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= r-2;
-    v.y -= r-2;
+    v.x -= r*scaling-2;
+    v.y -= r*scaling-2;
     shape.setPosition(v);
     shape.setOutlineColor(sf::Color(0,0,0,128));
     shape.setOutlineThickness(5);
     shape.setFillColor(sf::Color(255,255,255,0));
-    shape.setPointCount (400);
+    //shape.setPointCount (400);
     window->draw(shape);
 }
 CircleShapeImpl::CircleShapeImpl(const Point& mid, double radius){

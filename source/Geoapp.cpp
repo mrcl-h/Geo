@@ -64,10 +64,17 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     mainState->addState (inputManager::Key::U, new inputUIScrollState (&inManager, this,  10));
     mainState->addState (inputManager::Key::D, new inputUIScrollState (&inManager, this, -10));
 
+    mainState->addState (inputManager::Key::Hyphen, new inputScalingState (&inManager, this, 2));
+    mainState->addState (inputManager::Key::Equal, new inputScalingState (&inManager, this, 0.5), inputManager::shiftMod);
+
     inManager.setMainState (mainState);
     inManager.goToMainState();
 
     loop();
+}
+
+void Geoapp::changeScale (double rat) {
+    scalingFactor *= rat;
 }
 
 float Geoapp::findUIScrollMin () const {
@@ -255,8 +262,8 @@ void Geoapp::drawUI() const {
 
 void Geoapp::drawObjects() const{
     float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
-    sf::FloatRect visible (centerX - uiBarrier*windowWidth/2, centerY-windowHeight/2,uiBarrier*windowWidth,windowHeight);
-    sf::FloatRect box (0,0,window.getSize().x*uiBarrier,window.getSize().y);
+    sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+    sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
     for(unsigned int i=0;i<hulledShapes.size();i++){
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
@@ -296,8 +303,8 @@ void Geoapp::UIhandling(const Point& mysz){
 
 void Geoapp::whenClick(double x, double y){
     Point clickPosition;
-    clickPosition.x = centerX+x-float(window.getSize().x*uiBarrier)/2;
-    clickPosition.y = centerY+y-float(window.getSize().y)/2;
+    clickPosition.x = centerX+(x-float(window.getSize().x*uiBarrier)/2)*scalingFactor;
+    clickPosition.y = centerY+(y-float(window.getSize().y)/2)*scalingFactor;
     if(currentMode == mode::pointCreation){
         std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
         shapes.push_back(std::move(S));
