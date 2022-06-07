@@ -111,10 +111,12 @@ double PointShapeImpl::abs() const {
     return std::sqrt (coordinates.x*coordinates.x+coordinates.y*coordinates.y);
 }
 void PointShapeImpl::addToConstructionElements (constructionElements& el) {
-    el.points.push_back(this);
+    //el.points.push_back(this);
+    el.getVector<PointShape*>().push_back(this);
 }
 void PointShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.points.erase (std::find (el.points.begin(), el.points.end(), static_cast<Shape*>(this)));
+    //el.points.erase (std::find (el.points.begin(), el.points.end(), static_cast<Shape*>(this)));
+    el.getVector<PointShape*>().erase (std::find (el.getVector<PointShape*>().begin(), el.getVector<PointShape*>().end(), static_cast<Shape*>(this)));
 }
 void PointShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.pointCount += c;
@@ -132,10 +134,12 @@ void PointShapeImpl::moveShape (double xMov, double yMov) {
 }
 
 void SegmentShapeImpl::addToConstructionElements (constructionElements& el) {
-    el.segments.push_back(this);
+    //el.segments.push_back(this);
+    el.getVector<SegmentShape*>().push_back(this);
 }
 void SegmentShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.segments.erase (std::find (el.segments.begin(), el.segments.end(), static_cast<Shape*>(this)));
+    //el.segments.erase (std::find (el.segments.begin(), el.segments.end(), static_cast<Shape*>(this)));
+    el.getVector<SegmentShape*>().erase (std::find (el.getVector<SegmentShape*>().begin(), el.getVector<SegmentShape*>().end(), static_cast<Shape*>(this)));
 }
 void SegmentShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.segmentCount += c;
@@ -172,10 +176,12 @@ void LineShapeImpl::goThroughPoints (const double px, const double py, const dou
 }
 
 void LineShapeImpl::addToConstructionElements (constructionElements& el) {
-    el.lines.push_back(this);
+    //el.lines.push_back(this);
+    el.getVector<LineShape*>().push_back(this);
 }
 void LineShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.lines.erase (std::find (el.lines.begin(), el.lines.end(), static_cast<Shape*>(this)));
+    //el.lines.erase (std::find (el.lines.begin(), el.lines.end(), static_cast<Shape*>(this)));
+    el.getVector<LineShape*>().erase (std::find (el.getVector<LineShape*>().begin(), el.getVector<LineShape*>().end(), static_cast<Shape*>(this)));
 }
 void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int m) {
     op.lineCount += m;
@@ -187,10 +193,12 @@ bool LineShapeImpl::isHit (const Point& p) {
 unsigned int LineShapeImpl::getHitPriority () {return 6;}
 
 void CircleShapeImpl::addToConstructionElements (constructionElements& el) {
-    el.circles.push_back(this);
+    //el.circles.push_back(this);
+    el.getVector<CircleShape*>().push_back(this);
 }
 void CircleShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
+    //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
+    el.getVector<CircleShape*>().erase (std::find (el.getVector<CircleShape*>().begin(), el.getVector<CircleShape*>().end(), static_cast<Shape*>(this)));
 }
 void CircleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.circleCount += c;

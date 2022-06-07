@@ -1,4 +1,5 @@
 #pragma once
+#include "vectorHolder.h"
 #include<vector>
 #include<cmath>
 #include<memory>
@@ -17,6 +18,7 @@ inline double doubleAbs (double r) {
     return r >= 0 ? r : -r;
 }
 
+/*
 struct constructionElements {
     std::vector<PointShape*> points;
     std::vector<LineShape*> lines;
@@ -25,6 +27,9 @@ struct constructionElements {
 };
 
 void resetConstructionElements (constructionElements& el);
+*/
+
+typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*> constructionElements;
 
 struct uiOptionConditions {
     uint8_t lineCount, pointCount, circleCount, segmentCount;

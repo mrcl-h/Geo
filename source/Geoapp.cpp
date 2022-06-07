@@ -13,7 +13,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
     centerX = centerY = 0;
     resetUiOptionConditions (currentConditions);
     uiPages[uiMapId(currentConditions)];
-    resetConstructionElements (hulledElements);
+    //resetConstructionElements (hulledElements);
+    hulledElements.clear();
 
 
     makeOption<segmentMiddle> ("resources/segmentMid.png", uiSegmentObject (1));
@@ -298,7 +299,8 @@ void Geoapp::UIhandling(const Point& mysz){
     hulledShapes.clear();
     resetUIPosition();
     resetUiOptionConditions (currentConditions);
-    resetConstructionElements (hulledElements);
+    //resetConstructionElements (hulledElements);
+    hulledElements.clear();
 }
 
 void Geoapp::whenClick(double x, double y){
