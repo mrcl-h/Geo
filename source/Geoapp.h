@@ -43,6 +43,9 @@ class Geoapp{
 
         float uiTop = 0;
 
+        Point lastMouseRightPosition;
+        bool rightMoving;
+
         mutable sf::RenderWindow window;
 
         void loop();
