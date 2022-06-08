@@ -112,15 +112,15 @@ void tangentCirclePoint::adjust() {
 }
 
 void lineCircleIntersection::adjust() {
-    std::unique_ptr<LineShape> l (makeLineShape(line->getNormalX(), line->getNormalY(), circle->getMiddleX() * line->getNormalX() + circle->getMiddleY() * line->getNormalY() +  line->getC()));
-    double sqrtdelta = l->getNormalX() * sqrt( circle->getR() * circle->getR() * ( l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY() ) - l->getC() * l->getC());
-    double y = (-l->getNormalY() * l->getC() + sqrtdelta) / (l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
-    double x = - ( l->getC() + l->getNormalY() * y)/l->getNormalX();
+    double temp = circle->getMiddleX() * line->getNormalX() + circle->getMiddleY() * line->getNormalY() +  line->getC();
+    double sqrtdelta = line->getNormalX() * sqrt( circle->getR() * circle->getR() * ( line->getNormalX() * line->getNormalX() + line->getNormalY() * line->getNormalY() ) - temp * temp);
+    double y = (-line->getNormalY() * temp + sqrtdelta) / (line->getNormalX() * line->getNormalX() + line->getNormalY() * line->getNormalY());
+    double x = - ( temp + line->getNormalY() * y)/line->getNormalX();
     pointA->setX(x + circle->getMiddleX());
     pointA->setY(y + circle->getMiddleY());
 
-    y = (- l->getNormalY() * l->getC() - sqrtdelta)/(l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
-    x = - (l->getC() + l->getNormalY() * y) / l->getNormalX();
+    y = (- line->getNormalY() * temp - sqrtdelta)/(line->getNormalX() * line->getNormalX() + line->getNormalY() * line->getNormalY());
+    x = - (temp + line->getNormalY() * y) / line->getNormalX();
     pointB->setX(x + circle->getMiddleX());
     pointB->setY(y + circle->getMiddleY());
     
@@ -148,4 +148,13 @@ void circlesIntersection::adjust() {
     x = - (l->getC() + l->getNormalY() * y) / l->getNormalX();
     pointB->setX(x + circle1->getMiddleX());
     pointB->setY(y + circle1->getMiddleY());
+}
+void Triangle::adjust () {
+    triangle->setAX(pointA->getX());
+    triangle->setAY(pointA->getY());
+    triangle->setBX(pointB->getX());
+    triangle->setBY(pointB->getY());
+    triangle->setCX(pointC->getX());
+    triangle->setCY(pointC->getY());
+
 }

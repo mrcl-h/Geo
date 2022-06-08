@@ -255,6 +255,19 @@ class symmetricalOfPoints : public Construction {
         virtual void adjust ();
 };
 
+class Triangle : public Construction {
+    private:
+        PointShape * const pointA, * const pointB, * const pointC;
+        TriangleShape *triangle;
+    public:
+        Triangle (constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB(el.getVector<PointShape*>()[1]), pointC(el.getVector<PointShape*>()[2]), triangle (NULL) {
+            triangle = makeTriangleShape (1,0,0,0,0,1);
+            shapes.emplace_back (triangle);
+            triangle->setDependent(true);
+        }
+        virtual void adjust ();
+};
+
 //TODO: bisectors of two Lines
 //TODO: described circle on triangle
 //TODO: inscribed circle in triangle

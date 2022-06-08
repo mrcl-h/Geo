@@ -70,6 +70,29 @@ void CircleShapeImpl::setMiddleX (double x) {middle.x = x;}
 void CircleShapeImpl::setMiddleY (double y) {middle.y = y;}
 void CircleShapeImpl::setR (double _r) {r = _r;}
 
+void TriangleShapeImpl::setExistance (bool ex) {exists = ex;}
+bool TriangleShapeImpl::getExistance () const {return exists;}
+void TriangleShapeImpl::setActivity (bool ac) {isActive = ac;}
+bool TriangleShapeImpl::getActivity () const {return isActive;}
+void TriangleShapeImpl::setCurrent (bool cu) {isCurrent = cu;}
+bool TriangleShapeImpl::getCurrent () const {return isCurrent;}
+void TriangleShapeImpl::setDependent (bool de) {isDependent = de;}
+bool TriangleShapeImpl::getDependent () const {return isDependent;}
+
+void TriangleShapeImpl::setAX (double x) {A.x=x;}
+void TriangleShapeImpl::setAY (double y) {A.y=y;}
+void TriangleShapeImpl::setBX (double x) {B.x=x;}
+void TriangleShapeImpl::setBY (double y) {B.y=y;}
+void TriangleShapeImpl::setCX (double x) {C.x=x;}
+void TriangleShapeImpl::setCY (double y) {C.y=y;}
+
+double TriangleShapeImpl::getAX () const {return A.x;}
+double TriangleShapeImpl::getAY () const {return A.y;}
+double TriangleShapeImpl::getBX () const {return B.x;}
+double TriangleShapeImpl::getBY () const {return B.y;}
+double TriangleShapeImpl::getCX () const {return C.x;}
+double TriangleShapeImpl::getCY () const {return C.y;}
+
 PointShape* makePointShape (double x, double y) {
     return new PointShapeImpl (x, y);
 }
@@ -105,7 +128,12 @@ CircleShape* makeCircleShape (double x, double y, double r) {
 CircleShape* makeCircleShape (const Point& a, const Point& b, const Point& c) {
     return new CircleShapeImpl (a,b,c);
 }
-
+TriangleShape* makeTriangleShape (const Point& p1, const Point& p2, const Point& p3){
+    return new TriangleShapeImpl(p1, p2, p3);
+}
+TriangleShape* makeTriangleShape (double ax, double ay, double bx, double by, double cx, double cy){
+    return new TriangleShapeImpl(ax, ay, bx, by, cx, cy);
+}
 
 double PointShapeImpl::abs() const {
     return std::sqrt (coordinates.x*coordinates.x+coordinates.y*coordinates.y);
@@ -216,6 +244,24 @@ double PointShapeImpl::distFromPoint(const Point& v) const {
     Point temp=coordinates-v;
     return length(temp); 
 }
+
+
+
+void TriangleShapeImpl::addToConstructionElements (constructionElements& el) {
+    el.getVector<TriangleShape*>().push_back(this);
+}
+void TriangleShapeImpl::removeFromConstructionElements (constructionElements& el) {
+    //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
+    el.getVector<TriangleShape*>().erase (std::find (el.getVector<TriangleShape*>().begin(), el.getVector<TriangleShape*>().end(), static_cast<Shape*>(this)));
+}
+void TriangleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
+    op.triangleCount += c;
+}
+bool TriangleShapeImpl::isHit (const Point& p) {
+    return distFromPoint(p) < hitEpsilon;
+}
+unsigned int TriangleShapeImpl::getHitPriority () {return 5;}
+
 
 sf::Color getShapeColor (bool active, bool current, bool dependent) {
     if (dependent) {
@@ -435,7 +481,62 @@ CircleShapeImpl::CircleShapeImpl(const Point& A, const Point& B, const Point& C)
     middle=b*(aLen*aLen)/(a%b)/2-a*(bLen*bLen/(a%b))/2;
     middle.x = middle.y+C.x; middle.y = -middle.x + C.y;
 }
-
+///////////////////////////////////////
+double TriangleShapeImpl::distFromPoint(const Point& v) const {
+    
+    return 100;
+}
+void TriangleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+    sf::ConvexShape shape(3);
+    /*sf::Vector2f scaling();
+    scaling.x = box.width/visible.width;
+    scaling.y = box.height/visible.height;
+    shape.scale (scaling);
+    float alpha = (middle.x-visible.left)/visible.width;
+    float beta = (middle.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= r*scaling.x;
+    v.y -= r*scaling.y;
+    */
+    shape.setPoint(0, sf::Vector2f(A.x, A.y));
+    shape.setPoint(1, sf::Vector2f(B.x, B.y));
+    shape.setPoint(2, sf::Vector2f(C.x, C.y));
+    
+    shape.setFillColor(sf::Color(255,0,0,125));
+    window->draw(shape);
+}
+void TriangleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+    sf::ConvexShape shape;
+    /*sf::Vector2f scaling();
+    scaling.x = box.width/visible.width;
+    scaling.y = box.height/visible.height;
+    shape.scale (scaling);
+    float alpha = (middle.x-visible.left)/visible.width;
+    float beta = (middle.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= r*scaling.x;
+    v.y -= r*scaling.y;
+    */
+    shape.setPoint(0, sf::Vector2f(A.x, A.y));
+    shape.setPoint(1, sf::Vector2f(B.x, B.y));
+    shape.setPoint(2, sf::Vector2f(C.x, C.y));
+    
+    shape.setFillColor(sf::Color(0,255,255,50));
+    window->draw(shape);
+}
+TriangleShapeImpl::TriangleShapeImpl(const Point& _a, const Point& _b, const Point& _c){
+    A = _a;
+    B = _b;
+    C = _c;
+}
+TriangleShapeImpl::TriangleShapeImpl (double ax, double ay, double bx, double by, double cx, double cy){
+    A.x = ax;
+    A.y = ay;
+    B.x = bx;
+    B.y = by;
+    C.x = cx;
+    C.y = cy;
+}
 //helper outside functions
 
 Point getPointLocation (PointShape& ps) {

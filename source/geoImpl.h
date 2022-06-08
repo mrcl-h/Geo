@@ -182,4 +182,50 @@ class CircleShapeImpl : public CircleShape {
         virtual unsigned int getHitPriority () override;
 };
 
+class TriangleShapeImpl : public TriangleShape {
+        Point A, B, C;
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+    public:
+
+        virtual ~TriangleShapeImpl () {}
+        
+        virtual void setExistance (bool ex) override;
+        virtual bool getExistance () const override;
+        virtual void setActivity (bool ac) override;
+        virtual bool getActivity () const override;
+        virtual void setCurrent (bool cu) override;
+        virtual bool getCurrent () const override;
+        virtual void setDependent (bool de) override;
+        virtual bool getDependent () const override;
+
+        virtual double getAX () const override;
+        virtual double getAY () const override;
+        virtual double getBX () const override;
+        virtual double getBY () const override;
+        virtual double getCX () const override;
+        virtual double getCY () const override;
+
+        virtual void setAX (double _x) override;
+        virtual void setAY (double _y) override;
+        virtual void setBX (double _x) override;
+        virtual void setBY (double _y) override;
+        virtual void setCX (double _x) override;
+        virtual void setCY (double _y) override;
+        
+
+        virtual double distFromPoint(const Point&) const override;
+        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        TriangleShapeImpl(const Point&, const Point&, const Point&);
+        TriangleShapeImpl (double, double, double, double, double, double);
+        virtual void addToConstructionElements (constructionElements& el) override;
+        virtual void removeFromConstructionElements (constructionElements& el) override;
+        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        virtual bool isHit (const Point& p) override;
+        virtual unsigned int getHitPriority () override;
+};
+
 sf::Color getShapeColor (bool active, bool current, bool dependent);

@@ -29,10 +29,10 @@ struct constructionElements {
 void resetConstructionElements (constructionElements& el);
 */
 
-typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*> constructionElements;
+typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
 
 struct uiOptionConditions {
-    uint8_t lineCount, pointCount, circleCount, segmentCount;
+    uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
 };
 
 void resetUiOptionConditions (uiOptionConditions& op);
@@ -163,3 +163,27 @@ CircleShape* makeCircleShape (const Point&, const Point&, const Point&);
 Point getCircleCenter (CircleShape&);
 
 //TODO: Triangle class
+class TriangleShape : public Shape {
+    public:
+        virtual ~TriangleShape () {}
+        virtual double getAX () const = 0;
+        virtual double getAY () const = 0;
+
+        virtual double getBX () const = 0;
+        virtual double getBY () const = 0;
+        
+        virtual double getCX () const = 0;
+        virtual double getCY () const = 0;
+
+        virtual void setAX (double) = 0;
+        virtual void setAY (double) = 0;
+
+        virtual void setBX (double) = 0;
+        virtual void setBY (double) = 0;
+        
+        virtual void setCX (double) = 0;
+        virtual void setCY (double) = 0;
+        
+};
+TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
+TriangleShape* makeTriangleShape(double, double, double, double, double, double);
