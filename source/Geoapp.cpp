@@ -185,17 +185,30 @@ void Geoapp::events(sf::Event event){
                 Point mysz;
                 mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
                 if(mysz.x>uiBarrier*window.getSize().x){
-                    UIhandling(mysz);
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        UIhandling(mysz);
+                    }
                 } else {
-                    whenClick(mysz.x,mysz.y);
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        whenClick(mysz.x,mysz.y);
+                    } else if (event.mouseButton.button == sf::Mouse::Right) {
+
+                    }
                 }
             } else if (event.type== sf::Event::Resized){
                 resetUIPosition();
             } else if(event.type == sf::Event::KeyPressed){
                 inWrapper.onKeyEvent (event);
-            }
-            else if(event.type == sf::Event::KeyReleased){
+            } else if(event.type == sf::Event::KeyReleased){
                 inWrapper.onKeyEvent (event);
+            } else if (event.type == sf::Event::MouseWheelScrolled) {
+                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+                    if (event.mouseWheelScroll.x > uiBarrier*window.getSize().x) {
+                        scrollUI (10*event.mouseWheelScroll.delta);
+                    } else {
+                        scalingFactor *= (1.25+event.mouseWheelScroll.delta*0.75);
+                    }
+                }
             }
         }
 }
