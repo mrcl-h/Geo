@@ -7,29 +7,21 @@
 
 
 //lista figur geometrycznych
+//class Shape;
+
 class SegmentShape;
 class TriangleShape;
 class LineShape;
 class CircleShape;
 class PointShape;
-class Shape;
 
 inline double doubleAbs (double r) {
     return r >= 0 ? r : -r;
 }
 
-/*
-struct constructionElements {
-    std::vector<PointShape*> points;
-    std::vector<LineShape*> lines;
-    std::vector<CircleShape*> circles;
-    std::vector<SegmentShape*> segments;
-};
-
-void resetConstructionElements (constructionElements& el);
-*/
 
 typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
+typedef vectorHolder <std::unique_ptr<PointShape>, std::unique_ptr<LineShape>, std::unique_ptr<CircleShape>, std::unique_ptr<SegmentShape>, std::unique_ptr<TriangleShape> > shapesType;
 
 struct uiOptionConditions {
     uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
@@ -41,30 +33,30 @@ struct Point {
     double x, y;
 };
 
-class Shape {
-    protected:
-        constexpr static double hitEpsilon = 4;
-    public:
-        virtual void setExistance (bool) = 0;
-        virtual bool getExistance () const = 0;
-        virtual void setActivity (bool) = 0;
-        virtual bool getActivity () const = 0;
-        virtual void setCurrent (bool) = 0;
-        virtual bool getCurrent () const = 0;
-        virtual void setDependent (bool) = 0; 
-        virtual bool getDependent () const = 0;
-        virtual double distFromPoint(const Point&) const =0;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
-        virtual void addToConstructionElements (constructionElements&) {}
-        virtual void removeFromConstructionElements (constructionElements&) {}
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
-        virtual unsigned int getHitPriority () = 0;
-        virtual bool isHit (const Point& p) = 0;
-        virtual void moveShape (double x, double y) {}
-        virtual ~Shape() {}
-
-};
+//class Shape {
+//    protected:
+//        constexpr static double hitEpsilon = 4;
+//    public:
+//        void setExistance (bool) = 0;
+//        bool getExistance () const = 0;
+//        void setActivity (bool) = 0;
+//        bool getActivity () const = 0;
+//        void setCurrent (bool) = 0;
+//        bool getCurrent () const = 0;
+//        void setDependent (bool) = 0; 
+//        bool getDependent () const = 0;
+//        double distFromPoint(const Point&) const =0;
+//        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+//        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+//        void addToConstructionElements (constructionElements&) {}
+//        void removeFromConstructionElements (constructionElements&) {}
+//        void addToCurrentConditions (uiOptionConditions& op, int c) {}
+//        unsigned int getHitPriority () = 0;
+//        bool isHit (const Point& p) = 0;
+//        void moveShape (double x, double y) {}
+//        ~Shape() {}
+//
+//};
 
 double dist (double x1, double y1, double x2, double y2);
 double dist(const Point &p1, const Point &p2);
@@ -79,17 +71,53 @@ double operator*(const Point &p1, const Point &p2);
 double operator%(const Point &p1, const Point &p2);
 bool operator==(const Point &p1, const Point &p2);
 
-class PointShape : public Shape {
+class PointShape {
+    private:
+        static constexpr double radiusOfDrawing=3;
+        Point coordinates;
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~PointShape () {}
+        ~PointShape () {}
 
-        virtual double getX () const = 0;
-        virtual double getY () const = 0;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
+        double getX () const;
+        double getY () const;
 
-        virtual void setX (double newX) = 0;
-        virtual void setY (double newY) = 0;
+        void setX (double newX);
+        void setY (double newY);
 
-        virtual double abs() const = 0;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+
+        double distFromPoint(const Point&) const;
+
+        PointShape(double=0, double=0);
+
+        double abs() const;
+
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+
+        unsigned int getHitPriority ();
+
+        void moveShape (double xMov, double yMov);
+
+        PointShape (const LineShape&,const LineShape&);
 };
 
 PointShape* makePointShape (double = 0, double = 0);
@@ -97,22 +125,51 @@ PointShape* makePointShape (const LineShape&, const LineShape&);
 
 Point getPointLocation (PointShape&);
 
-class SegmentShape : public Shape{
+class SegmentShape {
+    private:
+        Point p1, p2;
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~SegmentShape () {}
+        ~SegmentShape () {}
 
-        virtual double getFromX () const = 0;
-        virtual double getToX () const = 0;
-        virtual double getFromY () const = 0;
-        virtual double getToY () const = 0;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual void setFromX (double newX) = 0;
-        virtual void setToX (double newX) = 0;
-        virtual void setFromY (double newY) = 0;
-        virtual void setToY (double newY) = 0;
+        double getFromX () const;
+        double getToX () const;
+        double getFromY () const;
+        double getToY () const;
 
+        void setFromX (double newX);
+        void setToX (double newX);
+        void setFromY (double newY);
+        void setToY (double newY);
 
-        virtual double abs() const = 0;
+        SegmentShape(const Point&, const Point&);
+        SegmentShape () {}
+
+        double distFromPoint(const Point&) const;
+
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+
+        double abs() const;
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+        unsigned int getHitPriority ();
+
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
 };
 
 SegmentShape* makeSegmentShape ();
@@ -121,19 +178,53 @@ SegmentShape* makeSegmentShape (const Point&, const Point&);
 Point getSegmentFrom (const SegmentShape& seg);
 Point getSegmentTo (const SegmentShape& seg);
 
-class LineShape : public Shape{
+class LineShape {
+    private:
+        Point n;
+        double c;
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+        void goThroughPoints (const Point& p, const Point& q);
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~LineShape () {}
-        virtual double getNormalX () const = 0;
-        virtual double getNormalY () const = 0;
-        virtual double getC () const = 0;
+        ~LineShape () {}
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual void setNormalX (double x) = 0;
-        virtual void setNormalY (double y) = 0;
-        virtual void setC (double _c) = 0;
+        double getNormalX () const;
+        double getNormalY () const;
+        double getC () const;
 
-        virtual void goThroughPoints (const double px, const double py, const double qx, const double qy) = 0;
+        void setNormalX (double x);
+        void setNormalY (double y);
+        void setC (double _c);
 
+        LineShape(double,double,double); //line ax+by+c=0
+        LineShape(const Point&,const Point&); //line through two points
+        LineShape(const SegmentShape&);
+
+        double distFromPoint(const Point&) const;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+
+
+        void goThroughPoints (const double px, const double py, const double qx, const double qy);
+
+        LineShape(const CircleShape&,const CircleShape&);
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+
+        unsigned int getHitPriority ();
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
 };
 
 LineShape* makeLineShape (double, double, double);
@@ -142,17 +233,48 @@ LineShape* makeLineShape (const Point&, const Point&);
 
 Point getLineNormal (const LineShape&);
 
-class CircleShape : public Shape {
+
+class CircleShape {
+        Point middle;
+        double r;
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~CircleShape () {}
-        virtual double getMiddleX () const = 0;
-        virtual double getMiddleY () const = 0;
-        virtual double getR () const = 0;
 
-        virtual void setMiddleX (double x) = 0;
-        virtual void setMiddleY (double y) = 0;
-        virtual void setR (double _r) = 0;
+        ~CircleShape () {}
+        
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
+        double getMiddleX () const;
+        double getMiddleY () const;
+        double getR () const;
+
+        void setMiddleX (double x);
+        void setMiddleY (double y);
+        void setR (double _r);
+
+        double distFromPoint(const Point&) const;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+        CircleShape(const Point&, const Point&, const Point&);
+        CircleShape(const Point&, double);
+        CircleShape(const Point&, const Point&);
+        CircleShape (double, double, double);
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+        unsigned int getHitPriority ();
 };
 
 CircleShape* makeCircleShape (const Point&, double);
@@ -163,27 +285,54 @@ CircleShape* makeCircleShape (const Point&, const Point&, const Point&);
 Point getCircleCenter (CircleShape&);
 
 //TODO: Triangle class
-class TriangleShape : public Shape {
+
+class TriangleShape {
+        Point A, B, C;
+        bool exists = true;
+        bool isActive = false;
+        bool isCurrent = false;
+        bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~TriangleShape () {}
-        virtual double getAX () const = 0;
-        virtual double getAY () const = 0;
 
-        virtual double getBX () const = 0;
-        virtual double getBY () const = 0;
+        ~TriangleShape () {}
         
-        virtual double getCX () const = 0;
-        virtual double getCY () const = 0;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual void setAX (double) = 0;
-        virtual void setAY (double) = 0;
+        double getAX () const;
+        double getAY () const;
+        double getBX () const;
+        double getBY () const;
+        double getCX () const;
+        double getCY () const;
 
-        virtual void setBX (double) = 0;
-        virtual void setBY (double) = 0;
+        void setAX (double _x);
+        void setAY (double _y);
+        void setBX (double _x);
+        void setBY (double _y);
+        void setCX (double _x);
+        void setCY (double _y);
         
-        virtual void setCX (double) = 0;
-        virtual void setCY (double) = 0;
-        
+
+        double distFromPoint(const Point&) const;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+        TriangleShape(const Point&, const Point&, const Point&);
+        TriangleShape (double, double, double, double, double, double);
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+        unsigned int getHitPriority ();
 };
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);
+
+sf::Color getShapeColor (bool active, bool current, bool dependent);

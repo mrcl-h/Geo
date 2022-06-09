@@ -6,6 +6,7 @@
 #include<memory>
 #include "Construction.h"
 
+
 class Geoapp{
 
     private:
@@ -30,8 +31,9 @@ class Geoapp{
         std::unordered_map <char, Point> markMap;
 
 
-        std::vector<std::unique_ptr<Shape> > shapes;
-        std::vector<Shape*> hulledShapes;
+        //std::vector<std::unique_ptr<Shape> > shapes;
+        shapesType shapes;
+        //std::vector<Shape*> hulledShapes;
         constructionElements hulledElements;
 
         std::vector<std::unique_ptr<Construction> > constructions;
@@ -59,7 +61,7 @@ class Geoapp{
 
         float findUIScrollMin () const;
 
-        Shape* findObjectHit (const Point& p) const;
+        //Shape* findObjectHit (const Point& p) const;
 
         void registerUiOption (uiObject obj, uiOptionConditions conditions);
 
