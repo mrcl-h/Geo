@@ -33,7 +33,7 @@ class Geoapp{
 
         //std::vector<std::unique_ptr<Shape> > shapes;
         shapesType shapes;
-        std::vector<Shape*> hulledShapes;
+        //std::vector<Shape*> hulledShapes;
         constructionElements hulledElements;
 
         std::vector<std::unique_ptr<Construction> > constructions;
@@ -61,7 +61,7 @@ class Geoapp{
 
         float findUIScrollMin () const;
 
-        Shape* findObjectHit (const Point& p) const;
+        //Shape* findObjectHit (const Point& p) const;
 
         void registerUiOption (uiObject obj, uiOptionConditions conditions);
 

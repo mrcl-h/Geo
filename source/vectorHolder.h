@@ -49,6 +49,13 @@ class vectorHolder {
                 vh.execute (actingObject);
             }
         template <typename F>
+            void execute (F& actingObject) const {
+                for (unsigned int i = 0; i < vec.size(); i++) {
+                    actingObject.act (vec[i]);
+                }
+                vh.execute (actingObject);
+            }
+        template <typename F>
             bool executeTillTrue (F& actingObject) {
                 for (unsigned int i = 0; i < vec.size(); i++) {
                     if (actingObject.act (vec[i])) {
@@ -107,6 +114,12 @@ class vectorHolder<U> {
         }
         template <typename f>
             void execute (f& actingobject) {
+                for (unsigned int i = 0; i < vec.size(); i++) {
+                    actingobject.act (vec[i]);
+                }
+            }
+        template <typename f>
+            void execute (f& actingobject) const {
                 for (unsigned int i = 0; i < vec.size(); i++) {
                     actingobject.act (vec[i]);
                 }

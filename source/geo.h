@@ -7,7 +7,7 @@
 
 
 //lista figur geometrycznych
-class Shape;
+//class Shape;
 
 class SegmentShape;
 class TriangleShape;
@@ -33,30 +33,30 @@ struct Point {
     double x, y;
 };
 
-class Shape {
-    protected:
-        constexpr static double hitEpsilon = 4;
-    public:
-        virtual void setExistance (bool) = 0;
-        virtual bool getExistance () const = 0;
-        virtual void setActivity (bool) = 0;
-        virtual bool getActivity () const = 0;
-        virtual void setCurrent (bool) = 0;
-        virtual bool getCurrent () const = 0;
-        virtual void setDependent (bool) = 0; 
-        virtual bool getDependent () const = 0;
-        virtual double distFromPoint(const Point&) const =0;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
-        virtual void addToConstructionElements (constructionElements&) {}
-        virtual void removeFromConstructionElements (constructionElements&) {}
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
-        virtual unsigned int getHitPriority () = 0;
-        virtual bool isHit (const Point& p) = 0;
-        virtual void moveShape (double x, double y) {}
-        virtual ~Shape() {}
-
-};
+//class Shape {
+//    protected:
+//        constexpr static double hitEpsilon = 4;
+//    public:
+//        void setExistance (bool) = 0;
+//        bool getExistance () const = 0;
+//        void setActivity (bool) = 0;
+//        bool getActivity () const = 0;
+//        void setCurrent (bool) = 0;
+//        bool getCurrent () const = 0;
+//        void setDependent (bool) = 0; 
+//        bool getDependent () const = 0;
+//        double distFromPoint(const Point&) const =0;
+//        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+//        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+//        void addToConstructionElements (constructionElements&) {}
+//        void removeFromConstructionElements (constructionElements&) {}
+//        void addToCurrentConditions (uiOptionConditions& op, int c) {}
+//        unsigned int getHitPriority () = 0;
+//        bool isHit (const Point& p) = 0;
+//        void moveShape (double x, double y) {}
+//        ~Shape() {}
+//
+//};
 
 double dist (double x1, double y1, double x2, double y2);
 double dist(const Point &p1, const Point &p2);
@@ -71,7 +71,7 @@ double operator*(const Point &p1, const Point &p2);
 double operator%(const Point &p1, const Point &p2);
 bool operator==(const Point &p1, const Point &p2);
 
-class PointShape : public Shape{
+class PointShape {
     private:
         static constexpr double radiusOfDrawing=3;
         Point coordinates;
@@ -79,42 +79,43 @@ class PointShape : public Shape{
         bool isActive = false;
         bool isCurrent = false;
         bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~PointShape () {}
+        ~PointShape () {}
 
-        virtual void setExistance (bool ex) override;
-        virtual bool getExistance () const override;
-        virtual void setActivity (bool ac) override;
-        virtual bool getActivity () const override;
-        virtual void setCurrent (bool cu) override;
-        virtual bool getCurrent () const override;
-        virtual void setDependent (bool de) override;
-        virtual bool getDependent () const override;
-        virtual double getX () const;
-        virtual double getY () const;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
+        double getX () const;
+        double getY () const;
 
-        virtual void setX (double newX);
-        virtual void setY (double newY);
+        void setX (double newX);
+        void setY (double newY);
 
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
 
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
 
-        virtual double distFromPoint(const Point&) const override;
+        double distFromPoint(const Point&) const;
 
         PointShape(double=0, double=0);
 
-        virtual double abs() const;
+        double abs() const;
 
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
 
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
 
-        virtual unsigned int getHitPriority () override;
+        unsigned int getHitPriority ();
 
-        virtual void moveShape (double xMov, double yMov) override;
+        void moveShape (double xMov, double yMov);
 
         PointShape (const LineShape&,const LineShape&);
 };
@@ -124,49 +125,51 @@ PointShape* makePointShape (const LineShape&, const LineShape&);
 
 Point getPointLocation (PointShape&);
 
-class SegmentShape : public Shape {
+class SegmentShape {
     private:
         Point p1, p2;
         bool exists = true;
         bool isActive = false;
         bool isCurrent = false;
         bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~SegmentShape () {}
+        ~SegmentShape () {}
 
-        virtual void setExistance (bool ex) override;
-        virtual bool getExistance () const override;
-        virtual void setActivity (bool ac) override;
-        virtual bool getActivity () const override;
-        virtual void setCurrent (bool cu) override;
-        virtual bool getCurrent () const override;
-        virtual void setDependent (bool de) override;
-        virtual bool getDependent () const override;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual double getFromX () const;
-        virtual double getToX () const;
-        virtual double getFromY () const;
-        virtual double getToY () const;
+        double getFromX () const;
+        double getToX () const;
+        double getFromY () const;
+        double getToY () const;
 
-        virtual void setFromX (double newX);
-        virtual void setToX (double newX);
-        virtual void setFromY (double newY);
-        virtual void setToY (double newY);
+        void setFromX (double newX);
+        void setToX (double newX);
+        void setFromY (double newY);
+        void setToY (double newY);
 
         SegmentShape(const Point&, const Point&);
         SegmentShape () {}
 
-        virtual double distFromPoint(const Point&) const override;
+        double distFromPoint(const Point&) const;
 
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
 
-        virtual double abs() const;
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
-        virtual unsigned int getHitPriority () override;
+        double abs() const;
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+        unsigned int getHitPriority ();
 
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
 };
 
 SegmentShape* makeSegmentShape ();
@@ -175,7 +178,7 @@ SegmentShape* makeSegmentShape (const Point&, const Point&);
 Point getSegmentFrom (const SegmentShape& seg);
 Point getSegmentTo (const SegmentShape& seg);
 
-class LineShape : public Shape {
+class LineShape {
     private:
         Point n;
         double c;
@@ -184,42 +187,44 @@ class LineShape : public Shape {
         bool isCurrent = false;
         bool isDependent = false;
         void goThroughPoints (const Point& p, const Point& q);
+        constexpr static double hitEpsilon = 4;
     public:
-        virtual ~LineShape () {}
-        virtual void setExistance (bool ex) override;
-        virtual bool getExistance () const override;
-        virtual void setActivity (bool ac) override;
-        virtual bool getActivity () const override;
-        virtual void setCurrent (bool cu) override;
-        virtual bool getCurrent () const override;
-        virtual void setDependent (bool de) override;
-        virtual bool getDependent () const override;
+        ~LineShape () {}
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual double getNormalX () const;
-        virtual double getNormalY () const;
-        virtual double getC () const;
+        double getNormalX () const;
+        double getNormalY () const;
+        double getC () const;
 
-        virtual void setNormalX (double x);
-        virtual void setNormalY (double y);
-        virtual void setC (double _c);
+        void setNormalX (double x);
+        void setNormalY (double y);
+        void setC (double _c);
 
         LineShape(double,double,double); //line ax+by+c=0
         LineShape(const Point&,const Point&); //line through two points
         LineShape(const SegmentShape&);
 
-        double distFromPoint(const Point&) const override;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        double distFromPoint(const Point&) const;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
 
 
-        virtual void goThroughPoints (const double px, const double py, const double qx, const double qy);
+        void goThroughPoints (const double px, const double py, const double qx, const double qy);
 
         LineShape(const CircleShape&,const CircleShape&);
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
 
-        virtual unsigned int getHitPriority () override;
+        unsigned int getHitPriority ();
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
 };
 
 LineShape* makeLineShape (double, double, double);
@@ -229,46 +234,47 @@ LineShape* makeLineShape (const Point&, const Point&);
 Point getLineNormal (const LineShape&);
 
 
-class CircleShape : public Shape {
+class CircleShape {
         Point middle;
         double r;
         bool exists = true;
         bool isActive = false;
         bool isCurrent = false;
         bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
 
-        virtual ~CircleShape () {}
+        ~CircleShape () {}
         
-        virtual void setExistance (bool ex) override;
-        virtual bool getExistance () const override;
-        virtual void setActivity (bool ac) override;
-        virtual bool getActivity () const override;
-        virtual void setCurrent (bool cu) override;
-        virtual bool getCurrent () const override;
-        virtual void setDependent (bool de) override;
-        virtual bool getDependent () const override;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual double getMiddleX () const;
-        virtual double getMiddleY () const;
-        virtual double getR () const;
+        double getMiddleX () const;
+        double getMiddleY () const;
+        double getR () const;
 
-        virtual void setMiddleX (double x);
-        virtual void setMiddleY (double y);
-        virtual void setR (double _r);
+        void setMiddleX (double x);
+        void setMiddleY (double y);
+        void setR (double _r);
 
-        virtual double distFromPoint(const Point&) const override;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        double distFromPoint(const Point&) const;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
         CircleShape(const Point&, const Point&, const Point&);
         CircleShape(const Point&, double);
         CircleShape(const Point&, const Point&);
         CircleShape (double, double, double);
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
-        virtual unsigned int getHitPriority () override;
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+        unsigned int getHitPriority ();
 };
 
 CircleShape* makeCircleShape (const Point&, double);
@@ -280,50 +286,51 @@ Point getCircleCenter (CircleShape&);
 
 //TODO: Triangle class
 
-class TriangleShape : public Shape {
+class TriangleShape {
         Point A, B, C;
         bool exists = true;
         bool isActive = false;
         bool isCurrent = false;
         bool isDependent = false;
+        constexpr static double hitEpsilon = 4;
     public:
 
-        virtual ~TriangleShape () {}
+        ~TriangleShape () {}
         
-        virtual void setExistance (bool ex) override;
-        virtual bool getExistance () const override;
-        virtual void setActivity (bool ac) override;
-        virtual bool getActivity () const override;
-        virtual void setCurrent (bool cu) override;
-        virtual bool getCurrent () const override;
-        virtual void setDependent (bool de) override;
-        virtual bool getDependent () const override;
+        void setExistance (bool ex);
+        bool getExistance () const;
+        void setActivity (bool ac);
+        bool getActivity () const;
+        void setCurrent (bool cu);
+        bool getCurrent () const;
+        void setDependent (bool de);
+        bool getDependent () const;
 
-        virtual double getAX () const;
-        virtual double getAY () const;
-        virtual double getBX () const;
-        virtual double getBY () const;
-        virtual double getCX () const;
-        virtual double getCY () const;
+        double getAX () const;
+        double getAY () const;
+        double getBX () const;
+        double getBY () const;
+        double getCX () const;
+        double getCY () const;
 
-        virtual void setAX (double _x);
-        virtual void setAY (double _y);
-        virtual void setBX (double _x);
-        virtual void setBY (double _y);
-        virtual void setCX (double _x);
-        virtual void setCY (double _y);
+        void setAX (double _x);
+        void setAY (double _y);
+        void setBX (double _x);
+        void setBY (double _y);
+        void setCX (double _x);
+        void setCY (double _y);
         
 
-        virtual double distFromPoint(const Point&) const override;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        double distFromPoint(const Point&) const;
+        void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
+        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const;
         TriangleShape(const Point&, const Point&, const Point&);
         TriangleShape (double, double, double, double, double, double);
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
-        virtual unsigned int getHitPriority () override;
+        void addToConstructionElements (constructionElements& el);
+        void removeFromConstructionElements (constructionElements& el);
+        void addToCurrentConditions (uiOptionConditions& op, int c);
+        bool isHit (const Point& p);
+        unsigned int getHitPriority ();
 };
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);

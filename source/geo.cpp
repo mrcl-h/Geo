@@ -211,7 +211,7 @@ void PointShape::addToConstructionElements (constructionElements& el) {
 }
 void PointShape::removeFromConstructionElements (constructionElements& el) {
     //el.points.erase (std::find (el.points.begin(), el.points.end(), static_cast<Shape*>(this)));
-    el.getVector<PointShape*>().erase (std::find (el.getVector<PointShape*>().begin(), el.getVector<PointShape*>().end(), static_cast<Shape*>(this)));
+    el.getVector<PointShape*>().erase (std::find (el.getVector<PointShape*>().begin(), el.getVector<PointShape*>().end(), this));
 }
 void PointShape::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.pointCount += c;
@@ -234,7 +234,7 @@ void SegmentShape::addToConstructionElements (constructionElements& el) {
 }
 void SegmentShape::removeFromConstructionElements (constructionElements& el) {
     //el.segments.erase (std::find (el.segments.begin(), el.segments.end(), static_cast<Shape*>(this)));
-    el.getVector<SegmentShape*>().erase (std::find (el.getVector<SegmentShape*>().begin(), el.getVector<SegmentShape*>().end(), static_cast<Shape*>(this)));
+    el.getVector<SegmentShape*>().erase (std::find (el.getVector<SegmentShape*>().begin(), el.getVector<SegmentShape*>().end(), this));
 }
 void SegmentShape::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.segmentCount += c;
@@ -276,7 +276,7 @@ void LineShape::addToConstructionElements (constructionElements& el) {
 }
 void LineShape::removeFromConstructionElements (constructionElements& el) {
     //el.lines.erase (std::find (el.lines.begin(), el.lines.end(), static_cast<Shape*>(this)));
-    el.getVector<LineShape*>().erase (std::find (el.getVector<LineShape*>().begin(), el.getVector<LineShape*>().end(), static_cast<Shape*>(this)));
+    el.getVector<LineShape*>().erase (std::find (el.getVector<LineShape*>().begin(), el.getVector<LineShape*>().end(), this));
 }
 void LineShape::addToCurrentConditions (uiOptionConditions& op, int m) {
     op.lineCount += m;
@@ -293,7 +293,7 @@ void CircleShape::addToConstructionElements (constructionElements& el) {
 }
 void CircleShape::removeFromConstructionElements (constructionElements& el) {
     //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
-    el.getVector<CircleShape*>().erase (std::find (el.getVector<CircleShape*>().begin(), el.getVector<CircleShape*>().end(), static_cast<Shape*>(this)));
+    el.getVector<CircleShape*>().erase (std::find (el.getVector<CircleShape*>().begin(), el.getVector<CircleShape*>().end(), this));
 }
 void CircleShape::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.circleCount += c;
@@ -319,7 +319,7 @@ void TriangleShape::addToConstructionElements (constructionElements& el) {
 }
 void TriangleShape::removeFromConstructionElements (constructionElements& el) {
     //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
-    el.getVector<TriangleShape*>().erase (std::find (el.getVector<TriangleShape*>().begin(), el.getVector<TriangleShape*>().end(), static_cast<Shape*>(this)));
+    el.getVector<TriangleShape*>().erase (std::find (el.getVector<TriangleShape*>().begin(), el.getVector<TriangleShape*>().end(), this));
 }
 void TriangleShape::addToCurrentConditions (uiOptionConditions& op, int c) {
     op.triangleCount += c;

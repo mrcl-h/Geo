@@ -99,24 +99,24 @@ uint32_t Geoapp::uiMapId (const uiOptionConditions& conditions) const {
     return mapId;
 }
 
-Shape* Geoapp::findObjectHit (const Point& p) const {
-    Shape *shapeHit = NULL;
-    /*for (auto& i : shapes) {
-        if (i->isHit (p)) {
-            if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
-                shapeHit = i.get();
-            }
-        }
-    }
-    */
-    //TODO 4th step
-    for (auto& i : shapes.getVector<std::unique_ptr<PointShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
-    for (auto& i : shapes.getVector<std::unique_ptr<LineShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
-    for (auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
-    for (auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
-    for (auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
-    return shapeHit;
-}
+//Shape* Geoapp::findObjectHit (const Point& p) const {
+//    Shape *shapeHit = NULL;
+//    /*for (auto& i : shapes) {
+//        if (i->isHit (p)) {
+//            if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
+//                shapeHit = i.get();
+//            }
+//        }
+//    }
+//    */
+//    //TODO 4th step
+//    for (auto& i : shapes.getVector<std::unique_ptr<PointShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+//    for (auto& i : shapes.getVector<std::unique_ptr<LineShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+//    for (auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+//    for (auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+//    for (auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+//    return shapeHit;
+//}
 
 void Geoapp::registerUiOption (uiObject obj, uiOptionConditions conditions) {
     uint32_t mapId = uiMapId (conditions);
@@ -164,14 +164,36 @@ void Geoapp::resetUIPosition () {
     uiTop = 0;
 }
 
+class hulledPointsMover {
+    private:
+        double x, y;
+    public:
+        hulledPointsMover (double _x, double _y) :x (_x), y(_y) {}
+        template <typename T>
+            void act (T& thing) {}
+        void act (std::unique_ptr<PointShape>& ptr) {
+            if (ptr->getActivity()) {
+                ptr->moveShape (x, y);
+            }
+        }
+};
+
 void Geoapp::moveHulledPoints (double x, double y) {
-    for (auto& i : hulledShapes) {
-        i->moveShape (x,y);
-    }
+    hulledPointsMover m (x, y);
+    shapes.execute (m);
     for (auto& i : constructions) {
         i->adjust();
     }
 }
+
+//void Geoapp::moveHulledPoints (double x, double y) {
+//    for (auto& i : hulledShapes) {
+//        i->moveShape (x,y);
+//    }
+//    for (auto& i : constructions) {
+//        i->adjust();
+//    }
+//}
 
 void Geoapp::loop(){
     while (window.isOpen()){
@@ -299,13 +321,32 @@ void Geoapp::drawUI() const {
     }
 }
 
+class hulledDrawer {
+    private:
+//        void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+        sf::RenderWindow& window;
+        const sf::FloatRect visible; 
+        const sf::FloatRect box;
+    public:
+        hulledDrawer (sf::RenderWindow& _window, const sf::FloatRect& _visible, const sf::FloatRect& _box) :window (_window), visible (_visible), box(_box) {}
+        template <typename T>
+            void act (T& thing) const {
+                thing->hull_draw (&window, visible, box);
+            }
+};
+
 void Geoapp::drawObjects() const{
     float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
     sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
     sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
-    for(unsigned int i=0;i<hulledShapes.size();i++){
-        hulledShapes[i]->hull_draw(&window, visible, box);
-    }
+
+    //for(unsigned int i=0;i<hulledShapes.size();i++){
+    //    hulledShapes[i]->hull_draw(&window, visible, box);
+    //}
+
+    hulledDrawer hd (window, visible, box);
+    hulledElements.execute (hd);
+
     //for(unsigned int i=0;i<shapes.size();i++){
     //    if (shapes[i]->getExistance())
     //        shapes[i]->draw(&window, visible, box);
@@ -332,6 +373,14 @@ void Geoapp::drawObjects() const{
     }
 }
 
+class inactiveSetter {
+    public:
+        template <typename T>
+            void act (T& thing) {
+                thing->setActivity(false); 
+            }
+};
+
 void Geoapp::UIhandling(const Point& mysz){
     unsigned int windowWidth = window.getSize().x;
     float uiWidth = windowWidth*(1-uiBarrier);
@@ -348,18 +397,67 @@ void Geoapp::UIhandling(const Point& mysz){
     Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
     constructions.emplace_back (constructionMade);
 
-    if (hulledShapes.size() > 0) {
-        hulledShapes.back()->setCurrent (false);
-    }
-    for (auto i : hulledShapes) {
-        i->setActivity (false);
-    }
-    hulledShapes.clear();
+    //if (hulledShapes.size() > 0) {
+    //    hulledShapes.back()->setCurrent (false);
+    //}
+    //for (auto i : hulledShapes) {
+    //    i->setActivity (false);
+    //}
+    //hulledShapes.clear();
     resetUIPosition();
     resetUiOptionConditions (currentConditions);
     //resetConstructionElements (hulledElements);
+    
+    inactiveSetter is;
+    hulledElements.execute (is);
+
     hulledElements.clear();
+
+
 }
+
+/*
+class hulledPointsMover {
+    private:
+        double x, y;
+    public:
+        hulledPointsMover (double _x, double _y) :x (_x), y(_y) {}
+        template <typename T>
+            void act (T& thing) {}
+        void act (std::unique_ptr<PointShape>& ptr) {
+            ptr->moveShape (x, y);
+        }
+};
+*/
+
+class objectSelecter {
+    private:
+        const Point clickPosition;
+        constructionElements & hulledElements;
+        uiOptionConditions & currentConditions;
+    public:
+        objectSelecter (const Point& _clickPosition, constructionElements& _hulledElements, uiOptionConditions& _currentConditions) :clickPosition (_clickPosition), hulledElements (_hulledElements), currentConditions (_currentConditions) {}
+        template <typename T>
+            bool act (T& thing) {
+                if (thing->isHit (clickPosition)) {
+                    if (thing->getActivity()) {
+
+                        thing->setActivity(false); 
+                        thing->removeFromConstructionElements (hulledElements);
+                        thing->addToCurrentConditions (currentConditions, -1);
+
+                    } else {
+
+                        thing->setActivity(true); 
+                        thing->addToConstructionElements (hulledElements);
+                        thing->addToCurrentConditions (currentConditions, 1);
+
+                    }
+                    return true;
+                } 
+                return false;
+            }
+};
 
 void Geoapp::whenClick(double x, double y){
     Point clickPosition;
@@ -370,6 +468,9 @@ void Geoapp::whenClick(double x, double y){
         //shapes.push_back(std::move(S));
         shapes.getVector<std::unique_ptr<PointShape> >().push_back (std::move(S));
     } else if(currentMode == mode::selection){
+        objectSelecter os (clickPosition, hulledElements, currentConditions);
+        shapes.executeTillTrue (os);
+        /*
         Shape *hitShape = findObjectHit (clickPosition);
         if(hitShape){
             int selectCount;
@@ -400,6 +501,8 @@ void Geoapp::whenClick(double x, double y){
             hitShape->addToCurrentConditions (currentConditions, selectCount);
             resetUIPosition();
         }
+        uiPages[uiMapId(currentConditions)];
+        */
         uiPages[uiMapId(currentConditions)];
     }
 
