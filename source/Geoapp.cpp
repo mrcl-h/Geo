@@ -101,13 +101,20 @@ uint32_t Geoapp::uiMapId (const uiOptionConditions& conditions) const {
 
 Shape* Geoapp::findObjectHit (const Point& p) const {
     Shape *shapeHit = NULL;
-    for (auto& i : shapes) {
+    /*for (auto& i : shapes) {
         if (i->isHit (p)) {
             if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
                 shapeHit = i.get();
             }
         }
     }
+    */
+    //TODO 4th step
+    for (auto& i : shapes.getVector<std::unique_ptr<PointShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+    for (auto& i : shapes.getVector<std::unique_ptr<LineShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+    for (auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+    for (auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
+    for (auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()) { if (i->isHit (p)) { if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) { shapeHit = i.get(); } } }
     return shapeHit;
 }
 
@@ -299,9 +306,29 @@ void Geoapp::drawObjects() const{
     for(unsigned int i=0;i<hulledShapes.size();i++){
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
-    for(unsigned int i=0;i<shapes.size();i++){
-        if (shapes[i]->getExistance())
-            shapes[i]->draw(&window, visible, box);
+    //for(unsigned int i=0;i<shapes.size();i++){
+    //    if (shapes[i]->getExistance())
+    //        shapes[i]->draw(&window, visible, box);
+    //}
+    for(auto& i : shapes.getVector<std::unique_ptr<PointShape> >()){
+        if (i->getExistance())
+            i->draw(&window, visible, box);
+    }
+    for(auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()){
+        if (i->getExistance())
+            i->draw(&window, visible, box);
+    }
+    for(auto& i : shapes.getVector<std::unique_ptr<LineShape> >()){
+        if (i->getExistance())
+            i->draw(&window, visible, box);
+    }
+    for(auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()){
+        if (i->getExistance())
+            i->draw(&window, visible, box);
+    }
+    for(auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()){
+        if (i->getExistance())
+            i->draw(&window, visible, box);
     }
 }
 
@@ -339,8 +366,9 @@ void Geoapp::whenClick(double x, double y){
     clickPosition.x = centerX+(x-float(window.getSize().x*uiBarrier)/2)*scalingFactor;
     clickPosition.y = centerY+(y-float(window.getSize().y)/2)*scalingFactor;
     if(currentMode == mode::pointCreation){
-        std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
-        shapes.push_back(std::move(S));
+        std::unique_ptr<PointShape> S (makePointShape(clickPosition.x, clickPosition.y));
+        //shapes.push_back(std::move(S));
+        shapes.getVector<std::unique_ptr<PointShape> >().push_back (std::move(S));
     } else if(currentMode == mode::selection){
         Shape *hitShape = findObjectHit (clickPosition);
         if(hitShape){

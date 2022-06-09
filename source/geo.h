@@ -21,6 +21,7 @@ inline double doubleAbs (double r) {
 
 
 typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
+typedef vectorHolder <std::unique_ptr<PointShape>, std::unique_ptr<LineShape>, std::unique_ptr<CircleShape>, std::unique_ptr<SegmentShape>, std::unique_ptr<TriangleShape> > shapesType;
 
 struct uiOptionConditions {
     uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;

@@ -6,6 +6,7 @@
 #include<memory>
 #include "Construction.h"
 
+
 class Geoapp{
 
     private:
@@ -30,7 +31,8 @@ class Geoapp{
         std::unordered_map <char, Point> markMap;
 
 
-        std::vector<std::unique_ptr<Shape> > shapes;
+        //std::vector<std::unique_ptr<Shape> > shapes;
+        shapesType shapes;
         std::vector<Shape*> hulledShapes;
         constructionElements hulledElements;
 
