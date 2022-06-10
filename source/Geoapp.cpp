@@ -170,11 +170,12 @@ class hulledPointsMover {
     public:
         hulledPointsMover (double _x, double _y) :x (_x), y(_y) {}
         template <typename T>
-            void act (T& thing) {}
-        void act (std::unique_ptr<PointShape>& ptr) {
+            bool act (T& thing) {return false;}
+        bool act (std::unique_ptr<PointShape>& ptr) {
             if (ptr->getActivity()) {
                 ptr->moveShape (x, y);
             }
+            return false;
         }
 };
 
@@ -330,8 +331,25 @@ class hulledDrawer {
     public:
         hulledDrawer (sf::RenderWindow& _window, const sf::FloatRect& _visible, const sf::FloatRect& _box) :window (_window), visible (_visible), box(_box) {}
         template <typename T>
-            void act (T& thing) const {
+            bool act (T& thing) const {
                 thing->hull_draw (&window, visible, box);
+                return false;
+            }
+};
+
+class normalDrawer {
+    private:
+        sf::RenderWindow& window;
+        const sf::FloatRect visible; 
+        const sf::FloatRect box;
+    public:
+        normalDrawer (sf::RenderWindow& _window, const sf::FloatRect& _visible, const sf::FloatRect& _box) :window (_window), visible (_visible), box(_box) {}
+        template <typename T>
+            bool act (T& thing) const {
+                if (thing->getExistance ()) {
+                    thing->draw (&window, visible, box);
+                }
+                return false;
             }
 };
 
@@ -345,39 +363,43 @@ void Geoapp::drawObjects() const{
     //}
 
     hulledDrawer hd (window, visible, box);
-    hulledElements.execute (hd);
+    hulledElements.executeReverse (hd);
+
+    normalDrawer nd (window, visible, box);
+    shapes.executeReverse (nd);
 
     //for(unsigned int i=0;i<shapes.size();i++){
     //    if (shapes[i]->getExistance())
     //        shapes[i]->draw(&window, visible, box);
     //}
-    for(auto& i : shapes.getVector<std::unique_ptr<PointShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<LineShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
+    //for(auto& i : shapes.getVector<std::unique_ptr<PointShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<LineShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
 }
 
 class inactiveSetter {
     public:
         template <typename T>
-            void act (T& thing) {
+            bool act (T& thing) {
                 thing->setActivity(false); 
+                return false;
             }
 };
 
@@ -469,7 +491,7 @@ void Geoapp::whenClick(double x, double y){
         shapes.getVector<std::unique_ptr<PointShape> >().push_back (std::move(S));
     } else if(currentMode == mode::selection){
         objectSelecter os (clickPosition, hulledElements, currentConditions);
-        shapes.executeTillTrue (os);
+        shapes.execute (os);
         /*
         Shape *hitShape = findObjectHit (clickPosition);
         if(hitShape){
