@@ -363,10 +363,10 @@ void Geoapp::drawObjects() const{
     //}
 
     hulledDrawer hd (window, visible, box);
-    hulledElements.execute (hd);
+    hulledElements.executeReverse (hd);
 
     normalDrawer nd (window, visible, box);
-    shapes.execute (nd);
+    shapes.executeReverse (nd);
 
     //for(unsigned int i=0;i<shapes.size();i++){
     //    if (shapes[i]->getExistance())
