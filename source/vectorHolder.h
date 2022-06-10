@@ -42,39 +42,39 @@ class vectorHolder {
             vh.clear();
         }
         template <typename F>
-            void execute (F& actingObject) {
-                for (unsigned int i = 0; i < vec.size(); i++) {
-                    actingObject.act (vec[i]);
-                }
-                vh.execute (actingObject);
-            }
-        template <typename F>
-            void execute (F& actingObject) const {
-                for (unsigned int i = 0; i < vec.size(); i++) {
-                    actingObject.act (vec[i]);
-                }
-                vh.execute (actingObject);
-            }
-        template <typename F>
-            bool executeTillTrue (F& actingObject) {
+            bool execute (F& actingObject) {
                 for (unsigned int i = 0; i < vec.size(); i++) {
                     if (actingObject.act (vec[i])) {
                         return true;
                     }
                 }
-                return vh.executeTillTrue (actingObject);
+                return vh.execute (actingObject);
             }
         template <typename F>
-            void executeReverse (F& actingObject) {
-                vh.executeReverse (actingObject);
+            bool execute (F& actingObject) const {
+                for (unsigned int i = 0; i < vec.size(); i++) {
+                    if (actingObject.act (vec[i])) {
+                        return true;
+                    }
+                }
+                return vh.execute (actingObject);
+            }
+        template <typename F>
+            bool executeReverse (F& actingObject) {
+                if (vh.executeReverse (actingObject)) {
+                    return true;
+                }
                 unsigned int s = vec.size();
                 for (unsigned int i = 1; i <= s; i++) {
-                    actingObject.act (vec[s-i]);
+                    if (actingObject.act (vec[s-i])) {
+                        return true;
+                    }
                 }
+                return false;
             }
         template <typename F>
-            bool executeReverseTillTrue (F& actingObject) {
-                if (vh.executeReverseTillTrue (actingObject)) {
+            bool executeReverse (F& actingObject) const {
+                if (vh.executeReverse (actingObject)) {
                     return true;
                 }
                 unsigned int s = vec.size();
@@ -112,20 +112,8 @@ class vectorHolder<U> {
         void clear () {
             vec.clear();
         }
-        template <typename f>
-            void execute (f& actingobject) {
-                for (unsigned int i = 0; i < vec.size(); i++) {
-                    actingobject.act (vec[i]);
-                }
-            }
-        template <typename f>
-            void execute (f& actingobject) const {
-                for (unsigned int i = 0; i < vec.size(); i++) {
-                    actingobject.act (vec[i]);
-                }
-            }
         template <typename F>
-            bool executeTillTrue (F& actingObject) {
+            bool execute (F& actingObject) {
                 for (unsigned int i = 0; i < vec.size(); i++) {
                     if (actingObject.act (vec[i])) {
                         return true;
@@ -134,14 +122,26 @@ class vectorHolder<U> {
                 return false;
             }
         template <typename F>
-            void executeReverse (F& actingObject) {
-                unsigned int s = vec.size();
-                for (unsigned int i = 1; i <= s; i++) {
-                    actingObject.act (vec[s-i]);
+            bool execute (F& actingObject) const {
+                for (unsigned int i = 0; i < vec.size(); i++) {
+                    if (actingObject.act (vec[i])) {
+                        return true;
+                    }
                 }
+                return false;
             }
         template <typename F>
-            bool executeReverseTillTrue (F& actingObject) {
+            bool executeReverse (F& actingObject) {
+                unsigned int s = vec.size();
+                for (unsigned int i = 1; i <= s; i++) {
+                    if (actingObject.act (vec[s-i])) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        template <typename F>
+            bool executeReverse (F& actingObject) const {
                 unsigned int s = vec.size();
                 for (unsigned int i = 1; i <= s; i++) {
                     if (actingObject.act (vec[s-i])) {
