@@ -335,6 +335,21 @@ class hulledDrawer {
             }
 };
 
+class normalDrawer {
+    private:
+        sf::RenderWindow& window;
+        const sf::FloatRect visible; 
+        const sf::FloatRect box;
+    public:
+        normalDrawer (sf::RenderWindow& _window, const sf::FloatRect& _visible, const sf::FloatRect& _box) :window (_window), visible (_visible), box(_box) {}
+        template <typename T>
+            void act (T& thing) const {
+                if (thing->getExistance ()) {
+                    thing->draw (&window, visible, box);
+                }
+            }
+};
+
 void Geoapp::drawObjects() const{
     float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
     sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
@@ -347,30 +362,33 @@ void Geoapp::drawObjects() const{
     hulledDrawer hd (window, visible, box);
     hulledElements.execute (hd);
 
+    normalDrawer nd (window, visible, box);
+    shapes.execute (nd);
+
     //for(unsigned int i=0;i<shapes.size();i++){
     //    if (shapes[i]->getExistance())
     //        shapes[i]->draw(&window, visible, box);
     //}
-    for(auto& i : shapes.getVector<std::unique_ptr<PointShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<LineShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
-    for(auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()){
-        if (i->getExistance())
-            i->draw(&window, visible, box);
-    }
+    //for(auto& i : shapes.getVector<std::unique_ptr<PointShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<CircleShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<LineShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<SegmentShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
+    //for(auto& i : shapes.getVector<std::unique_ptr<TriangleShape> >()){
+    //    if (i->getExistance())
+    //        i->draw(&window, visible, box);
+    //}
 }
 
 class inactiveSetter {
