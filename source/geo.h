@@ -19,6 +19,9 @@ inline double doubleAbs (double r) {
     return r >= 0 ? r : -r;
 }
 
+struct floatRect {
+    float left, top, width, height;
+};
 
 typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
 typedef vectorHolder <std::unique_ptr<PointShape>, std::unique_ptr<LineShape>, std::unique_ptr<CircleShape>, std::unique_ptr<SegmentShape>, std::unique_ptr<TriangleShape> > shapesType;
