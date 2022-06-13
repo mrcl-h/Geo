@@ -25,7 +25,7 @@ class PointShapeImpl : public PointShape {
         virtual void setX (double newX) override;
         virtual void setY (double newY) override;
 
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        virtual void draw(drawingClass* drawer) const override;
 
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
@@ -82,7 +82,7 @@ class SegmentShapeImpl : public SegmentShape{
 
         virtual double distFromPoint(const Point&) const override;
 
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        virtual void draw(drawingClass* drawer) const override;
 
         virtual double abs() const override;
         virtual void addToConstructionElements (constructionElements& el) override;
@@ -126,7 +126,7 @@ class LineShapeImpl : public LineShape{
         LineShapeImpl(const SegmentShape&);
 
         double distFromPoint(const Point&) const override;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        virtual void draw(drawingClass* drawer) const override;
 
 
         virtual void goThroughPoints (const double px, const double py, const double qx, const double qy) override;
@@ -169,7 +169,7 @@ class CircleShapeImpl : public CircleShape {
         virtual void setR (double _r) override;
 
         virtual double distFromPoint(const Point&) const override;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        virtual void draw(drawingClass* drawer) const override;
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
         CircleShapeImpl(const Point&, const Point&, const Point&);
         CircleShapeImpl(const Point&, double);
@@ -217,7 +217,7 @@ class TriangleShapeImpl : public TriangleShape {
         
 
         virtual double distFromPoint(const Point&) const override;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        virtual void draw(drawingClass* drawer) const override;
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
         TriangleShapeImpl(const Point&, const Point&, const Point&);
         TriangleShapeImpl (double, double, double, double, double, double);

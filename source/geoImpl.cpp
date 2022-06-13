@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <iostream>
+#include "drawers.h"
 
 void PointShapeImpl::setExistance (bool ex) {exists = ex;}
 bool PointShapeImpl::getExistance () const {return exists;}
@@ -283,7 +284,9 @@ sf::Color getShapeColor (bool active, bool current, bool dependent) {
     }
 }
 
-void PointShapeImpl::draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+void PointShapeImpl::draw(drawingClass* drawer) const{
+    drawer->drawPoint (coordinates);
+    /*
     sf::CircleShape shape (radiusOfDrawing);
     float alpha = (coordinates.x-visible.left)/visible.width;
     float beta = (coordinates.y-visible.top)/visible.height;
@@ -293,6 +296,7 @@ void PointShapeImpl::draw(sf::RenderWindow *window, const sf::FloatRect& visible
     shape.setPosition(v);
     shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
     window->draw(shape);
+    */
 }
 void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
 
@@ -329,7 +333,9 @@ SegmentShapeImpl::SegmentShapeImpl(const Point& A, const Point& B){
     p1=A;
     p1=B;
 }
-void SegmentShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+void SegmentShapeImpl::draw(drawingClass* drawer) const{
+    drawer->drawSegment (p1, p2);
+    /*
     float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
     float tp2x = box.left + (p2.x-visible.left)/visible.width*box.width;
 
@@ -343,6 +349,7 @@ void SegmentShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visib
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
     window->draw(line, 2, sf::Lines);
+    */
 }
 double SegmentShapeImpl::distFromPoint(const Point& v) const{
     Point D=p2-p1;
@@ -378,9 +385,10 @@ LineShapeImpl::LineShapeImpl(const SegmentShape& s){
 double LineShapeImpl::distFromPoint(const Point& v) const{
     return doubleAbs((n*v+c)/length(n));
 }
-void LineShapeImpl::draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+void LineShapeImpl::draw(drawingClass* drawer) const{
 
-
+    drawer->drawLine (n.x, n.y, c);
+    /*
     sf::Vector2f from;
     sf::Vector2f to;
 
@@ -413,6 +421,7 @@ void LineShapeImpl::draw(sf::RenderWindow *window, const sf::FloatRect& visible,
     line[0].color = line[1].color = lineColor;
 
     window->draw(line, 2, sf::Lines);
+    */
 
 }
 LineShapeImpl::LineShapeImpl(const CircleShape& o1, const CircleShape& o2){
@@ -428,8 +437,10 @@ LineShapeImpl::LineShapeImpl(const CircleShape& o1, const CircleShape& o2){
 double CircleShapeImpl::distFromPoint(const Point& v) const {
     return std::abs(dist (middle,v)-r);
 }
-void CircleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    // i hope this works.
+void CircleShapeImpl::draw(drawingClass* drawer) const{
+
+    drawer->drawCircle (middle, r);
+    /*
     sf::CircleShape shape (r, 400);
     sf::Vector2f scaling;
     scaling.x = box.width/visible.width;
@@ -446,6 +457,7 @@ void CircleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visibl
     shape.setFillColor(sf::Color(255,255,255,0));
     //shape.setPointCount (400);
     window->draw(shape);
+    */
 }
 void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
     float scaling = box.width/visible.width;
@@ -489,7 +501,9 @@ double TriangleShapeImpl::distFromPoint(const Point& v) const {
         return 100;
     }
 }
-void TriangleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+void TriangleShapeImpl::draw(drawingClass* drawer) const{
+    drawer->drawTriangle (A, B, C);
+    /*
     sf::ConvexShape shape(3);
     float alpha = (A.x-visible.left)/visible.width;
     float beta = (A.y-visible.top)/visible.height;
@@ -506,6 +520,7 @@ void TriangleShapeImpl::draw(sf::RenderWindow* window, const sf::FloatRect& visi
     
     shape.setFillColor(sf::Color(255,0,0,125));
     window->draw(shape);
+    */
 }
 void TriangleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
     sf::ConvexShape shape(3);

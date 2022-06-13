@@ -1,0 +1,2 @@
+class drawingClass;
+class sfmlDrawingClass;

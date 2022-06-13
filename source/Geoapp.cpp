@@ -4,7 +4,7 @@
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
-Geoapp::Geoapp() : inManager (), inWrapper (inManager), testPtr (new int){
+Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), testPtr (new int) {
     uiBarrier = 0.6;
     sf::ContextSettings settings;
     settings.antialiasingLevel = antialias;
@@ -296,12 +296,17 @@ void Geoapp::drawObjects() const{
     float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
     sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
     sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+    floatRect visible2 (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+    floatRect box2 (0,0,windowWidth*uiBarrier,windowHeight);
     for(unsigned int i=0;i<hulledShapes.size();i++){
         hulledShapes[i]->hull_draw(&window, visible, box);
     }
+
+    sfmlDrawing.setVisible (visible2);
+    sfmlDrawing.setBox (box2);
     for(unsigned int i=0;i<shapes.size();i++){
         if (shapes[i]->getExistance())
-            shapes[i]->draw(&window, visible, box);
+            shapes[i]->draw(&sfmlDrawing);
     }
 }
 

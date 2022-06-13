@@ -5,6 +5,7 @@
 #include<unordered_map>
 #include<memory>
 #include "Construction.h"
+#include "drawers.h"
 
 class Geoapp{
 
@@ -13,6 +14,8 @@ class Geoapp{
             sf::Texture image;
             constructionMaker creator;
         };
+
+
         std::unordered_map<uint32_t, std::vector<uiObject> > uiPages;
 
         uint32_t uiMapId (const uiOptionConditions& conditions) const;
@@ -47,6 +50,8 @@ class Geoapp{
         bool rightMoving;
 
         mutable sf::RenderWindow window;
+
+        mutable sfmlDrawingClass sfmlDrawing;
 
         void loop();
         void update();

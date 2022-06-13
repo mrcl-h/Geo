@@ -4,6 +4,7 @@
 #include<cmath>
 #include<memory>
 #include <SFML/Graphics.hpp>
+#include "drawersFWD.h"
 
 
 //lista figur geometrycznych
@@ -20,6 +21,7 @@ inline double doubleAbs (double r) {
 
 struct floatRect {
     float left, top, width, height;
+    floatRect (float _left = 0, float _top = 0, float _width = 0, float _height = 0) :left (_left), top(_top), width (_width), height(_height) {}
 };
 
 typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
@@ -47,7 +49,7 @@ class Shape {
         virtual void setDependent (bool) = 0; 
         virtual bool getDependent () const = 0;
         virtual double distFromPoint(const Point&) const =0;
-        virtual void draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+        virtual void draw(drawingClass* drawer) const {}
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
         virtual void addToConstructionElements (constructionElements&) {}
         virtual void removeFromConstructionElements (constructionElements&) {}
