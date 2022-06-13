@@ -1,5 +1,8 @@
 #include "drawers.h"
 
+void sfmlDrawingClass::setColor (unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
+    drawingColor = sf::Color (r,g,b,a); 
+}
 
 void sfmlDrawingClass::setVisible (const floatRect& _visible) {
     visible = _visible; 
@@ -20,7 +23,7 @@ void sfmlDrawingClass::drawPoint (const Point& p) {
     v.y -= radiusOfDrawing;
     shape.setPosition(v);
     //shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
-    shape.setFillColor (sf::Color::Black);
+    shape.setFillColor (drawingColor);
     window->draw(shape);
 }
 
@@ -35,8 +38,12 @@ void sfmlDrawingClass::drawSegment (const Point& from, const Point& to) {
         sf::Vertex(sf::Vector2f(tp1x, tp1y)),
         sf::Vertex(sf::Vector2f(tp2x, tp2y))
     };
+    /*
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
+    */
+    line[0].color=drawingColor;
+    line[1].color=drawingColor;
     window->draw(line, 2, sf::Lines);
 
 }
@@ -53,7 +60,7 @@ void sfmlDrawingClass::drawCircle (const Point& center, const double radius) {
     v.x -= radius*scaling.x;
     v.y -= radius*scaling.y;
     shape.setPosition(v);
-    shape.setOutlineColor(sf::Color(0,0,0,255));
+    shape.setOutlineColor(drawingColor);
     shape.setOutlineThickness(1/scaling.x);
     shape.setFillColor(sf::Color(255,255,255,0));
     //shape.setPointCount (400);
@@ -75,7 +82,10 @@ void sfmlDrawingClass::drawTriangle (const Point& a, const Point& b, const Point
     v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
     shape.setPoint(2, v);
     
+    /*
     shape.setFillColor(sf::Color(255,0,0,125));
+    */
+    shape.setFillColor(drawingColor);
     window->draw(shape);
 }
 
@@ -109,7 +119,7 @@ void sfmlDrawingClass::drawLine (const double a, const double b, const double c)
     //} else {
     //    lineColor = sf::Color::Black;
     //}
-    lineColor = sf::Color::Black;
+    lineColor = drawingColor;
 
     line[0].color = line[1].color = lineColor;
 

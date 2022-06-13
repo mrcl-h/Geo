@@ -285,6 +285,8 @@ sf::Color getShapeColor (bool active, bool current, bool dependent) {
 }
 
 void PointShapeImpl::draw(drawingClass* drawer) const{
+    sf::Color drawingColor = getShapeColor (isActive, isCurrent, isDependent);
+    drawer->setColor (drawingColor.r, drawingColor.g, drawingColor.b, 255);
     drawer->drawPoint (coordinates);
     /*
     sf::CircleShape shape (radiusOfDrawing);
@@ -334,6 +336,7 @@ SegmentShapeImpl::SegmentShapeImpl(const Point& A, const Point& B){
     p1=B;
 }
 void SegmentShapeImpl::draw(drawingClass* drawer) const{
+    drawer->setColor (0,0,0);
     drawer->drawSegment (p1, p2);
     /*
     float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
@@ -386,7 +389,16 @@ double LineShapeImpl::distFromPoint(const Point& v) const{
     return doubleAbs((n*v+c)/length(n));
 }
 void LineShapeImpl::draw(drawingClass* drawer) const{
-
+    
+    sf::Color lineColor;
+    if (isCurrent) {
+        lineColor = sf::Color::Green;
+    } else if (isActive) {
+        lineColor = sf::Color::Blue;
+    } else {
+        lineColor = sf::Color::Black;
+    }
+    drawer->setColor (lineColor.r, lineColor.g, lineColor.b);
     drawer->drawLine (n.x, n.y, c);
     /*
     sf::Vector2f from;
@@ -439,6 +451,15 @@ double CircleShapeImpl::distFromPoint(const Point& v) const {
 }
 void CircleShapeImpl::draw(drawingClass* drawer) const{
 
+    sf::Color lineColor;
+    if (isCurrent) {
+        lineColor = sf::Color::Green;
+    } else if (isActive) {
+        lineColor = sf::Color::Blue;
+    } else {
+        lineColor = sf::Color::Black;
+    }
+    drawer->setColor (lineColor.r, lineColor.g, lineColor.b);
     drawer->drawCircle (middle, r);
     /*
     sf::CircleShape shape (r, 400);
@@ -502,6 +523,7 @@ double TriangleShapeImpl::distFromPoint(const Point& v) const {
     }
 }
 void TriangleShapeImpl::draw(drawingClass* drawer) const{
+    drawer->setColor (255,0,0,125);
     drawer->drawTriangle (A, B, C);
     /*
     sf::ConvexShape shape(3);
