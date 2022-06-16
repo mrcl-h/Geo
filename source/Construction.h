@@ -255,6 +255,24 @@ class symmetricalOfPoints : public Construction {
         virtual void adjust ();
 };
 
+class lineConstraint : public Construction {
+    private:
+        LineShape * const line;
+        PointShape * const point;
+    public:
+        lineConstraint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line (el.getVector<LineShape*>()[0]), point (el.getVector<PointShape*>()[0]) {}
+        virtual void adjust ();
+};
+
+class circleConstraint : public Construction {
+    private:
+        CircleShape * const circle;
+        PointShape * const point;
+    public:
+        circleConstraint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle (el.getVector<CircleShape*>()[0]), point (el.getVector<PointShape*>()[0]) {}
+        virtual void adjust ();
+};
+
 class Triangle : public Construction {
     private:
         PointShape * const pointA, * const pointB, * const pointC;

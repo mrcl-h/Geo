@@ -33,6 +33,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
     makeOption<circlesIntersection> ("resources/circleCircleIntersection.png", uiCircleObject (2));
     makeOption<bisectorThreePoints> ("resources/bisectorThreePoints.png", uiPointObject (3));
     makeOption<tangentCirclePoint> ("resources/tangentsThroughPoint.png", uiPointObject(1), uiCircleObject(1));
+    makeOption<circleConstraint> ("resources/circleConstraint.png", uiPointObject (1), uiCircleObject (1));
+    makeOption<lineConstraint> ("resources/lineConstraint.png", uiPointObject (1), uiLineObject (1));
     makeOption<Triangle> ("resources/segmentMid.png", uiPointObject (3));
 
     junctionInputState *mainState = new junctionInputState (&inManager);
