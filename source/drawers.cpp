@@ -1,11 +1,12 @@
 #include "drawers.h"
+#include <iomanip>
 
 void sfmlDrawingClass::setColor (unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
-    drawingColor = sf::Color (r,g,b,a); 
+    drawingColor = sf::Color (r,g,b,a);
 }
 
 void sfmlDrawingClass::setVisible (const floatRect& _visible) {
-    visible = _visible; 
+    visible = _visible;
 }
 
 void sfmlDrawingClass::setBox (const floatRect& _box) {
@@ -13,7 +14,7 @@ void sfmlDrawingClass::setBox (const floatRect& _box) {
 }
 
 void sfmlDrawingClass::drawPoint (const Point& p) {
-    
+
     const double radiusOfDrawing = 3;
     sf::CircleShape shape (radiusOfDrawing);
     float alpha = (p.x-visible.left)/visible.width;
@@ -81,7 +82,7 @@ void sfmlDrawingClass::drawTriangle (const Point& a, const Point& b, const Point
     beta = (c.y-visible.top)/visible.height;
     v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
     shape.setPoint(2, v);
-    
+
     /*
     shape.setFillColor(sf::Color(255,0,0,125));
     */
@@ -124,4 +125,134 @@ void sfmlDrawingClass::drawLine (const double a, const double b, const double c)
     line[0].color = line[1].color = lineColor;
 
     window->draw(line, 2, sf::Lines);
+}
+
+void svgDrawingClass::startDrawing () {
+    curStream << ""
+        "<svg\n"
+        "   width= \"" << visible.width << "\"\n"
+        "   height= \"" << visible.height << "\">\n"
+        "  <g>\n";
+}
+void svgDrawingClass::endDrawing () {
+    curStream << ""
+        "  </g>\n"
+        "</svg>";
+}
+void svgDrawingClass::saveToFile (const std::string& filename) {
+    std::ofstream of (filename);
+    of << curStream.rdbuf();
+    of.close();
+}
+
+svgDrawingClass::svgDrawingClass() {}
+
+void svgDrawingClass::setVisible (const floatRect& _visible) {
+    visible = _visible;
+}
+void svgDrawingClass::setBox (const floatRect& _box) {
+    box = _box;
+}
+void svgDrawingClass::setColor (unsigned int r, unsigned int g, unsigned int b, unsigned int a) {
+    currentR = r;
+    currentG = g;
+    currentB = b;
+}
+void svgDrawingClass::drawPoint (const Point& p) {
+    const double radiusOfDrawing = 3;
+    float alpha = (p.x-visible.left)/visible.width;
+    float beta = (p.y-visible.top)/visible.height;
+    float vx = box.left + alpha*box.width;
+    float vy = box.top + beta*box.height;
+    curStream << std::hex << ""
+    "    <circle\n"
+    "       style=\""
+    "fill:#" <<
+    std::setw (2) << std::setfill ('0') << currentR <<
+    std::setw (2) << std::setfill ('0') << currentG <<
+    std::setw (2) << std::setfill ('0') << currentB << ";"
+    "stroke:none;"
+    "stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stop-color:#000000\"\n"
+    << std::dec << ""
+    "       cx=\"" << vx << "\"\n"
+    "       cy=\"" << vy << "\"\n"
+    "       r=\"" << radiusOfDrawing << "\" />\n";
+}
+void svgDrawingClass::drawSegment (const Point& from, const Point& to) {
+    float tp1x = box.left + (from.x-visible.left)/visible.width*box.width;
+    float tp2x = box.left + (to.x-visible.left)/visible.width*box.width;
+
+    float tp1y = box.top + (from.y-visible.top)/visible.height*box.height;
+    float tp2y = box.top + (to.y-visible.top)/visible.height*box.height;
+    curStream << std::hex << ""
+    "    <path\n"
+    "       style=\""
+    "fill:none;"
+    "stroke:#" <<
+    std::setw (2) << std::setfill ('0') << currentR <<
+    std::setw (2) << std::setfill ('0') << currentG <<
+    std::setw (2) << std::setfill ('0') << currentB << ";"
+    "stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stop-color:#000000\"\n"
+    << std::dec << ""
+    "       d=\"M " << tp1x << "," << tp1y << " " << tp2x << " " << tp2y << "\"/>\n";
+
+}
+void svgDrawingClass::drawCircle (const Point& center, const double radius) {
+    double cx, cy, rx, ry;
+    rx = radius * box.width / visible.width;
+    ry = radius * box.height / visible.height;
+    float alpha = (center.x-visible.left)/visible.width;
+    float beta = (center.y-visible.top)/visible.height;
+    cx = box.left + alpha*box.width;
+    cy = box.top + beta*box.height;
+    curStream << std::hex << ""
+        "    <ellipse\n"
+        "       style=\""
+        "fill:none;"
+        "stroke:#" <<
+        std::setw (2) << std::setfill ('0') << currentR <<
+        std::setw (2) << std::setfill ('0') << currentG <<
+        std::setw (2) << std::setfill ('0') << currentB << ";"
+        "stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stop-color:#000000\"\n"
+    << std::dec << ""
+    "       cx=\"" << cx << "\"\n"
+    "       cy=\"" << cy << "\"\n"
+    "       rx=\"" << rx << "\"\n"
+    "       ry=\"" << ry << "\" />\n";
+}
+void svgDrawingClass::drawTriangle (const Point& a, const Point& b, const Point& c) {
+
+}
+void svgDrawingClass::drawLine (const double a, const double b, const double c) {
+    double fromX, fromY, toX, toY;
+
+    unsigned int cond1 = (b+a)>=0;
+    unsigned int cond2 = (b-a)<0;
+    if (cond1^cond2) { //draw horizontally
+        fromX = (box.left);
+        fromY = box.top+box.height/visible.height*((-c-a*visible.left)/b-visible.top);
+
+
+        toX = (box.left+box.width);
+        toY = box.top+box.height/visible.height*((-c-a*(visible.left+visible.width))/b-visible.top);
+    } else { //draw vertically
+        fromY = (box.top);
+        fromX = box.left+box.width/visible.width*((-c-b*visible.top)/a-visible.left);
+
+        toY = (box.top+box.height);
+        toX = box.left+box.width/visible.width*((-c-b*(visible.top+visible.height))/a-visible.left);
+    }
+
+    curStream << std::hex << ""
+    "    <path\n"
+    "       style=\""
+    "fill:none;"
+    "stroke:#" <<
+    std::setw (2) << std::setfill ('0') << currentR <<
+    std::setw (2) << std::setfill ('0') << currentG <<
+    std::setw (2) << std::setfill ('0') << currentB << ";"
+    "stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stop-color:#000000\"\n"
+    << std::dec << ""
+    "       d=\"M " << fromX << "," << fromY << " " << toX << " " << toY << "\"/>\n";
+
 }

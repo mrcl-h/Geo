@@ -5,6 +5,7 @@ constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
 Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), testPtr (new int) {
+
     uiBarrier = 0.6;
     sf::ContextSettings settings;
     settings.antialiasingLevel = antialias;
@@ -67,6 +68,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
 
     mainState->addState (inputManager::Key::Hyphen, new inputScalingState (&inManager, this, 2));
     mainState->addState (inputManager::Key::Equal, new inputScalingState (&inManager, this, 0.5), inputManager::shiftMod);
+
+    mainState->addState (inputManager::Key::S, new inputSaveState (&inManager, this, "output.svg", &svgDrawing));
 
     inManager.setMainState (mainState);
     inManager.goToMainState();
