@@ -52,6 +52,7 @@ class Geoapp{
         mutable sf::RenderWindow window;
 
         mutable sfmlDrawingClass sfmlDrawing;
+        mutable svgDrawingClass svgDrawing;
 
         void loop();
         void update();
@@ -146,6 +147,33 @@ class Geoapp{
 
         void moveHulledPoints (double x, double y);
         enum mode {pointCreation = 1, selection = 2};
+
+        floatRect getVisible () {
+            float windowWidth = getWindowWidth();
+            float windowHeight = getWindowHeight();
+            floatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+            return visible;
+        }
+        floatRect getBox () {
+            float windowWidth = getWindowWidth();
+            float windowHeight = getWindowHeight();
+            floatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+            return box;
+        }
+
+        float getWindowWidth () {
+            return window.getSize().x;
+        }
+        float getWindowHeight () {
+            return window.getSize().y;
+        }
+
+        void drawShapes (drawingClass* drawer) {
+            for(unsigned int i=0;i<shapes.size();i++){
+                if (shapes[i]->getExistance())
+                    shapes[i]->draw(drawer);
+            }
+        }
 
         std::unique_ptr<int> testPtr;
         Geoapp();
@@ -264,6 +292,24 @@ class inputScalingState : public inputState {
         inputScalingState (inputManager* _manager, Geoapp* _app, double _scaleValue) : inputState (_manager), app(_app), scaleValue (_scaleValue) {}
         virtual void onEnter () override {
             app->changeScale (scaleValue);
+            done();
+        }
+};
+
+class inputSaveState : public inputState {
+    private:
+        Geoapp* app;
+        const std::string filename;
+        svgDrawingClass* drawer;
+    public:
+        inputSaveState (inputManager* _manager, Geoapp* _app, const std::string& _filename, svgDrawingClass* _drawer) :inputState (_manager), app(_app), filename(_filename), drawer(_drawer) {}
+        virtual void onEnter () override {
+            drawer->setVisible (app->getVisible());
+            drawer->setBox (app->getBox());
+            drawer->startDrawing();
+            app->drawShapes (drawer);
+            drawer->endDrawing();
+            drawer->saveToFile (filename);
             done();
         }
 };
