@@ -168,10 +168,13 @@ class Geoapp{
             return window.getSize().y;
         }
 
-        void drawShapes (drawingClass* drawer) {
+        void drawShapes (drawingClass* drawer) const {
+            drawingShapeVisitor dv;
+            dv.setDrawer (drawer);
             for(unsigned int i=0;i<shapes.size();i++){
                 if (shapes[i]->getExistance())
-                    shapes[i]->draw(drawer);
+                    shapes[i]->acceptVisitor (&dv);
+                    //shapes[i]->draw(drawer);
             }
         }
 

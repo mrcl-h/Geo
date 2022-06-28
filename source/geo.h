@@ -36,6 +36,20 @@ struct Point {
     double x, y;
 };
 
+struct color {
+    unsigned int r, g, b, a;
+};
+
+class ShapeVisitor {
+    public:
+        virtual ~ShapeVisitor () {}
+        virtual void visitSegment (SegmentShape*) {}
+        virtual void visitTriangle (TriangleShape*) {}
+        virtual void visitLine (LineShape*) {}
+        virtual void visitCircle (CircleShape*) {}
+        virtual void visitPoint (PointShape*) {}
+};
+
 class Shape {
     protected:
         constexpr static double hitEpsilon = 4;
@@ -49,7 +63,7 @@ class Shape {
         virtual void setDependent (bool) = 0; 
         virtual bool getDependent () const = 0;
         virtual double distFromPoint(const Point&) const =0;
-        virtual void draw(drawingClass* drawer) const {}
+        //virtual void draw(drawingClass* drawer) const {}
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
         virtual void addToConstructionElements (constructionElements&) {}
         virtual void removeFromConstructionElements (constructionElements&) {}
@@ -58,6 +72,9 @@ class Shape {
         virtual bool isHit (const Point& p) = 0;
         virtual void moveShape (double x, double y) {}
         virtual ~Shape() {}
+
+        virtual void getPreferredColor (color&) = 0;
+        virtual void acceptVisitor (ShapeVisitor*) = 0;
 
 };
 
@@ -90,9 +107,9 @@ class PointShape : public Shape {
 PointShape* makePointShape (double = 0, double = 0);
 PointShape* makePointShape (const LineShape&, const LineShape&);
 
-Point getPointLocation (PointShape&);
+Point getPointLocation (const PointShape&);
 
-class SegmentShape : public Shape{
+class SegmentShape : public Shape {
     public:
         virtual ~SegmentShape () {}
 
@@ -155,7 +172,7 @@ CircleShape* makeCircleShape (const Point&, const Point&);
 CircleShape* makeCircleShape (double, double, double);
 CircleShape* makeCircleShape (const Point&, const Point&, const Point&);
 
-Point getCircleCenter (CircleShape&);
+Point getCircleCenter (const CircleShape&);
 
 //TODO: Triangle class
 class TriangleShape : public Shape {
@@ -180,5 +197,9 @@ class TriangleShape : public Shape {
         virtual void setCY (double) = 0;
         
 };
+Point getTrianglePointA (const TriangleShape& ts);
+Point getTrianglePointB (const TriangleShape& ts);
+Point getTrianglePointC (const TriangleShape& ts);
+
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);
