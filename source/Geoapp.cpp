@@ -309,7 +309,8 @@ void Geoapp::drawObjects() const{
     sfmlDrawing.setBox (box2);
     for(unsigned int i=0;i<shapes.size();i++){
         if (shapes[i]->getExistance())
-            shapes[i]->draw(&sfmlDrawing);
+            //shapes[i]->draw(&sfmlDrawing);
+            drawShapes (&sfmlDrawing);
     }
 }
 

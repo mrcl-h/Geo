@@ -51,3 +51,42 @@ class sfmlDrawingClass : public drawingClass {
         virtual void drawTriangle (const Point& a, const Point& b, const Point& c) override;
         virtual void drawLine (const double a, const double b, const double c) override;
 };
+
+class drawingShapeVisitor : public ShapeVisitor {
+    private:
+        drawingClass * drawer;
+
+        void setDrawerColorToShape (Shape* s) {
+            color pointColor; 
+            s->getPreferredColor(pointColor);
+            drawer->setColor (pointColor.r, pointColor.g, pointColor.b, pointColor.a);
+        }
+
+    public:
+        virtual ~drawingShapeVisitor () {}
+
+        void setDrawer (drawingClass* _drawer) {
+            drawer = _drawer;
+        }
+
+        virtual void visitSegment (SegmentShape* ss) {
+            setDrawerColorToShape (ss);
+            drawer->drawSegment (getSegmentFrom (*ss), getSegmentTo (*ss));
+        }
+        virtual void visitTriangle (TriangleShape* ts) {
+            setDrawerColorToShape (ts);
+            drawer->drawTriangle (getTrianglePointA (*ts), getTrianglePointB (*ts), getTrianglePointC (*ts));
+        }
+        virtual void visitLine (LineShape* ls) {
+            setDrawerColorToShape (ls);
+            drawer->drawLine (ls->getNormalX(), ls->getNormalY(), ls->getC());
+        }
+        virtual void visitCircle (CircleShape* cs) {
+            setDrawerColorToShape (cs);
+            drawer->drawCircle (getCircleCenter (*cs), cs->getR());
+        }
+        virtual void visitPoint (PointShape* ps) {
+            setDrawerColorToShape (ps);
+            drawer->drawPoint (getPointLocation (*ps));
+        }
+};
