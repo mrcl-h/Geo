@@ -63,7 +63,7 @@ class Shape {
         virtual bool getDependent () const = 0;
         virtual double distFromPoint(const Point&) const =0;
         //virtual void draw(drawingClass* drawer) const {}
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+        //virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
         //virtual void addToConstructionElements (constructionElements&) {}
         //virtual void removeFromConstructionElements (constructionElements&) {}
         virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}

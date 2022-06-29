@@ -127,6 +127,57 @@ void sfmlDrawingClass::drawLine (const double a, const double b, const double c)
     window->draw(line, 2, sf::Lines);
 }
 
+void sfmlDrawingClass::drawHullPoint (const Point& p) {
+    const double radiusOfDrawing = 3;
+    sf::CircleShape shape (2*radiusOfDrawing);
+    float alpha = (p.x-visible.left)/visible.width;
+    float beta = (p.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= 2*radiusOfDrawing;
+    v.y -= 2*radiusOfDrawing;
+    shape.setPosition(v);
+    shape.setFillColor(sf::Color(0,0,0,100));
+
+    window->draw(shape);
+}
+void sfmlDrawingClass::drawHullSegment (const Point& from, const Point& to) {
+}
+void sfmlDrawingClass::drawHullCircle (const Point& center, const double radius) {
+    float scaling = box.width/visible.width;
+    sf::CircleShape shape (radius*scaling-2, 400);
+    float alpha = (center.x-visible.left)/visible.width;
+    float beta = (center.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    v.x -= radius*scaling-2;
+    v.y -= radius*scaling-2;
+    shape.setPosition(v);
+    shape.setOutlineColor(sf::Color(0,0,0,128));
+    shape.setOutlineThickness(5);
+    shape.setFillColor(sf::Color(255,255,255,0));
+    //shape.setPointCount (400);
+    window->draw(shape);
+}
+void sfmlDrawingClass::drawHullTriangle (const Point& a, const Point& b, const Point& c) {
+    sf::ConvexShape shape(3);
+    float alpha = (a.x-visible.left)/visible.width;
+    float beta = (a.y-visible.top)/visible.height;
+    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+    shape.setPoint(0, v);
+    alpha = (b.x-visible.left)/visible.width;
+    beta = (b.y-visible.top)/visible.height;
+    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+    shape.setPoint(1, v);
+    alpha = (c.x-visible.left)/visible.width;
+    beta = (c.y-visible.top)/visible.height;
+    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+    shape.setPoint(2, v);
+    
+    shape.setFillColor(sf::Color(0,255,255,40));
+    window->draw(shape);
+}
+void sfmlDrawingClass::drawHullLine (const double a, const double b, const double c) {
+}
+
 void svgDrawingClass::startDrawing () {
     curStream << ""
         "<svg\n"

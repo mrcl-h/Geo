@@ -366,19 +366,19 @@ sf::Color getShapeColor (bool active, bool current, bool dependent) {
 //    window->draw(shape);
 //    */
 //}
-void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-
-    sf::CircleShape shape (2*radiusOfDrawing);
-    float alpha = (coordinates.x-visible.left)/visible.width;
-    float beta = (coordinates.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= 2*radiusOfDrawing;
-    v.y -= 2*radiusOfDrawing;
-    shape.setPosition(v);
-    shape.setFillColor(sf::Color(0,0,0,100));
-
-    window->draw(shape);
-}
+//void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//
+//    sf::CircleShape shape (2*radiusOfDrawing);
+//    float alpha = (coordinates.x-visible.left)/visible.width;
+//    float beta = (coordinates.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    v.x -= 2*radiusOfDrawing;
+//    v.y -= 2*radiusOfDrawing;
+//    shape.setPosition(v);
+//    shape.setFillColor(sf::Color(0,0,0,100));
+//
+//    window->draw(shape);
+//}
 PointShapeImpl::PointShapeImpl(const LineShape& l,const LineShape& m){
 
     if (m.getC() < 1 && m.getC() > -1 && l.getC() < 1 && l.getC() > -1) {
@@ -546,21 +546,21 @@ double CircleShapeImpl::distFromPoint(const Point& v) const {
 //    window->draw(shape);
 //    */
 //}
-void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    float scaling = box.width/visible.width;
-    sf::CircleShape shape (r*scaling-2, 400);
-    float alpha = (middle.x-visible.left)/visible.width;
-    float beta = (middle.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= r*scaling-2;
-    v.y -= r*scaling-2;
-    shape.setPosition(v);
-    shape.setOutlineColor(sf::Color(0,0,0,128));
-    shape.setOutlineThickness(5);
-    shape.setFillColor(sf::Color(255,255,255,0));
-    //shape.setPointCount (400);
-    window->draw(shape);
-}
+//void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//    float scaling = box.width/visible.width;
+//    sf::CircleShape shape (r*scaling-2, 400);
+//    float alpha = (middle.x-visible.left)/visible.width;
+//    float beta = (middle.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    v.x -= r*scaling-2;
+//    v.y -= r*scaling-2;
+//    shape.setPosition(v);
+//    shape.setOutlineColor(sf::Color(0,0,0,128));
+//    shape.setOutlineThickness(5);
+//    shape.setFillColor(sf::Color(255,255,255,0));
+//    //shape.setPointCount (400);
+//    window->draw(shape);
+//}
 CircleShapeImpl::CircleShapeImpl(const Point& mid, double radius){
     middle=mid;
     r=radius;
@@ -610,24 +610,24 @@ double TriangleShapeImpl::distFromPoint(const Point& v) const {
 //    window->draw(shape);
 //    */
 //}
-void TriangleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    sf::ConvexShape shape(3);
-    float alpha = (A.x-visible.left)/visible.width;
-    float beta = (A.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(0, v);
-    alpha = (B.x-visible.left)/visible.width;
-    beta = (B.y-visible.top)/visible.height;
-    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(1, v);
-    alpha = (C.x-visible.left)/visible.width;
-    beta = (C.y-visible.top)/visible.height;
-    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(2, v);
-    
-    shape.setFillColor(sf::Color(0,255,255,40));
-    window->draw(shape);
-}
+//void TriangleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//    sf::ConvexShape shape(3);
+//    float alpha = (A.x-visible.left)/visible.width;
+//    float beta = (A.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(0, v);
+//    alpha = (B.x-visible.left)/visible.width;
+//    beta = (B.y-visible.top)/visible.height;
+//    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(1, v);
+//    alpha = (C.x-visible.left)/visible.width;
+//    beta = (C.y-visible.top)/visible.height;
+//    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(2, v);
+//    
+//    shape.setFillColor(sf::Color(0,255,255,40));
+//    window->draw(shape);
+//}
 TriangleShapeImpl::TriangleShapeImpl(const Point& _a, const Point& _b, const Point& _c){
     A = _a;
     B = _b;
