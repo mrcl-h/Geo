@@ -20,16 +20,16 @@ void constructionElementsAddingShapeVisitor::visitPoint (PointShape* ps) {
 }
 
 void constructionElementsRemovingShapeVisitor::visitSegment (SegmentShape* ss) {
-    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ss)));
+    elements->getVector<SegmentShape*>().erase (std::find (elements->getVector<SegmentShape*>().begin(), elements->getVector<SegmentShape*>().end(), static_cast<Shape*>(ss)));
 }
 void constructionElementsRemovingShapeVisitor::visitTriangle (TriangleShape* ts) {
-    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ts)));
+    elements->getVector<TriangleShape*>().erase (std::find (elements->getVector<TriangleShape*>().begin(), elements->getVector<TriangleShape*>().end(), static_cast<Shape*>(ts)));
 }
 void constructionElementsRemovingShapeVisitor::visitLine (LineShape* ls) {
-    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ls)));
+    elements->getVector<LineShape*>().erase (std::find (elements->getVector<LineShape*>().begin(), elements->getVector<LineShape*>().end(), static_cast<Shape*>(ls)));
 }
 void constructionElementsRemovingShapeVisitor::visitCircle (CircleShape* cs) {
-    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(cs)));
+    elements->getVector<CircleShape*>().erase (std::find (elements->getVector<CircleShape*>().begin(), elements->getVector<CircleShape*>().end(), static_cast<Shape*>(cs)));
 }
 void constructionElementsRemovingShapeVisitor::visitPoint (PointShape* ps) {
     elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ps)));
