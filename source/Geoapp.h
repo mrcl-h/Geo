@@ -161,10 +161,10 @@ class Geoapp{
             return box;
         }
 
-        float getWindowWidth () {
+        float getWindowWidth () const {
             return window.getSize().x;
         }
-        float getWindowHeight () {
+        float getWindowHeight () const {
             return window.getSize().y;
         }
 
@@ -174,7 +174,6 @@ class Geoapp{
             for(unsigned int i=0;i<shapes.size();i++){
                 if (shapes[i]->getExistance())
                     shapes[i]->acceptVisitor (&dv);
-                    //shapes[i]->draw(drawer);
             }
         }
 

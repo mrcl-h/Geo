@@ -296,22 +296,33 @@ void Geoapp::drawUI() const {
 }
 
 void Geoapp::drawObjects() const{
-    float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
-    sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
-    sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
-    floatRect visible2 (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
-    floatRect box2 (0,0,windowWidth*uiBarrier,windowHeight);
+    //float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+    //sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+    //sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+    float windowWidth = getWindowWidth(), windowHeight = getWindowHeight();
+    
+    floatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+    floatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+
+    //for(unsigned int i=0;i<hulledShapes.size();i++){
+    //    hulledShapes[i]->hull_draw(&window, visible, box);
+    //}
+
+    sfmlDrawing.setVisible (visible);
+    sfmlDrawing.setBox (box);
+
+    hullDrawingShapeVisitor hdv;
+    hdv.setDrawer (&sfmlDrawing);
     for(unsigned int i=0;i<hulledShapes.size();i++){
-        hulledShapes[i]->hull_draw(&window, visible, box);
+        hulledShapes[i]->acceptVisitor (&hdv);
     }
 
-    sfmlDrawing.setVisible (visible2);
-    sfmlDrawing.setBox (box2);
-    for(unsigned int i=0;i<shapes.size();i++){
-        if (shapes[i]->getExistance())
-            //shapes[i]->draw(&sfmlDrawing);
-            drawShapes (&sfmlDrawing);
-    }
+    drawShapes (&sfmlDrawing);
+    //for(unsigned int i=0;i<shapes.size();i++){
+    //    if (shapes[i]->getExistance())
+    //        //shapes[i]->draw(&sfmlDrawing);
+    //        drawShapes (&sfmlDrawing);
+    //}
 }
 
 void Geoapp::UIhandling(const Point& mysz){
