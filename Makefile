@@ -7,7 +7,7 @@ bin/app: $(OBJECTS)
 
 obj/main.o: main.cpp source/Geoapp.h source/geo.h source/inputSFML.h \
  source/Input.h source/Construction.h source/vectorHolder.h \
- source/drawers.h | obj
+ source/drawers.h source/uiOptions.h source/conditionTracker.h | obj
 	g++ main.cpp -o obj/main.o -c $(CFLAGS)
 
 obj/Construction.o: source/Construction.cpp source/Construction.h \
@@ -19,7 +19,8 @@ obj/drawers.o: source/drawers.cpp source/drawers.h source/geo.h | obj
 
 obj/Geoapp.o: source/Geoapp.cpp source/Geoapp.h source/geo.h \
  source/inputSFML.h source/Input.h source/Construction.h \
- source/vectorHolder.h source/drawers.h | obj
+ source/vectorHolder.h source/drawers.h source/uiOptions.h \
+ source/conditionTracker.h | obj
 	g++ source/Geoapp.cpp -o obj/Geoapp.o -c $(CFLAGS)
 
 obj/geo.o: source/geo.cpp source/geo.h | obj
