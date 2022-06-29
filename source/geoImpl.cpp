@@ -1,8 +1,6 @@
 #include "geoImpl.h"
+#include <cmath>
 #include <stdexcept>
-#include <algorithm>
-#include <iostream>
-#include "drawers.h"
 
 void PointShapeImpl::setExistance (bool ex) {exists = ex;}
 bool PointShapeImpl::getExistance () const {return exists;}
@@ -139,17 +137,17 @@ TriangleShape* makeTriangleShape (double ax, double ay, double bx, double by, do
 double PointShapeImpl::abs() const {
     return std::sqrt (coordinates.x*coordinates.x+coordinates.y*coordinates.y);
 }
-void PointShapeImpl::addToConstructionElements (constructionElements& el) {
-    //el.points.push_back(this);
-    el.getVector<PointShape*>().push_back(this);
-}
-void PointShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    //el.points.erase (std::find (el.points.begin(), el.points.end(), static_cast<Shape*>(this)));
-    el.getVector<PointShape*>().erase (std::find (el.getVector<PointShape*>().begin(), el.getVector<PointShape*>().end(), static_cast<Shape*>(this)));
-}
-void PointShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
-    op.pointCount += c;
-}
+//void PointShapeImpl::addToConstructionElements (constructionElements& el) {
+//    //el.points.push_back(this);
+//    el.getVector<PointShape*>().push_back(this);
+//}
+//void PointShapeImpl::removeFromConstructionElements (constructionElements& el) {
+//    //el.points.erase (std::find (el.points.begin(), el.points.end(), static_cast<Shape*>(this)));
+//    el.getVector<PointShape*>().erase (std::find (el.getVector<PointShape*>().begin(), el.getVector<PointShape*>().end(), static_cast<Shape*>(this)));
+//}
+//void PointShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
+//    op.pointCount += c;
+//}
 bool PointShapeImpl::isHit (const Point& p) {
     return distFromPoint(p) < hitEpsilon;
 }
@@ -162,21 +160,51 @@ void PointShapeImpl::moveShape (double xMov, double yMov) {
     coordinates.y += yMov;
 }
 
-void SegmentShapeImpl::addToConstructionElements (constructionElements& el) {
-    //el.segments.push_back(this);
-    el.getVector<SegmentShape*>().push_back(this);
+void PointShapeImpl::getPreferredColor (color& col) { //COLOR
+    col.a = 255;
+    if (getDependent()) { col.r = 255; } else { col.r = 0; }
+    if (getCurrent()) {
+        col.g = 255;    
+        col.b = 0;
+    } else if (getActivity()) {
+        col.g = 0;
+        col.b = 255;
+    } else {
+        col.g = 0;
+        col.b = 0;
+    }
 }
-void SegmentShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    //el.segments.erase (std::find (el.segments.begin(), el.segments.end(), static_cast<Shape*>(this)));
-    el.getVector<SegmentShape*>().erase (std::find (el.getVector<SegmentShape*>().begin(), el.getVector<SegmentShape*>().end(), static_cast<Shape*>(this)));
-}
-void SegmentShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
-    op.segmentCount += c;
-}
+
+//void SegmentShapeImpl::addToConstructionElements (constructionElements& el) {
+//    //el.segments.push_back(this);
+//    el.getVector<SegmentShape*>().push_back(this);
+//}
+//void SegmentShapeImpl::removeFromConstructionElements (constructionElements& el) {
+//    //el.segments.erase (std::find (el.segments.begin(), el.segments.end(), static_cast<Shape*>(this)));
+//    el.getVector<SegmentShape*>().erase (std::find (el.getVector<SegmentShape*>().begin(), el.getVector<SegmentShape*>().end(), static_cast<Shape*>(this)));
+//}
+//void SegmentShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
+//    op.segmentCount += c;
+//}
 bool SegmentShapeImpl::isHit (const Point& p) {
     return distFromPoint(p) < hitEpsilon;
 }
 unsigned int SegmentShapeImpl::getHitPriority () {return 8;}
+
+void SegmentShapeImpl::getPreferredColor (color& c) { //COLOR
+    c.a = 255;
+    c.r = 0;
+    if (getCurrent()) {
+        c.g = 255;
+        c.b = 0;
+    } else if (getActivity()) {
+        c.g = 0;
+        c.b = 255;
+    } else {
+        c.g = 0;
+        c.b = 0;
+    }
+}
 
 void LineShapeImpl::goThroughPoints (const Point& p, const Point& q) {
     if(p==q){
@@ -204,38 +232,68 @@ void LineShapeImpl::goThroughPoints (const double px, const double py, const dou
     goThroughPoints (p, q);
 }
 
-void LineShapeImpl::addToConstructionElements (constructionElements& el) {
-    //el.lines.push_back(this);
-    el.getVector<LineShape*>().push_back(this);
-}
-void LineShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    //el.lines.erase (std::find (el.lines.begin(), el.lines.end(), static_cast<Shape*>(this)));
-    el.getVector<LineShape*>().erase (std::find (el.getVector<LineShape*>().begin(), el.getVector<LineShape*>().end(), static_cast<Shape*>(this)));
-}
-void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int m) {
-    op.lineCount += m;
-}
+//void LineShapeImpl::addToConstructionElements (constructionElements& el) {
+//    //el.lines.push_back(this);
+//    el.getVector<LineShape*>().push_back(this);
+//}
+//void LineShapeImpl::removeFromConstructionElements (constructionElements& el) {
+//    //el.lines.erase (std::find (el.lines.begin(), el.lines.end(), static_cast<Shape*>(this)));
+//    el.getVector<LineShape*>().erase (std::find (el.getVector<LineShape*>().begin(), el.getVector<LineShape*>().end(), static_cast<Shape*>(this)));
+//}
+//void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int m) {
+//    op.lineCount += m;
+//}
 bool LineShapeImpl::isHit (const Point& p) {
     return distFromPoint(p) < hitEpsilon;
 }
 
 unsigned int LineShapeImpl::getHitPriority () {return 6;}
 
-void CircleShapeImpl::addToConstructionElements (constructionElements& el) {
-    //el.circles.push_back(this);
-    el.getVector<CircleShape*>().push_back(this);
+void LineShapeImpl::getPreferredColor (color& col) { //COLOR
+    col.a = 255;
+    col.r = 0;
+    if (getCurrent()) {
+        col.g = 255;
+        col.b = 0;
+    } else if (getActivity()) {
+        col.g = 0;
+        col.b = 255;
+    } else {
+        col.g = 0;
+        col.b = 0;
+    }
 }
-void CircleShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
-    el.getVector<CircleShape*>().erase (std::find (el.getVector<CircleShape*>().begin(), el.getVector<CircleShape*>().end(), static_cast<Shape*>(this)));
-}
-void CircleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
-    op.circleCount += c;
-}
+
+//void CircleShapeImpl::addToConstructionElements (constructionElements& el) {
+//    //el.circles.push_back(this);
+//    el.getVector<CircleShape*>().push_back(this);
+//}
+//void CircleShapeImpl::removeFromConstructionElements (constructionElements& el) {
+//    //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
+//    el.getVector<CircleShape*>().erase (std::find (el.getVector<CircleShape*>().begin(), el.getVector<CircleShape*>().end(), static_cast<Shape*>(this)));
+//}
+//void CircleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
+//    op.circleCount += c;
+//}
 bool CircleShapeImpl::isHit (const Point& p) {
     return distFromPoint(p) < hitEpsilon;
 }
 unsigned int CircleShapeImpl::getHitPriority () {return 4;}
+
+void CircleShapeImpl::getPreferredColor (color& c) { //COLOR
+    c.a = 255;
+    c.r = 0;
+    if (getCurrent()) {
+        c.g = 255;
+        c.b = 0;
+    } else if (getActivity()) {
+        c.g = 0;
+        c.b = 255;
+    } else {
+        c.g = 0;
+        c.b = 0;
+    }
+}
 
 PointShapeImpl::PointShapeImpl(double x1, double y2){
 	coordinates.x=x1;
@@ -248,71 +306,77 @@ double PointShapeImpl::distFromPoint(const Point& v) const {
 
 
 
-void TriangleShapeImpl::addToConstructionElements (constructionElements& el) {
-    el.getVector<TriangleShape*>().push_back(this);
-}
-void TriangleShapeImpl::removeFromConstructionElements (constructionElements& el) {
-    //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
-    el.getVector<TriangleShape*>().erase (std::find (el.getVector<TriangleShape*>().begin(), el.getVector<TriangleShape*>().end(), static_cast<Shape*>(this)));
-}
-void TriangleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
-    op.triangleCount += c;
-}
+//void TriangleShapeImpl::addToConstructionElements (constructionElements& el) {
+//    el.getVector<TriangleShape*>().push_back(this);
+//}
+//void TriangleShapeImpl::removeFromConstructionElements (constructionElements& el) {
+//    //el.circles.erase (std::find (el.circles.begin(), el.circles.end(), static_cast<Shape*>(this)));
+//    el.getVector<TriangleShape*>().erase (std::find (el.getVector<TriangleShape*>().begin(), el.getVector<TriangleShape*>().end(), static_cast<Shape*>(this)));
+//}
+//void TriangleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
+//    op.triangleCount += c;
+//}
 bool TriangleShapeImpl::isHit (const Point& p) {
     return distFromPoint(p) < hitEpsilon;
 }
 unsigned int TriangleShapeImpl::getHitPriority () {return 5;}
 
-
-sf::Color getShapeColor (bool active, bool current, bool dependent) {
-    if (dependent) {
-        if (current) {
-            return sf::Color::Yellow;
-        } else if (active) {
-            return sf::Color::Magenta;
-        } else {
-            return sf::Color::Red;
-        }
-    } else {
-        if (current) {
-            return sf::Color::Green;
-        } else if (active) {
-            return sf::Color::Blue;
-        } else {
-            return sf::Color::Black;
-        }
-    }
+void TriangleShapeImpl::getPreferredColor (color& c) { //COLOR
+    c.r = 255;
+    c.g = 0;
+    c.b = 0;
+    c.a = 125;
 }
 
-void PointShapeImpl::draw(drawingClass* drawer) const{
-    sf::Color drawingColor = getShapeColor (isActive, isCurrent, isDependent);
-    drawer->setColor (drawingColor.r, drawingColor.g, drawingColor.b, 255);
-    drawer->drawPoint (coordinates);
-    /*
-    sf::CircleShape shape (radiusOfDrawing);
-    float alpha = (coordinates.x-visible.left)/visible.width;
-    float beta = (coordinates.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= radiusOfDrawing;
-    v.y -= radiusOfDrawing;
-    shape.setPosition(v);
-    shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
-    window->draw(shape);
-    */
-}
-void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//sf::Color getShapeColor (bool active, bool current, bool dependent) {
+//    if (dependent) {
+//        if (current) {
+//            return sf::Color::Yellow;
+//        } else if (active) {
+//            return sf::Color::Magenta;
+//        } else {
+//            return sf::Color::Red;
+//        }
+//    } else {
+//        if (current) {
+//            return sf::Color::Green;
+//        } else if (active) {
+//            return sf::Color::Blue;
+//        } else {
+//            return sf::Color::Black;
+//        }
+//    }
+//}
 
-    sf::CircleShape shape (2*radiusOfDrawing);
-    float alpha = (coordinates.x-visible.left)/visible.width;
-    float beta = (coordinates.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= 2*radiusOfDrawing;
-    v.y -= 2*radiusOfDrawing;
-    shape.setPosition(v);
-    shape.setFillColor(sf::Color(0,0,0,100));
-
-    window->draw(shape);
-}
+//void PointShapeImpl::draw(drawingClass* drawer) const{
+//    sf::Color drawingColor = getShapeColor (isActive, isCurrent, isDependent);
+//    drawer->setColor (drawingColor.r, drawingColor.g, drawingColor.b, 255);
+//    drawer->drawPoint (coordinates);
+//    /*
+//    sf::CircleShape shape (radiusOfDrawing);
+//    float alpha = (coordinates.x-visible.left)/visible.width;
+//    float beta = (coordinates.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    v.x -= radiusOfDrawing;
+//    v.y -= radiusOfDrawing;
+//    shape.setPosition(v);
+//    shape.setFillColor (getShapeColor (isActive, isCurrent, isDependent));
+//    window->draw(shape);
+//    */
+//}
+//void PointShapeImpl::hull_draw(sf::RenderWindow *window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//
+//    sf::CircleShape shape (2*radiusOfDrawing);
+//    float alpha = (coordinates.x-visible.left)/visible.width;
+//    float beta = (coordinates.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    v.x -= 2*radiusOfDrawing;
+//    v.y -= 2*radiusOfDrawing;
+//    shape.setPosition(v);
+//    shape.setFillColor(sf::Color(0,0,0,100));
+//
+//    window->draw(shape);
+//}
 PointShapeImpl::PointShapeImpl(const LineShape& l,const LineShape& m){
 
     if (m.getC() < 1 && m.getC() > -1 && l.getC() < 1 && l.getC() > -1) {
@@ -335,25 +399,25 @@ SegmentShapeImpl::SegmentShapeImpl(const Point& A, const Point& B){
     p1=A;
     p1=B;
 }
-void SegmentShapeImpl::draw(drawingClass* drawer) const{
-    drawer->setColor (0,0,0);
-    drawer->drawSegment (p1, p2);
-    /*
-    float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
-    float tp2x = box.left + (p2.x-visible.left)/visible.width*box.width;
-
-    float tp1y = box.top + (p1.y-visible.top)/visible.height*box.height;
-    float tp2y = box.top + (p2.y-visible.top)/visible.height*box.height;
-    sf::Vertex line[] =
-    {
-        sf::Vertex(sf::Vector2f(tp1x, tp1y)),
-        sf::Vertex(sf::Vector2f(tp2x, tp2y))
-    };
-    line[0].color=sf::Color(0,0,0);
-    line[1].color=sf::Color(0,0,0);
-    window->draw(line, 2, sf::Lines);
-    */
-}
+//void SegmentShapeImpl::draw(drawingClass* drawer) const{
+//    drawer->setColor (0,0,0);
+//    drawer->drawSegment (p1, p2);
+//    /*
+//    float tp1x = box.left + (p1.x-visible.left)/visible.width*box.width;
+//    float tp2x = box.left + (p2.x-visible.left)/visible.width*box.width;
+//
+//    float tp1y = box.top + (p1.y-visible.top)/visible.height*box.height;
+//    float tp2y = box.top + (p2.y-visible.top)/visible.height*box.height;
+//    sf::Vertex line[] =
+//    {
+//        sf::Vertex(sf::Vector2f(tp1x, tp1y)),
+//        sf::Vertex(sf::Vector2f(tp2x, tp2y))
+//    };
+//    line[0].color=sf::Color(0,0,0);
+//    line[1].color=sf::Color(0,0,0);
+//    window->draw(line, 2, sf::Lines);
+//    */
+//}
 double SegmentShapeImpl::distFromPoint(const Point& v) const{
     Point D=p2-p1;
 
@@ -388,54 +452,54 @@ LineShapeImpl::LineShapeImpl(const SegmentShape& s){
 double LineShapeImpl::distFromPoint(const Point& v) const{
     return doubleAbs((n*v+c)/length(n));
 }
-void LineShapeImpl::draw(drawingClass* drawer) const{
-    
-    sf::Color lineColor;
-    if (isCurrent) {
-        lineColor = sf::Color::Green;
-    } else if (isActive) {
-        lineColor = sf::Color::Blue;
-    } else {
-        lineColor = sf::Color::Black;
-    }
-    drawer->setColor (lineColor.r, lineColor.g, lineColor.b);
-    drawer->drawLine (n.x, n.y, c);
-    /*
-    sf::Vector2f from;
-    sf::Vector2f to;
-
-    unsigned int cond1 = (n.y+n.x)>=0;
-    unsigned int cond2 = (n.y-n.x)<0;
-    if (cond1^cond2) { //draw horizontally
-        from.x = (box.left);
-        from.y = box.top+box.height/visible.height*((-c-n.x*visible.left)/n.y-visible.top);
-
-
-        to.x = (box.left+box.width);
-        to.y = box.top+box.height/visible.height*((-c-n.x*(visible.left+visible.width))/n.y-visible.top);
-    } else { //draw vertically
-        from.y = (box.top);
-        from.x = box.left+box.width/visible.width*((-c-n.y*visible.top)/n.x-visible.left);
-
-        to.y = (box.top+box.height);
-        to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
-    }
-    sf::Vertex line[] = { from, to };
-    sf::Color lineColor;
-    if (isCurrent) {
-        lineColor = sf::Color::Green;
-    } else if (isActive) {
-        lineColor = sf::Color::Blue;
-    } else {
-        lineColor = sf::Color::Black;
-    }
-
-    line[0].color = line[1].color = lineColor;
-
-    window->draw(line, 2, sf::Lines);
-    */
-
-}
+//void LineShapeImpl::draw(drawingClass* drawer) const{
+//    
+//    sf::Color lineColor;
+//    if (isCurrent) {
+//        lineColor = sf::Color::Green;
+//    } else if (isActive) {
+//        lineColor = sf::Color::Blue;
+//    } else {
+//        lineColor = sf::Color::Black;
+//    }
+//    drawer->setColor (lineColor.r, lineColor.g, lineColor.b);
+//    drawer->drawLine (n.x, n.y, c);
+//    /*
+//    sf::Vector2f from;
+//    sf::Vector2f to;
+//
+//    unsigned int cond1 = (n.y+n.x)>=0;
+//    unsigned int cond2 = (n.y-n.x)<0;
+//    if (cond1^cond2) { //draw horizontally
+//        from.x = (box.left);
+//        from.y = box.top+box.height/visible.height*((-c-n.x*visible.left)/n.y-visible.top);
+//
+//
+//        to.x = (box.left+box.width);
+//        to.y = box.top+box.height/visible.height*((-c-n.x*(visible.left+visible.width))/n.y-visible.top);
+//    } else { //draw vertically
+//        from.y = (box.top);
+//        from.x = box.left+box.width/visible.width*((-c-n.y*visible.top)/n.x-visible.left);
+//
+//        to.y = (box.top+box.height);
+//        to.x = box.left+box.width/visible.width*((-c-n.y*(visible.top+visible.height))/n.x-visible.left);
+//    }
+//    sf::Vertex line[] = { from, to };
+//    sf::Color lineColor;
+//    if (isCurrent) {
+//        lineColor = sf::Color::Green;
+//    } else if (isActive) {
+//        lineColor = sf::Color::Blue;
+//    } else {
+//        lineColor = sf::Color::Black;
+//    }
+//
+//    line[0].color = line[1].color = lineColor;
+//
+//    window->draw(line, 2, sf::Lines);
+//    */
+//
+//}
 LineShapeImpl::LineShapeImpl(const CircleShape& o1, const CircleShape& o2){
     Point o1Mid, o2Mid;
     o1Mid.x = o1.getMiddleX(); o1Mid.y = o1.getMiddleY();
@@ -449,52 +513,52 @@ LineShapeImpl::LineShapeImpl(const CircleShape& o1, const CircleShape& o2){
 double CircleShapeImpl::distFromPoint(const Point& v) const {
     return std::abs(dist (middle,v)-r);
 }
-void CircleShapeImpl::draw(drawingClass* drawer) const{
-
-    sf::Color lineColor;
-    if (isCurrent) {
-        lineColor = sf::Color::Green;
-    } else if (isActive) {
-        lineColor = sf::Color::Blue;
-    } else {
-        lineColor = sf::Color::Black;
-    }
-    drawer->setColor (lineColor.r, lineColor.g, lineColor.b);
-    drawer->drawCircle (middle, r);
-    /*
-    sf::CircleShape shape (r, 400);
-    sf::Vector2f scaling;
-    scaling.x = box.width/visible.width;
-    scaling.y = box.height/visible.height;
-    shape.scale (scaling);
-    float alpha = (middle.x-visible.left)/visible.width;
-    float beta = (middle.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= r*scaling.x;
-    v.y -= r*scaling.y;
-    shape.setPosition(v);
-    shape.setOutlineColor(sf::Color(0,0,0,255));
-    shape.setOutlineThickness(1/scaling.x);
-    shape.setFillColor(sf::Color(255,255,255,0));
-    //shape.setPointCount (400);
-    window->draw(shape);
-    */
-}
-void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    float scaling = box.width/visible.width;
-    sf::CircleShape shape (r*scaling-2, 400);
-    float alpha = (middle.x-visible.left)/visible.width;
-    float beta = (middle.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    v.x -= r*scaling-2;
-    v.y -= r*scaling-2;
-    shape.setPosition(v);
-    shape.setOutlineColor(sf::Color(0,0,0,128));
-    shape.setOutlineThickness(5);
-    shape.setFillColor(sf::Color(255,255,255,0));
-    //shape.setPointCount (400);
-    window->draw(shape);
-}
+//void CircleShapeImpl::draw(drawingClass* drawer) const{
+//
+//    sf::Color lineColor;
+//    if (isCurrent) {
+//        lineColor = sf::Color::Green;
+//    } else if (isActive) {
+//        lineColor = sf::Color::Blue;
+//    } else {
+//        lineColor = sf::Color::Black;
+//    }
+//    drawer->setColor (lineColor.r, lineColor.g, lineColor.b);
+//    drawer->drawCircle (middle, r);
+//    /*
+//    sf::CircleShape shape (r, 400);
+//    sf::Vector2f scaling;
+//    scaling.x = box.width/visible.width;
+//    scaling.y = box.height/visible.height;
+//    shape.scale (scaling);
+//    float alpha = (middle.x-visible.left)/visible.width;
+//    float beta = (middle.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    v.x -= r*scaling.x;
+//    v.y -= r*scaling.y;
+//    shape.setPosition(v);
+//    shape.setOutlineColor(sf::Color(0,0,0,255));
+//    shape.setOutlineThickness(1/scaling.x);
+//    shape.setFillColor(sf::Color(255,255,255,0));
+//    //shape.setPointCount (400);
+//    window->draw(shape);
+//    */
+//}
+//void CircleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//    float scaling = box.width/visible.width;
+//    sf::CircleShape shape (r*scaling-2, 400);
+//    float alpha = (middle.x-visible.left)/visible.width;
+//    float beta = (middle.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    v.x -= r*scaling-2;
+//    v.y -= r*scaling-2;
+//    shape.setPosition(v);
+//    shape.setOutlineColor(sf::Color(0,0,0,128));
+//    shape.setOutlineThickness(5);
+//    shape.setFillColor(sf::Color(255,255,255,0));
+//    //shape.setPointCount (400);
+//    window->draw(shape);
+//}
 CircleShapeImpl::CircleShapeImpl(const Point& mid, double radius){
     middle=mid;
     r=radius;
@@ -522,46 +586,46 @@ double TriangleShapeImpl::distFromPoint(const Point& v) const {
         return 100;
     }
 }
-void TriangleShapeImpl::draw(drawingClass* drawer) const{
-    drawer->setColor (255,0,0,125);
-    drawer->drawTriangle (A, B, C);
-    /*
-    sf::ConvexShape shape(3);
-    float alpha = (A.x-visible.left)/visible.width;
-    float beta = (A.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(0, v);
-    alpha = (B.x-visible.left)/visible.width;
-    beta = (B.y-visible.top)/visible.height;
-    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(1, v);
-    alpha = (C.x-visible.left)/visible.width;
-    beta = (C.y-visible.top)/visible.height;
-    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(2, v);
-    
-    shape.setFillColor(sf::Color(255,0,0,125));
-    window->draw(shape);
-    */
-}
-void TriangleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
-    sf::ConvexShape shape(3);
-    float alpha = (A.x-visible.left)/visible.width;
-    float beta = (A.y-visible.top)/visible.height;
-    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(0, v);
-    alpha = (B.x-visible.left)/visible.width;
-    beta = (B.y-visible.top)/visible.height;
-    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(1, v);
-    alpha = (C.x-visible.left)/visible.width;
-    beta = (C.y-visible.top)/visible.height;
-    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
-    shape.setPoint(2, v);
-    
-    shape.setFillColor(sf::Color(0,255,255,40));
-    window->draw(shape);
-}
+//void TriangleShapeImpl::draw(drawingClass* drawer) const{
+//    drawer->setColor (255,0,0,125);
+//    drawer->drawTriangle (A, B, C);
+//    /*
+//    sf::ConvexShape shape(3);
+//    float alpha = (A.x-visible.left)/visible.width;
+//    float beta = (A.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(0, v);
+//    alpha = (B.x-visible.left)/visible.width;
+//    beta = (B.y-visible.top)/visible.height;
+//    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(1, v);
+//    alpha = (C.x-visible.left)/visible.width;
+//    beta = (C.y-visible.top)/visible.height;
+//    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(2, v);
+//    
+//    shape.setFillColor(sf::Color(255,0,0,125));
+//    window->draw(shape);
+//    */
+//}
+//void TriangleShapeImpl::hull_draw(sf::RenderWindow* window, const sf::FloatRect& visible, const sf::FloatRect& box) const{
+//    sf::ConvexShape shape(3);
+//    float alpha = (A.x-visible.left)/visible.width;
+//    float beta = (A.y-visible.top)/visible.height;
+//    sf::Vector2f v(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(0, v);
+//    alpha = (B.x-visible.left)/visible.width;
+//    beta = (B.y-visible.top)/visible.height;
+//    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(1, v);
+//    alpha = (C.x-visible.left)/visible.width;
+//    beta = (C.y-visible.top)/visible.height;
+//    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
+//    shape.setPoint(2, v);
+//    
+//    shape.setFillColor(sf::Color(0,255,255,40));
+//    window->draw(shape);
+//}
 TriangleShapeImpl::TriangleShapeImpl(const Point& _a, const Point& _b, const Point& _c){
     A = _a;
     B = _b;
@@ -577,7 +641,7 @@ TriangleShapeImpl::TriangleShapeImpl (double ax, double ay, double bx, double by
 }
 //helper outside functions
 
-Point getPointLocation (PointShape& ps) {
+Point getPointLocation (const PointShape& ps) {
     Point p;
     p.x = ps.getX(); p.y = ps.getY();
     return p;
@@ -601,8 +665,26 @@ Point getLineNormal (const LineShape& ls) {
     return n;
 }
 
-Point getCircleCenter (CircleShape& cs) {
+Point getCircleCenter (const CircleShape& cs) {
     Point center;
     center.x = cs.getMiddleX(); center.y = cs.getMiddleY();
     return center;
+}
+
+Point getTrianglePointA (const TriangleShape& ts) {
+    Point A;
+    A.x = ts.getAX(); A.y = ts.getAY();
+    return A;
+}
+
+Point getTrianglePointB (const TriangleShape& ts) {
+    Point B;
+    B.x = ts.getBX(); B.y = ts.getBY();
+    return B;
+}
+
+Point getTrianglePointC (const TriangleShape& ts) {
+    Point C;
+    C.x = ts.getCX(); C.y = ts.getCY();
+    return C;
 }

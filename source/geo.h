@@ -1,11 +1,4 @@
 #pragma once
-#include "vectorHolder.h"
-#include<vector>
-#include<cmath>
-#include<memory>
-#include <SFML/Graphics.hpp>
-#include "drawersFWD.h"
-
 
 //lista figur geometrycznych
 class SegmentShape;
@@ -24,17 +17,24 @@ struct floatRect {
     floatRect (float _left = 0, float _top = 0, float _width = 0, float _height = 0) :left (_left), top(_top), width (_width), height(_height) {}
 };
 
-typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
-
-struct uiOptionConditions {
-    uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
-};
-
-void resetUiOptionConditions (uiOptionConditions& op);
-
 struct Point {
     double x, y;
 };
+
+struct color {
+    unsigned int r, g, b, a;
+};
+
+class ShapeVisitor {
+    public:
+        virtual ~ShapeVisitor () {}
+        virtual void visitSegment (SegmentShape*) {}
+        virtual void visitTriangle (TriangleShape*) {}
+        virtual void visitLine (LineShape*) {}
+        virtual void visitCircle (CircleShape*) {}
+        virtual void visitPoint (PointShape*) {}
+};
+
 
 class Shape {
     protected:
@@ -49,15 +49,18 @@ class Shape {
         virtual void setDependent (bool) = 0; 
         virtual bool getDependent () const = 0;
         virtual double distFromPoint(const Point&) const =0;
-        virtual void draw(drawingClass* drawer) const {}
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
-        virtual void addToConstructionElements (constructionElements&) {}
-        virtual void removeFromConstructionElements (constructionElements&) {}
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
+        //virtual void draw(drawingClass* drawer) const {}
+        //virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
+        //virtual void addToConstructionElements (constructionElements&) {}
+        //virtual void removeFromConstructionElements (constructionElements&) {}
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
         virtual unsigned int getHitPriority () = 0;
         virtual bool isHit (const Point& p) = 0;
         virtual void moveShape (double x, double y) {}
         virtual ~Shape() {}
+
+        virtual void getPreferredColor (color&) = 0;
+        virtual void acceptVisitor (ShapeVisitor*) = 0;
 
 };
 
@@ -90,9 +93,9 @@ class PointShape : public Shape {
 PointShape* makePointShape (double = 0, double = 0);
 PointShape* makePointShape (const LineShape&, const LineShape&);
 
-Point getPointLocation (PointShape&);
+Point getPointLocation (const PointShape&);
 
-class SegmentShape : public Shape{
+class SegmentShape : public Shape {
     public:
         virtual ~SegmentShape () {}
 
@@ -155,7 +158,7 @@ CircleShape* makeCircleShape (const Point&, const Point&);
 CircleShape* makeCircleShape (double, double, double);
 CircleShape* makeCircleShape (const Point&, const Point&, const Point&);
 
-Point getCircleCenter (CircleShape&);
+Point getCircleCenter (const CircleShape&);
 
 //TODO: Triangle class
 class TriangleShape : public Shape {
@@ -180,5 +183,9 @@ class TriangleShape : public Shape {
         virtual void setCY (double) = 0;
         
 };
+Point getTrianglePointA (const TriangleShape& ts);
+Point getTrianglePointB (const TriangleShape& ts);
+Point getTrianglePointC (const TriangleShape& ts);
+
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);

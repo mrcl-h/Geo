@@ -90,4 +90,3 @@ template <typename U, typename... T>
 static inline const std::vector<U>& getVectorFromHolder (const vectorHolder<T...>& ii) {
     return ii.template fwdVector<U>();
 }
-

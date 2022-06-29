@@ -1,11 +1,45 @@
 #pragma once
-#include"geo.h"
-//#include"Input.h"
-#include"inputSFML.h"
-#include<unordered_map>
-#include<memory>
+#include "geo.h"
+#include "inputSFML.h"
+#include <unordered_map>
+#include <memory>
 #include "Construction.h"
 #include "drawers.h"
+
+struct uiOptionConditions {
+    uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
+};
+
+void resetUiOptionConditions (uiOptionConditions& op);
+
+class uiOptionConditionsAdjusterShapeVisitor : public ShapeVisitor {
+    private: 
+        uiOptionConditions* conditions;
+        int count;
+    public:
+        virtual ~uiOptionConditionsAdjusterShapeVisitor () {}
+        void setConditions (uiOptionConditions* _conditions) {
+            conditions = _conditions;
+        }
+        void setCount (int _count) {
+            count = _count;
+        }
+        virtual void visitSegment (SegmentShape*) {
+            conditions->segmentCount += count;
+        }
+        virtual void visitTriangle (TriangleShape*) {
+            conditions->triangleCount += count;
+        }
+        virtual void visitLine (LineShape*) {
+            conditions->lineCount += count;
+        }
+        virtual void visitCircle (CircleShape*) {
+            conditions->circleCount += count;
+        }
+        virtual void visitPoint (PointShape*) {
+            conditions->pointCount += count;
+        }
+};
 
 class Geoapp{
 
@@ -161,17 +195,19 @@ class Geoapp{
             return box;
         }
 
-        float getWindowWidth () {
+        float getWindowWidth () const {
             return window.getSize().x;
         }
-        float getWindowHeight () {
+        float getWindowHeight () const {
             return window.getSize().y;
         }
 
-        void drawShapes (drawingClass* drawer) {
+        void drawShapes (drawingClass* drawer) const {
+            drawingShapeVisitor dv;
+            dv.setDrawer (drawer);
             for(unsigned int i=0;i<shapes.size();i++){
                 if (shapes[i]->getExistance())
-                    shapes[i]->draw(drawer);
+                    shapes[i]->acceptVisitor (&dv);
             }
         }
 

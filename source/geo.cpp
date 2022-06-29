@@ -1,7 +1,5 @@
-#include"geo.h"
-#include<iostream>
-#include<cmath>
-#include<SFML/Graphics.hpp>
+#include "geo.h"
+#include <cmath>
 
 //void resetConstructionElements (constructionElements& el) {
 //    el.points.clear();
@@ -9,10 +7,6 @@
 //    el.circles.clear();
 //    el.segments.clear();
 //}
-
-void resetUiOptionConditions (uiOptionConditions& op) {
-    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
-}
 
 //----------------------------------------
 double dist(const Point &p1, const Point &p2) {

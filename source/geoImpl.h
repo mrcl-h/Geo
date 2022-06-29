@@ -25,9 +25,9 @@ class PointShapeImpl : public PointShape {
         virtual void setX (double newX) override;
         virtual void setY (double newY) override;
 
-        virtual void draw(drawingClass* drawer) const override;
+        //virtual void draw(drawingClass* drawer) const override;
 
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        //virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
 
         virtual double distFromPoint(const Point&) const override;
 
@@ -35,10 +35,10 @@ class PointShapeImpl : public PointShape {
 
         virtual double abs() const override;
 
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
+        //virtual void addToConstructionElements (constructionElements& el) override;
+        //virtual void removeFromConstructionElements (constructionElements& el) override;
 
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
 
         virtual unsigned int getHitPriority () override;
@@ -46,6 +46,10 @@ class PointShapeImpl : public PointShape {
         virtual void moveShape (double xMov, double yMov) override;
 
         PointShapeImpl (const LineShape&,const LineShape&);
+
+        virtual void getPreferredColor (color& c) override;
+
+        virtual void acceptVisitor (ShapeVisitor* vis) override {vis->visitPoint (this);}
 };
 
 class SegmentShapeImpl : public SegmentShape{
@@ -82,14 +86,18 @@ class SegmentShapeImpl : public SegmentShape{
 
         virtual double distFromPoint(const Point&) const override;
 
-        virtual void draw(drawingClass* drawer) const override;
+        //virtual void draw(drawingClass* drawer) const override;
 
         virtual double abs() const override;
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToConstructionElements (constructionElements& el) override;
+        //virtual void removeFromConstructionElements (constructionElements& el) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
+
+        virtual void getPreferredColor (color& c) override;
+
+        virtual void acceptVisitor (ShapeVisitor* vis) override {vis->visitSegment (this);}
 
 };
 
@@ -126,18 +134,22 @@ class LineShapeImpl : public LineShape{
         LineShapeImpl(const SegmentShape&);
 
         double distFromPoint(const Point&) const override;
-        virtual void draw(drawingClass* drawer) const override;
+        //virtual void draw(drawingClass* drawer) const override;
 
 
         virtual void goThroughPoints (const double px, const double py, const double qx, const double qy) override;
 
         LineShapeImpl(const CircleShape&,const CircleShape&);
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToConstructionElements (constructionElements& el) override;
+        //virtual void removeFromConstructionElements (constructionElements& el) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
 
         virtual unsigned int getHitPriority () override;
+
+        virtual void getPreferredColor (color& c) override;
+
+        virtual void acceptVisitor (ShapeVisitor* vis) override {vis->visitLine (this);}
 };
 
 class CircleShapeImpl : public CircleShape {
@@ -169,17 +181,21 @@ class CircleShapeImpl : public CircleShape {
         virtual void setR (double _r) override;
 
         virtual double distFromPoint(const Point&) const override;
-        virtual void draw(drawingClass* drawer) const override;
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        //virtual void draw(drawingClass* drawer) const override;
+        //virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
         CircleShapeImpl(const Point&, const Point&, const Point&);
         CircleShapeImpl(const Point&, double);
         CircleShapeImpl(const Point&, const Point&);
         CircleShapeImpl (double, double, double);
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToConstructionElements (constructionElements& el) override;
+        //virtual void removeFromConstructionElements (constructionElements& el) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
+
+        virtual void getPreferredColor (color& c) override;
+
+        virtual void acceptVisitor (ShapeVisitor* vis) override {vis->visitCircle (this);}
 };
 
 class TriangleShapeImpl : public TriangleShape {
@@ -217,15 +233,19 @@ class TriangleShapeImpl : public TriangleShape {
         
 
         virtual double distFromPoint(const Point&) const override;
-        virtual void draw(drawingClass* drawer) const override;
-        virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
+        //virtual void draw(drawingClass* drawer) const override;
+        //virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const override;
         TriangleShapeImpl(const Point&, const Point&, const Point&);
         TriangleShapeImpl (double, double, double, double, double, double);
-        virtual void addToConstructionElements (constructionElements& el) override;
-        virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToConstructionElements (constructionElements& el) override;
+        //virtual void removeFromConstructionElements (constructionElements& el) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
+
+        virtual void getPreferredColor (color& c) override;
+
+        virtual void acceptVisitor (ShapeVisitor* vis) override {vis->visitTriangle (this);}
 };
 
-sf::Color getShapeColor (bool active, bool current, bool dependent);
+//sf::Color getShapeColor (bool active, bool current, bool dependent);

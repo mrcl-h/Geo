@@ -1,8 +1,12 @@
-#include"Geoapp.h"
-#include<SFML/Graphics.hpp>
+#include "Geoapp.h"
+#include <SFML/Graphics.hpp>
 
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
+
+void resetUiOptionConditions (uiOptionConditions& op) {
+    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
+}
 
 Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), testPtr (new int) {
 
@@ -296,21 +300,33 @@ void Geoapp::drawUI() const {
 }
 
 void Geoapp::drawObjects() const{
-    float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
-    sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
-    sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
-    floatRect visible2 (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
-    floatRect box2 (0,0,windowWidth*uiBarrier,windowHeight);
+    //float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+    //sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+    //sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+    float windowWidth = getWindowWidth(), windowHeight = getWindowHeight();
+    
+    floatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
+    floatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+
+    //for(unsigned int i=0;i<hulledShapes.size();i++){
+    //    hulledShapes[i]->hull_draw(&window, visible, box);
+    //}
+
+    sfmlDrawing.setVisible (visible);
+    sfmlDrawing.setBox (box);
+
+    hullDrawingShapeVisitor hdv;
+    hdv.setDrawer (&sfmlDrawing);
     for(unsigned int i=0;i<hulledShapes.size();i++){
-        hulledShapes[i]->hull_draw(&window, visible, box);
+        hulledShapes[i]->acceptVisitor (&hdv);
     }
 
-    sfmlDrawing.setVisible (visible2);
-    sfmlDrawing.setBox (box2);
-    for(unsigned int i=0;i<shapes.size();i++){
-        if (shapes[i]->getExistance())
-            shapes[i]->draw(&sfmlDrawing);
-    }
+    drawShapes (&sfmlDrawing);
+    //for(unsigned int i=0;i<shapes.size();i++){
+    //    if (shapes[i]->getExistance())
+    //        //shapes[i]->draw(&sfmlDrawing);
+    //        drawShapes (&sfmlDrawing);
+    //}
 }
 
 void Geoapp::UIhandling(const Point& mysz){
@@ -359,8 +375,10 @@ void Geoapp::whenClick(double x, double y){
 
                 hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
 
-                hitShape->removeFromConstructionElements (hulledElements);
-
+                //hitShape->removeFromConstructionElements (hulledElements);
+                constructionElementsRemovingShapeVisitor rvs;
+                rvs.setElements (&hulledElements);
+                hitShape->acceptVisitor (&rvs);
 
                 if (hulledShapes.size() > 0) {
                     hulledShapes.back()->setCurrent (true);
@@ -374,10 +392,18 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.push_back(hitShape);
                 hulledShapes.back()->setCurrent (true);
 
-                hitShape->addToConstructionElements (hulledElements);
+                //hitShape->addToConstructionElements (hulledElements);
+                constructionElementsAddingShapeVisitor avs;
+                avs.setElements (&hulledElements);
+                hitShape->acceptVisitor (&avs);
+
                 selectCount = 1;
             }
-            hitShape->addToCurrentConditions (currentConditions, selectCount);
+            //hitShape->addToCurrentConditions (currentConditions, selectCount);
+            uiOptionConditionsAdjusterShapeVisitor ocasv;
+            ocasv.setConditions (&currentConditions);
+            ocasv.setCount (selectCount);
+            hitShape->acceptVisitor (&ocasv);
             resetUIPosition();
         }
         uiPages[uiMapId(currentConditions)];

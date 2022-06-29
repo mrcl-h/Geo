@@ -1,12 +1,35 @@
 #pragma once
-#include<iostream>
-#include<SFML/Graphics.hpp>
-#include<vector>
-#include<cmath>
-#include<memory>
-#include"geo.h"
+#include "vectorHolder.h"
+#include "geo.h"
+#include <memory>
 
+typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
 
+class constructionElementsAddingShapeVisitor : public ShapeVisitor {
+    private:
+        constructionElements* elements;
+    public:
+        void setElements (constructionElements* _elements) {elements = _elements;}
+        virtual ~constructionElementsAddingShapeVisitor () {}
+        virtual void visitSegment (SegmentShape* ss) override;
+        virtual void visitTriangle (TriangleShape* ts) override;
+        virtual void visitLine (LineShape* ls) override;
+        virtual void visitCircle (CircleShape* cs) override;
+        virtual void visitPoint (PointShape* ps) override;
+};
+
+class constructionElementsRemovingShapeVisitor : public ShapeVisitor {
+    private:
+        constructionElements* elements;
+    public:
+        void setElements (constructionElements* _elements) {elements = _elements;}
+        virtual ~constructionElementsRemovingShapeVisitor () {}
+        virtual void visitSegment (SegmentShape* ss) override;
+        virtual void visitTriangle (TriangleShape* ts) override;
+        virtual void visitLine (LineShape* ls) override;
+        virtual void visitCircle (CircleShape* cs) override;
+        virtual void visitPoint (PointShape* ps) override;
+};
 
 class Construction {
     public:
