@@ -1,11 +1,4 @@
 #pragma once
-#include "vectorHolder.h"
-#include<vector>
-#include<cmath>
-#include<memory>
-#include <SFML/Graphics.hpp>
-//#include "drawersFWD.h"
-
 
 //lista figur geometrycznych
 class SegmentShape;

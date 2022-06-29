@@ -1,8 +1,6 @@
 #include "geoImpl.h"
+#include <cmath>
 #include <stdexcept>
-#include <algorithm>
-#include <iostream>
-#include "drawers.h"
 
 void PointShapeImpl::setExistance (bool ex) {exists = ex;}
 bool PointShapeImpl::getExistance () const {return exists;}
@@ -330,25 +328,25 @@ void TriangleShapeImpl::getPreferredColor (color& c) { //COLOR
     c.a = 125;
 }
 
-sf::Color getShapeColor (bool active, bool current, bool dependent) {
-    if (dependent) {
-        if (current) {
-            return sf::Color::Yellow;
-        } else if (active) {
-            return sf::Color::Magenta;
-        } else {
-            return sf::Color::Red;
-        }
-    } else {
-        if (current) {
-            return sf::Color::Green;
-        } else if (active) {
-            return sf::Color::Blue;
-        } else {
-            return sf::Color::Black;
-        }
-    }
-}
+//sf::Color getShapeColor (bool active, bool current, bool dependent) {
+//    if (dependent) {
+//        if (current) {
+//            return sf::Color::Yellow;
+//        } else if (active) {
+//            return sf::Color::Magenta;
+//        } else {
+//            return sf::Color::Red;
+//        }
+//    } else {
+//        if (current) {
+//            return sf::Color::Green;
+//        } else if (active) {
+//            return sf::Color::Blue;
+//        } else {
+//            return sf::Color::Black;
+//        }
+//    }
+//}
 
 //void PointShapeImpl::draw(drawingClass* drawer) const{
 //    sf::Color drawingColor = getShapeColor (isActive, isCurrent, isDependent);

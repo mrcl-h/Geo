@@ -1,7 +1,6 @@
-#include"Construction.h"
-#include<iostream>
-#include<cmath>
-#include<SFML/Graphics.hpp>
+#include "Construction.h"
+#include <algorithm>
+#include <cmath>
 
 void constructionElementsAddingShapeVisitor::visitSegment (SegmentShape* ss) {
     elements->getVector<SegmentShape*>().push_back(ss);

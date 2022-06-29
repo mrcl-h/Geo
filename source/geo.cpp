@@ -1,7 +1,5 @@
-#include"geo.h"
-#include<iostream>
-#include<cmath>
-#include<SFML/Graphics.hpp>
+#include "geo.h"
+#include <cmath>
 
 //void resetConstructionElements (constructionElements& el) {
 //    el.points.clear();

@@ -1,9 +1,8 @@
 #pragma once
-#include"geo.h"
-//#include"Input.h"
-#include"inputSFML.h"
-#include<unordered_map>
-#include<memory>
+#include "geo.h"
+#include "inputSFML.h"
+#include <unordered_map>
+#include <memory>
 #include "Construction.h"
 #include "drawers.h"
 

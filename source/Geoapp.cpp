@@ -1,5 +1,5 @@
-#include"Geoapp.h"
-#include<SFML/Graphics.hpp>
+#include "Geoapp.h"
+#include <SFML/Graphics.hpp>
 
 constexpr double epsilon = 2;
 constexpr int antialias = 4;

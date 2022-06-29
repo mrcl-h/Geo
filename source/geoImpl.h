@@ -248,4 +248,4 @@ class TriangleShapeImpl : public TriangleShape {
         virtual void acceptVisitor (ShapeVisitor* vis) override {vis->visitTriangle (this);}
 };
 
-sf::Color getShapeColor (bool active, bool current, bool dependent);
+//sf::Color getShapeColor (bool active, bool current, bool dependent);

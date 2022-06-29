@@ -2,6 +2,7 @@
 #include "geo.h"
 #include <sstream>
 #include <fstream>
+#include <SFML/Graphics.hpp>
 
 class drawingClass {
     public:

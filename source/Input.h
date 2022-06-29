@@ -1,8 +1,5 @@
-#include <unordered_map>
 #include <map>
 #include <cstddef>
-#include <cstdint>
-#include <iostream>
 
 class inputManager;
 class inputState;

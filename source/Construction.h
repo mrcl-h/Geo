@@ -1,11 +1,7 @@
 #pragma once
-#include<iostream>
-#include<SFML/Graphics.hpp>
-#include<vector>
-#include<cmath>
-#include<memory>
-#include"geo.h"
-
+#include "vectorHolder.h"
+#include "geo.h"
+#include <memory>
 
 typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
 
