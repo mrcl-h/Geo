@@ -1,4 +1,5 @@
 #include "Geoapp.h"
+#include "keyStates.h"
 #include <SFML/Graphics.hpp>
 
 constexpr double epsilon = 2;
