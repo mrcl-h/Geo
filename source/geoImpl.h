@@ -38,7 +38,7 @@ class PointShapeImpl : public PointShape {
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
 
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
 
         virtual unsigned int getHitPriority () override;
@@ -91,7 +91,7 @@ class SegmentShapeImpl : public SegmentShape{
         virtual double abs() const override;
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
 
@@ -142,7 +142,7 @@ class LineShapeImpl : public LineShape{
         LineShapeImpl(const CircleShape&,const CircleShape&);
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
 
         virtual unsigned int getHitPriority () override;
@@ -189,7 +189,7 @@ class CircleShapeImpl : public CircleShape {
         CircleShapeImpl (double, double, double);
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
 
@@ -239,7 +239,7 @@ class TriangleShapeImpl : public TriangleShape {
         TriangleShapeImpl (double, double, double, double, double, double);
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
         virtual bool isHit (const Point& p) override;
         virtual unsigned int getHitPriority () override;
 

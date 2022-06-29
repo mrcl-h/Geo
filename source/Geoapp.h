@@ -7,6 +7,41 @@
 #include "Construction.h"
 #include "drawers.h"
 
+struct uiOptionConditions {
+    uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
+};
+
+void resetUiOptionConditions (uiOptionConditions& op);
+
+class uiOptionConditionsAdjusterShapeVisitor : public ShapeVisitor {
+    private: 
+        uiOptionConditions* conditions;
+        int count;
+    public:
+        virtual ~uiOptionConditionsAdjusterShapeVisitor () {}
+        void setConditions (uiOptionConditions* _conditions) {
+            conditions = _conditions;
+        }
+        void setCount (int _count) {
+            count = _count;
+        }
+        virtual void visitSegment (SegmentShape*) {
+            conditions->segmentCount += count;
+        }
+        virtual void visitTriangle (TriangleShape*) {
+            conditions->triangleCount += count;
+        }
+        virtual void visitLine (LineShape*) {
+            conditions->lineCount += count;
+        }
+        virtual void visitCircle (CircleShape*) {
+            conditions->circleCount += count;
+        }
+        virtual void visitPoint (PointShape*) {
+            conditions->pointCount += count;
+        }
+};
+
 class Geoapp{
 
     private:

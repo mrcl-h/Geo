@@ -24,12 +24,6 @@ struct floatRect {
     floatRect (float _left = 0, float _top = 0, float _width = 0, float _height = 0) :left (_left), top(_top), width (_width), height(_height) {}
 };
 
-struct uiOptionConditions {
-    uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
-};
-
-void resetUiOptionConditions (uiOptionConditions& op);
-
 struct Point {
     double x, y;
 };
@@ -66,7 +60,7 @@ class Shape {
         //virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
         //virtual void addToConstructionElements (constructionElements&) {}
         //virtual void removeFromConstructionElements (constructionElements&) {}
-        virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
+        //virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
         virtual unsigned int getHitPriority () = 0;
         virtual bool isHit (const Point& p) = 0;
         virtual void moveShape (double x, double y) {}
@@ -202,4 +196,3 @@ Point getTrianglePointC (const TriangleShape& ts);
 
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);
-

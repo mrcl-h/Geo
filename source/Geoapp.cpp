@@ -4,6 +4,10 @@
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
+void resetUiOptionConditions (uiOptionConditions& op) {
+    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
+}
+
 Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), testPtr (new int) {
 
     uiBarrier = 0.6;
@@ -395,7 +399,11 @@ void Geoapp::whenClick(double x, double y){
 
                 selectCount = 1;
             }
-            hitShape->addToCurrentConditions (currentConditions, selectCount);
+            //hitShape->addToCurrentConditions (currentConditions, selectCount);
+            uiOptionConditionsAdjusterShapeVisitor ocasv;
+            ocasv.setConditions (&currentConditions);
+            ocasv.setCount (selectCount);
+            hitShape->acceptVisitor (&ocasv);
             resetUIPosition();
         }
         uiPages[uiMapId(currentConditions)];

@@ -10,10 +10,6 @@
 //    el.segments.clear();
 //}
 
-void resetUiOptionConditions (uiOptionConditions& op) {
-    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
-}
-
 //----------------------------------------
 double dist(const Point &p1, const Point &p2) {
   double diffX = p1.x - p2.x;
