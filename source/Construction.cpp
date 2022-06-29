@@ -3,6 +3,38 @@
 #include<cmath>
 #include<SFML/Graphics.hpp>
 
+void constructionElementsAddingShapeVisitor::visitSegment (SegmentShape* ss) {
+    elements->getVector<SegmentShape*>().push_back(ss);
+}
+void constructionElementsAddingShapeVisitor::visitTriangle (TriangleShape* ts) {
+    elements->getVector<TriangleShape*>().push_back(ts);
+}
+void constructionElementsAddingShapeVisitor::visitLine (LineShape* ls) {
+    elements->getVector<LineShape*>().push_back(ls);
+}
+void constructionElementsAddingShapeVisitor::visitCircle (CircleShape* cs) {
+    elements->getVector<CircleShape*>().push_back(cs);
+}
+void constructionElementsAddingShapeVisitor::visitPoint (PointShape* ps) {
+    elements->getVector<PointShape*>().push_back(ps);
+}
+
+void constructionElementsRemovingShapeVisitor::visitSegment (SegmentShape* ss) {
+    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ss)));
+}
+void constructionElementsRemovingShapeVisitor::visitTriangle (TriangleShape* ts) {
+    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ts)));
+}
+void constructionElementsRemovingShapeVisitor::visitLine (LineShape* ls) {
+    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ls)));
+}
+void constructionElementsRemovingShapeVisitor::visitCircle (CircleShape* cs) {
+    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(cs)));
+}
+void constructionElementsRemovingShapeVisitor::visitPoint (PointShape* ps) {
+    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ps)));
+}
+
 void segmentMiddle::adjust() {
     midPoint->setX ((segment->getFromX() + segment->getToX())/2);
     midPoint->setY ((segment->getFromY() + segment->getToY())/2);

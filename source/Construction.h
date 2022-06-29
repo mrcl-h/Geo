@@ -7,6 +7,33 @@
 #include"geo.h"
 
 
+typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
+
+class constructionElementsAddingShapeVisitor : public ShapeVisitor {
+    private:
+        constructionElements* elements;
+    public:
+        void setElements (constructionElements* _elements) {elements = _elements;}
+        virtual ~constructionElementsAddingShapeVisitor () {}
+        virtual void visitSegment (SegmentShape* ss) override;
+        virtual void visitTriangle (TriangleShape* ts) override;
+        virtual void visitLine (LineShape* ls) override;
+        virtual void visitCircle (CircleShape* cs) override;
+        virtual void visitPoint (PointShape* ps) override;
+};
+
+class constructionElementsRemovingShapeVisitor : public ShapeVisitor {
+    private:
+        constructionElements* elements;
+    public:
+        void setElements (constructionElements* _elements) {elements = _elements;}
+        virtual ~constructionElementsRemovingShapeVisitor () {}
+        virtual void visitSegment (SegmentShape* ss) override;
+        virtual void visitTriangle (TriangleShape* ts) override;
+        virtual void visitLine (LineShape* ls) override;
+        virtual void visitCircle (CircleShape* cs) override;
+        virtual void visitPoint (PointShape* ps) override;
+};
 
 class Construction {
     public:

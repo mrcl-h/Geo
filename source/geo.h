@@ -24,8 +24,6 @@ struct floatRect {
     floatRect (float _left = 0, float _top = 0, float _width = 0, float _height = 0) :left (_left), top(_top), width (_width), height(_height) {}
 };
 
-typedef vectorHolder <PointShape*, LineShape*, CircleShape*, SegmentShape*, TriangleShape*> constructionElements;
-
 struct uiOptionConditions {
     uint8_t lineCount, pointCount, circleCount, segmentCount, triangleCount;
 };
@@ -205,48 +203,3 @@ Point getTrianglePointC (const TriangleShape& ts);
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);
 
-class constructionElementsAddingShapeVisitor : public ShapeVisitor {
-    private:
-        constructionElements* elements;
-    public:
-        void setElements (constructionElements* _elements) {elements = _elements;}
-        virtual ~constructionElementsAddingShapeVisitor () {}
-        virtual void visitSegment (SegmentShape* ss) {
-            elements->getVector<SegmentShape*>().push_back(ss);
-        }
-        virtual void visitTriangle (TriangleShape* ts) {
-            elements->getVector<TriangleShape*>().push_back(ts);
-        }
-        virtual void visitLine (LineShape* ls) {
-            elements->getVector<LineShape*>().push_back(ls); 
-        }
-        virtual void visitCircle (CircleShape* cs) {
-            elements->getVector<CircleShape*>().push_back(cs);
-        }
-        virtual void visitPoint (PointShape* ps) {
-            elements->getVector<PointShape*>().push_back(ps);
-        }
-};
-
-class constructionElementsRemovingShapeVisitor : public ShapeVisitor {
-    private:
-        constructionElements* elements;
-    public:
-        void setElements (constructionElements* _elements) {elements = _elements;}
-        virtual ~constructionElementsRemovingShapeVisitor () {}
-        virtual void visitSegment (SegmentShape* ss) {
-            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ss)));
-        }
-        virtual void visitTriangle (TriangleShape* ts) {
-            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ts)));
-        }
-        virtual void visitLine (LineShape* ls) {
-            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ls)));
-        }
-        virtual void visitCircle (CircleShape* cs) {
-            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(cs)));
-        }
-        virtual void visitPoint (PointShape* ps) {
-            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ps)));
-        }
-};
