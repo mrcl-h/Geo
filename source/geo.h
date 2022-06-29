@@ -4,7 +4,7 @@
 #include<cmath>
 #include<memory>
 #include <SFML/Graphics.hpp>
-#include "drawersFWD.h"
+//#include "drawersFWD.h"
 
 
 //lista figur geometrycznych
@@ -50,6 +50,7 @@ class ShapeVisitor {
         virtual void visitPoint (PointShape*) {}
 };
 
+
 class Shape {
     protected:
         constexpr static double hitEpsilon = 4;
@@ -65,8 +66,8 @@ class Shape {
         virtual double distFromPoint(const Point&) const =0;
         //virtual void draw(drawingClass* drawer) const {}
         virtual void hull_draw(sf::RenderWindow*, const sf::FloatRect& visible, const sf::FloatRect& box) const {}
-        virtual void addToConstructionElements (constructionElements&) {}
-        virtual void removeFromConstructionElements (constructionElements&) {}
+        //virtual void addToConstructionElements (constructionElements&) {}
+        //virtual void removeFromConstructionElements (constructionElements&) {}
         virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
         virtual unsigned int getHitPriority () = 0;
         virtual bool isHit (const Point& p) = 0;
@@ -203,3 +204,49 @@ Point getTrianglePointC (const TriangleShape& ts);
 
 TriangleShape* makeTriangleShape(const Point&, const Point&, const Point&);
 TriangleShape* makeTriangleShape(double, double, double, double, double, double);
+
+class constructionElementsAddingShapeVisitor : public ShapeVisitor {
+    private:
+        constructionElements* elements;
+    public:
+        void setElements (constructionElements* _elements) {elements = _elements;}
+        virtual ~constructionElementsAddingShapeVisitor () {}
+        virtual void visitSegment (SegmentShape* ss) {
+            elements->getVector<SegmentShape*>().push_back(ss);
+        }
+        virtual void visitTriangle (TriangleShape* ts) {
+            elements->getVector<TriangleShape*>().push_back(ts);
+        }
+        virtual void visitLine (LineShape* ls) {
+            elements->getVector<LineShape*>().push_back(ls); 
+        }
+        virtual void visitCircle (CircleShape* cs) {
+            elements->getVector<CircleShape*>().push_back(cs);
+        }
+        virtual void visitPoint (PointShape* ps) {
+            elements->getVector<PointShape*>().push_back(ps);
+        }
+};
+
+class constructionElementsRemovingShapeVisitor : public ShapeVisitor {
+    private:
+        constructionElements* elements;
+    public:
+        void setElements (constructionElements* _elements) {elements = _elements;}
+        virtual ~constructionElementsRemovingShapeVisitor () {}
+        virtual void visitSegment (SegmentShape* ss) {
+            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ss)));
+        }
+        virtual void visitTriangle (TriangleShape* ts) {
+            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ts)));
+        }
+        virtual void visitLine (LineShape* ls) {
+            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ls)));
+        }
+        virtual void visitCircle (CircleShape* cs) {
+            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(cs)));
+        }
+        virtual void visitPoint (PointShape* ps) {
+            elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ps)));
+        }
+};
