@@ -361,10 +361,9 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
 
                 //hitShape->removeFromConstructionElements (hulledElements);
-                constructionElementsAddingShapeVisitor avs;
-                avs.setElements (&hulledElements);
-                hitShape->acceptVisitor (&avs);
-
+                constructionElementsRemovingShapeVisitor rvs;
+                rvs.setElements (&hulledElements);
+                hitShape->acceptVisitor (&rvs);
 
                 if (hulledShapes.size() > 0) {
                     hulledShapes.back()->setCurrent (true);
@@ -379,9 +378,9 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.back()->setCurrent (true);
 
                 //hitShape->addToConstructionElements (hulledElements);
-                constructionElementsRemovingShapeVisitor rvs;
-                rvs.setElements (&hulledElements);
-                hitShape->acceptVisitor (&rvs);
+                constructionElementsAddingShapeVisitor avs;
+                avs.setElements (&hulledElements);
+                hitShape->acceptVisitor (&avs);
 
                 selectCount = 1;
             }
