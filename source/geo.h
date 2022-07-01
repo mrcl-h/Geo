@@ -1,3 +1,5 @@
+/* file responsible for creating interfaces for shape classes
+ * */
 #pragma once
 
 //lista figur geometrycznych

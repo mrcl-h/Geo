@@ -1,12 +1,9 @@
 #include "Geoapp.h"
+#include "keyStates.h"
 #include <SFML/Graphics.hpp>
 
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
-
-void resetUiOptionConditions (uiOptionConditions& op) {
-    op.lineCount = op.pointCount = op.circleCount = op.segmentCount = 0;
-}
 
 Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), testPtr (new int) {
 
@@ -16,29 +13,30 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
     window.create(sf::VideoMode(500, 300), "Geo", sf::Style::Default, settings);
     scalingFactor=1.0;
     centerX = centerY = 0;
-    resetUiOptionConditions (currentConditions);
-    uiPages[uiMapId(currentConditions)];
+    //resetUiOptionConditions (currentConditions);
+    
+    //uiPages[uiMapId(currentConditions)];
     //resetConstructionElements (hulledElements);
     hulledElements.clear();
     rightMoving = false;
 
-    makeOption<segmentMiddle> ("resources/segmentMid.png", uiSegmentObject (1));
-    makeOption<pointsMiddle> ("resources/pointsMid.png", uiPointObject (2));
-    makeOption<parallelLine> ("resources/parallelLine.png", uiLineObject (1), uiPointObject (1));
-    makeOption<orthogonalLine> ("resources/orthogonalLine.png", uiLineObject (1), uiPointObject (1));
-    makeOption<lineThroughPoints> ("resources/lineThroughPoints.png", uiPointObject (2));
-    makeOption<circleWithCenter> ("resources/circleWithCenter.png", uiPointObject (2));
-    makeOption<segmentFromPoints> ("resources/segmentFromPoints.png", uiPointObject (2));
-    makeOption<centerOfMass> ("resources/centerOfMass.png", uiPointObject (3));
-    makeOption<circleThreePoints> ("resources/circleThreePoints.png", uiPointObject (3));
-    makeOption<powerLine> ("resources/powerLine.png", uiCircleObject (2));
-    makeOption<symmetricalOfPoints> ("resources/symmetricalOfPoints.png", uiPointObject (2));
-    makeOption<symmetricalOfSegment> ("resources/symmetricalOfSegment.png", uiSegmentObject (1));
-    makeOption<lineCircleIntersection> ("resources/lineCircleIntersection.png", uiLineObject(1), uiCircleObject(1));
-    makeOption<circlesIntersection> ("resources/circleCircleIntersection.png", uiCircleObject (2));
-    makeOption<bisectorThreePoints> ("resources/bisectorThreePoints.png", uiPointObject (3));
-    makeOption<tangentCirclePoint> ("resources/tangentsThroughPoint.png", uiPointObject(1), uiCircleObject(1));
-    makeOption<Triangle> ("resources/segmentMid.png", uiPointObject (3));
+    makeUiOption<segmentMiddle> (uiTracker, "resources/segmentMid.png", uiSegmentObject (1));
+    makeUiOption<pointsMiddle> (uiTracker, "resources/pointsMid.png", uiPointObject (2));
+    makeUiOption<parallelLine> (uiTracker, "resources/parallelLine.png", uiLineObject (1), uiPointObject (1));
+    makeUiOption<orthogonalLine> (uiTracker, "resources/orthogonalLine.png", uiLineObject (1), uiPointObject (1));
+    makeUiOption<lineThroughPoints> (uiTracker, "resources/lineThroughPoints.png", uiPointObject (2));
+    makeUiOption<circleWithCenter> (uiTracker, "resources/circleWithCenter.png", uiPointObject (2));
+    makeUiOption<segmentFromPoints> (uiTracker, "resources/segmentFromPoints.png", uiPointObject (2));
+    makeUiOption<centerOfMass> (uiTracker, "resources/centerOfMass.png", uiPointObject (3));
+    makeUiOption<circleThreePoints> (uiTracker, "resources/circleThreePoints.png", uiPointObject (3));
+    makeUiOption<powerLine> (uiTracker, "resources/powerLine.png", uiCircleObject (2));
+    makeUiOption<symmetricalOfPoints> (uiTracker, "resources/symmetricalOfPoints.png", uiPointObject (2));
+    makeUiOption<symmetricalOfSegment> (uiTracker, "resources/symmetricalOfSegment.png", uiSegmentObject (1));
+    makeUiOption<lineCircleIntersection> (uiTracker, "resources/lineCircleIntersection.png", uiLineObject(1), uiCircleObject(1));
+    makeUiOption<circlesIntersection> (uiTracker, "resources/circleCircleIntersection.png", uiCircleObject (2));
+    makeUiOption<bisectorThreePoints> (uiTracker, "resources/bisectorThreePoints.png", uiPointObject (3));
+    makeUiOption<tangentCirclePoint> (uiTracker, "resources/tangentsThroughPoint.png", uiPointObject(1), uiCircleObject(1));
+    makeUiOption<Triangle> (uiTracker, "resources/segmentMid.png", uiPointObject (3));
 
     junctionInputState *mainState = new junctionInputState (&inManager);
     mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0));
@@ -89,21 +87,12 @@ float Geoapp::findUIScrollMin () const {
     unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
     float uiWidth = windowWidth*(1-uiBarrier);
     std::unordered_map<uint32_t, std::vector<uiObject> >::const_iterator it;
-    it = uiPages.find(uiMapId (currentConditions));
-    if (it == uiPages.end()) return 0;
+    //it = uiPages.find(uiMapId (currentConditions));
+    //if (it == uiPages.end()) return 0;
+    //float objectHeight = uiWidth/2;
+    //return -(objectHeight*it->second.size()-windowHeight);
     float objectHeight = uiWidth/2;
-    return -(objectHeight*it->second.size()-windowHeight);
-}
-
-uint32_t Geoapp::uiMapId (const uiOptionConditions& conditions) const {
-    uint32_t mapId = conditions.segmentCount;
-    mapId <<= 8;
-    mapId += conditions.circleCount;
-    mapId <<= 8;
-    mapId += conditions.pointCount;
-    mapId <<= 8;
-    mapId += conditions.lineCount;
-    return mapId;
+    return -(objectHeight*uiTracker.size()-windowHeight);
 }
 
 Shape* Geoapp::findObjectHit (const Point& p) const {
@@ -116,11 +105,6 @@ Shape* Geoapp::findObjectHit (const Point& p) const {
         }
     }
     return shapeHit;
-}
-
-void Geoapp::registerUiOption (uiObject obj, uiOptionConditions conditions) {
-    uint32_t mapId = uiMapId (conditions);
-    uiPages[mapId].push_back(obj);
 }
 
 const Point * Geoapp::getMark (char c) const {
@@ -275,7 +259,7 @@ void Geoapp::drawUI() const {
     window.draw(rect);
     window.draw(line, 2, sf::Lines);
 
-    const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
+    //const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
     float objectHeight = uiWidth/2;
 
     sf::Sprite currentIcon;
@@ -283,7 +267,8 @@ void Geoapp::drawUI() const {
 
     sf::Vector2f leftSeparator (uiLeft, uiTop+objectHeight);
     sf::Vector2f rightSeparator (windowWidth, uiTop+objectHeight);
-    for (auto& i : currentObjects) {
+    //for (auto& i : currentObjects) {
+    for (auto& i : uiTracker) {
         currentIcon.setTexture (i.image);
         float texWidth = i.image.getSize().x, texHeight = i.image.getSize().y;
         currentIcon.setScale (objectHeight*0.8/texWidth, objectHeight*0.8/texHeight);
@@ -338,11 +323,13 @@ void Geoapp::UIhandling(const Point& mysz){
         return;
     }
     unsigned int clickedOption = (mysz.y-uiTop)/objectHeight;
-    std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
-    if (clickedOption >= currentPage.size()) {
+    //std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
+    //if (clickedOption >= currentPage.size()) {
+    if (clickedOption >= uiTracker.size()) {
         return;
     }
-    Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
+    //Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
+    Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledElements, shapes);
     constructions.emplace_back (constructionMade);
 
     if (hulledShapes.size() > 0) {
@@ -353,7 +340,9 @@ void Geoapp::UIhandling(const Point& mysz){
     }
     hulledShapes.clear();
     resetUIPosition();
-    resetUiOptionConditions (currentConditions);
+    //resetUiOptionConditions (currentConditions);
+    uiTracker.resetConditions();
+    
     //resetConstructionElements (hulledElements);
     hulledElements.clear();
 }
@@ -401,12 +390,13 @@ void Geoapp::whenClick(double x, double y){
             }
             //hitShape->addToCurrentConditions (currentConditions, selectCount);
             uiOptionConditionsAdjusterShapeVisitor ocasv;
-            ocasv.setConditions (&currentConditions);
+            //ocasv.setConditions (&currentConditions);
+            ocasv.setTracker (&uiTracker);
             ocasv.setCount (selectCount);
             hitShape->acceptVisitor (&ocasv);
             resetUIPosition();
         }
-        uiPages[uiMapId(currentConditions)];
+        //uiPages[uiMapId(currentConditions)];
     }
 
 }

@@ -1,3 +1,6 @@
+/* file responsible for creating vector holder data structure
+ * useful for keeping different types of objects in one place
+ * */
 #include <vector>
 
 template <typename U, typename... T>

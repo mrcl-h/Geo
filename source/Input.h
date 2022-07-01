@@ -1,3 +1,6 @@
+/* file responsible for managing input states and mapping specific keys to states
+ * */
+#pragma once
 #include <map>
 #include <cstddef>
 

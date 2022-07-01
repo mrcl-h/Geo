@@ -1,3 +1,5 @@
+/* file responsible for creating different constructions 
+ * */
 #pragma once
 #include "vectorHolder.h"
 #include "geo.h"
