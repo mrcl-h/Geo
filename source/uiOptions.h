@@ -1,3 +1,6 @@
+/* file responsible for customization of condition tracker for needs of
+ * user interface
+ * */
 #include "geo.h"
 #include "conditionTracker.h"
 #include "Construction.h"

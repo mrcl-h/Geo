@@ -1,3 +1,5 @@
+/* file responsible for creating implementations of shape classes
+ * */
 #include "geo.h"
 
 class PointShapeImpl : public PointShape {

@@ -1,3 +1,5 @@
+/* file with body of the program, class Geoapp responsible for the behaviour of the app
+ * */
 #pragma once
 #include "geo.h"
 #include "inputSFML.h"

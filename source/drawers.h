@@ -1,9 +1,13 @@
+/* file responsible for drawing shapes
+ * it is possible to draw shapes in different context, either on screen or to file
+ * */
 #pragma once
 #include "geo.h"
 #include <sstream>
 #include <fstream>
 #include <SFML/Graphics.hpp>
 
+//interface for drawing shapes
 class drawingClass {
     public:
         virtual void setVisible (const floatRect& _visible) = 0;
@@ -22,6 +26,7 @@ class drawingClass {
         virtual void drawHullLine (const double a, const double b, const double c) {}
 };
 
+//class for drawing shapes to svg file
 class svgDrawingClass : public drawingClass {
     private:
         std::stringstream curStream;
@@ -42,6 +47,7 @@ class svgDrawingClass : public drawingClass {
         virtual void drawLine (const double a, const double b, const double c) override;
 };
 
+//class for drawing shapes to sfml context
 class sfmlDrawingClass : public drawingClass {
     private:
         floatRect visible, box;
@@ -65,6 +71,7 @@ class sfmlDrawingClass : public drawingClass {
         virtual void drawHullLine (const double a, const double b, const double c) override;
 };
 
+//shape visitor drawing shapes with chosen drawer
 class drawingShapeVisitor : public ShapeVisitor {
     private:
         drawingClass * drawer;
@@ -104,6 +111,7 @@ class drawingShapeVisitor : public ShapeVisitor {
         }
 };
 
+//shape visitor hull drawing shapes with chosen drawer
 class hullDrawingShapeVisitor : public ShapeVisitor {
     private:
         drawingClass * drawer;

@@ -1,3 +1,10 @@
+/* file for tracking conditions and choosing appropriate options
+ *
+ * conditionTracker tracks n conditions and stores objects of type OP
+ *
+ * By using begin() and end() one can iterate through all options matching
+ * current conditions.
+ * */
 #include <array>
 #include <map>
 #include <vector>
@@ -22,6 +29,7 @@ class conditionTracker {
             }
             return (*i).second.size();
         }
+        //return n-th possible option satisfying current conditions
         const OP& getNthOption (unsigned int n) const {
             typename std::map<std::array<int, LEN>, std::vector<OP> >::const_iterator i = conditionToOptionMap.find(currentConditions);
             if (i == conditionToOptionMap.end()) {
@@ -29,6 +37,7 @@ class conditionTracker {
             }
             return (*i).second[n];
         }
+        //add an option to possibilities to choose from
         template <typename ITER>
             void addOption (ITER conditionBeg, const OP& newOp) {
                 std::array<int, LEN> optionConditions;
@@ -38,9 +47,11 @@ class conditionTracker {
                 }
                 conditionToOptionMap[optionConditions].push_back(newOp);
             }
+        //change current conditions
         void adjustCondition (unsigned int conditionNumber, int count) {
             currentConditions[conditionNumber] += count;
         }
+        //iterator to iterate through all options matching current conditions
         class iterator {
             private:
                 typename std::vector<OP>::const_iterator it;
