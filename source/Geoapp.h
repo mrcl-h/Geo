@@ -24,7 +24,7 @@ class Geoapp{
 
         std::vector<std::unique_ptr<Shape> > shapes;
         std::vector<Shape*> hulledShapes;
-        constructionElements hulledElements;
+        //constructionElements hulledElements;
 
         std::vector<std::unique_ptr<Construction> > constructions;
 

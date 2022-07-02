@@ -171,7 +171,7 @@ void sfmlDrawingClass::drawHullTriangle (const Point& a, const Point& b, const P
     beta = (c.y-visible.top)/visible.height;
     v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
     shape.setPoint(2, v);
-    
+
     shape.setFillColor(sf::Color(0,255,255,40));
     window->draw(shape);
 }

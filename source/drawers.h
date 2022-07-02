@@ -77,7 +77,7 @@ class drawingShapeVisitor : public ShapeVisitor {
         drawingClass * drawer;
 
         void setDrawerColorToShape (Shape* s) {
-            color pointColor; 
+            color pointColor;
             s->getPreferredColor(pointColor);
             drawer->setColor (pointColor.r, pointColor.g, pointColor.b, pointColor.a);
         }

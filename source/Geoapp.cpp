@@ -14,10 +14,10 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
     scalingFactor=1.0;
     centerX = centerY = 0;
     //resetUiOptionConditions (currentConditions);
-    
+
     //uiPages[uiMapId(currentConditions)];
     //resetConstructionElements (hulledElements);
-    hulledElements.clear();
+    //hulledElements.clear();
     rightMoving = false;
 
     makeUiOption<segmentMiddle> (uiTracker, "resources/segmentMid.png", uiSegmentObject (1));
@@ -140,7 +140,7 @@ void Geoapp::scrollUI (double s) {
         return;
     }
     if (uiTop < min) {
-        uiTop = min; 
+        uiTop = min;
     }
 }
 
@@ -289,7 +289,7 @@ void Geoapp::drawObjects() const{
     //sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
     //sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
     float windowWidth = getWindowWidth(), windowHeight = getWindowHeight();
-    
+
     floatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
     floatRect box (0,0,windowWidth*uiBarrier,windowHeight);
 
@@ -329,7 +329,8 @@ void Geoapp::UIhandling(const Point& mysz){
         return;
     }
     //Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
-    Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledElements, shapes);
+    //Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledElements, shapes);
+    Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledShapes, shapes);
     constructions.emplace_back (constructionMade);
 
     if (hulledShapes.size() > 0) {
@@ -342,9 +343,9 @@ void Geoapp::UIhandling(const Point& mysz){
     resetUIPosition();
     //resetUiOptionConditions (currentConditions);
     uiTracker.resetConditions();
-    
+
     //resetConstructionElements (hulledElements);
-    hulledElements.clear();
+    //hulledElements.clear();
 }
 
 void Geoapp::whenClick(double x, double y){
@@ -365,9 +366,11 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
 
                 //hitShape->removeFromConstructionElements (hulledElements);
+                /*
                 constructionElementsRemovingShapeVisitor rvs;
                 rvs.setElements (&hulledElements);
                 hitShape->acceptVisitor (&rvs);
+                */
 
                 if (hulledShapes.size() > 0) {
                     hulledShapes.back()->setCurrent (true);
@@ -382,9 +385,11 @@ void Geoapp::whenClick(double x, double y){
                 hulledShapes.back()->setCurrent (true);
 
                 //hitShape->addToConstructionElements (hulledElements);
+                /*
                 constructionElementsAddingShapeVisitor avs;
                 avs.setElements (&hulledElements);
                 hitShape->acceptVisitor (&avs);
+                */
 
                 selectCount = 1;
             }

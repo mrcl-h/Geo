@@ -50,7 +50,7 @@ class inputManager {
 };
 
 class inputState {
-    private: 
+    private:
         inputManager * const manager;
     protected:
         void done ();
@@ -100,7 +100,7 @@ class junctionInputState : public inputState {
         void addState (inputManager::keyType k, inputState* addedState, unsigned int mods = 0, bool responsible = true) {
             keyComb newComb;
             newComb.key = k; newComb.mods = mods;
-            stateMap[newComb].set(addedState, responsible); 
+            stateMap[newComb].set(addedState, responsible);
         }
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
             if (a != inputManager::action::pressed) return;

@@ -2,190 +2,174 @@
 #include <algorithm>
 #include <cmath>
 
-void constructionElementsAddingShapeVisitor::visitSegment (SegmentShape* ss) {
-    elements->getVector<SegmentShape*>().push_back(ss);
+void shapeHolderAdderVisitor::visitPoint (PointShape * ps) {
+    sh->addPoint (ps);
 }
-void constructionElementsAddingShapeVisitor::visitTriangle (TriangleShape* ts) {
-    elements->getVector<TriangleShape*>().push_back(ts);
+void shapeHolderAdderVisitor::visitSegment (SegmentShape* ss) {
+    sh->addSegment (ss);
 }
-void constructionElementsAddingShapeVisitor::visitLine (LineShape* ls) {
-    elements->getVector<LineShape*>().push_back(ls);
+void shapeHolderAdderVisitor::visitTriangle (TriangleShape* ts) {
+    sh->addTriangle (ts);
 }
-void constructionElementsAddingShapeVisitor::visitCircle (CircleShape* cs) {
-    elements->getVector<CircleShape*>().push_back(cs);
+void shapeHolderAdderVisitor::visitLine (LineShape* ls) {
+    sh->addLine (ls);
 }
-void constructionElementsAddingShapeVisitor::visitPoint (PointShape* ps) {
-    elements->getVector<PointShape*>().push_back(ps);
-}
-
-void constructionElementsRemovingShapeVisitor::visitSegment (SegmentShape* ss) {
-    elements->getVector<SegmentShape*>().erase (std::find (elements->getVector<SegmentShape*>().begin(), elements->getVector<SegmentShape*>().end(), static_cast<Shape*>(ss)));
-}
-void constructionElementsRemovingShapeVisitor::visitTriangle (TriangleShape* ts) {
-    elements->getVector<TriangleShape*>().erase (std::find (elements->getVector<TriangleShape*>().begin(), elements->getVector<TriangleShape*>().end(), static_cast<Shape*>(ts)));
-}
-void constructionElementsRemovingShapeVisitor::visitLine (LineShape* ls) {
-    elements->getVector<LineShape*>().erase (std::find (elements->getVector<LineShape*>().begin(), elements->getVector<LineShape*>().end(), static_cast<Shape*>(ls)));
-}
-void constructionElementsRemovingShapeVisitor::visitCircle (CircleShape* cs) {
-    elements->getVector<CircleShape*>().erase (std::find (elements->getVector<CircleShape*>().begin(), elements->getVector<CircleShape*>().end(), static_cast<Shape*>(cs)));
-}
-void constructionElementsRemovingShapeVisitor::visitPoint (PointShape* ps) {
-    elements->getVector<PointShape*>().erase (std::find (elements->getVector<PointShape*>().begin(), elements->getVector<PointShape*>().end(), static_cast<Shape*>(ps)));
+void shapeHolderAdderVisitor::visitCircle (CircleShape* cs) {
+    sh->addCircle (cs);
 }
 
 void segmentMiddle::adjust() {
-    midPoint->setX ((segment->getFromX() + segment->getToX())/2);
-    midPoint->setY ((segment->getFromY() + segment->getToY())/2);
+    midPoint()->setX ((segment()->getFromX() + segment()->getToX())/2);
+    midPoint()->setY ((segment()->getFromY() + segment()->getToY())/2);
 }
 
 void pointsMiddle::adjust() {
-    midPoint->setX ((pointA->getX()+pointB->getX())/2);
-    midPoint->setY ((pointA->getY()+pointB->getY())/2);
+    midPoint()->setX ((pointA()->getX()+pointB()->getX())/2);
+    midPoint()->setY ((pointA()->getY()+pointB()->getY())/2);
 }
 void orthogonalLine::adjust() {
-    orthogonal->setNormalX (-(line->getNormalY()));
-    orthogonal->setNormalY (line->getNormalX());
+    orthogonal()->setNormalX (-(line()->getNormalY()));
+    orthogonal()->setNormalY (line()->getNormalX());
 
-    orthogonal->setC (-( point->getX() * orthogonal->getNormalX() + point->getY() * orthogonal->getNormalY()));
+    orthogonal()->setC (-( point()->getX() * orthogonal()->getNormalX() + point()->getY() * orthogonal()->getNormalY()));
 }
 void parallelLine::adjust() {
-    parallel->setNormalX (line->getNormalX());
-    parallel->setNormalY (line->getNormalY());
-    parallel->setC (-( point->getX() * parallel->getNormalX() + point->getY() * parallel->getNormalY()));
+    parallel()->setNormalX (line()->getNormalX());
+    parallel()->setNormalY (line()->getNormalY());
+    parallel()->setC (-( point()->getX() * parallel()->getNormalX() + point()->getY() * parallel()->getNormalY()));
 }
 void lineThroughPoints::adjust() {
-    line->goThroughPoints (pointA->getX(), pointA->getY(), pointB->getX(), pointB->getY());
+    line()->goThroughPoints (pointA()->getX(), pointA()->getY(), pointB()->getX(), pointB()->getY());
 }
 
 void segmentFromPoints::adjust() {
-    segment->setFromX (pointA->getX());
-    segment->setFromY (pointA->getY());
-    segment->setToX (pointB->getX());
-    segment->setToY (pointB->getY());
+    segment()->setFromX (pointA()->getX());
+    segment()->setFromY (pointA()->getY());
+    segment()->setToX (pointB()->getX());
+    segment()->setToY (pointB()->getY());
 }
 
 void circleWithCenter::adjust() {
-    circle->setMiddleX (center->getX());
-    circle->setMiddleY (center->getY());
-    circle->setR (dist(center->getX(), center->getY(), point->getX(), point->getY()));
+    circle()->setMiddleX (center()->getX());
+    circle()->setMiddleY (center()->getY());
+    circle()->setR (dist(center()->getX(), center()->getY(), point()->getX(), point()->getY()));
 }
 
 void centerOfMass::adjust () {
-    center->setX ((pointA->getX() + pointB->getX() + pointC->getX())/3);
-    center->setY ((pointA->getY() + pointB->getY() + pointC->getY())/3);
+    center()->setX ((pointA()->getX() + pointB()->getX() + pointC()->getX())/3);
+    center()->setY ((pointA()->getY() + pointB()->getY() + pointC()->getY())/3);
 }
 
 void bisectorThreePoints::adjust () {
-    double ratio = dist(pointA->getX(), pointA->getY(), pointC->getX(), pointC->getY())/dist(pointB->getX(), pointB->getY(), pointC->getX(), pointC->getY());    
+    double ratio = dist(pointA()->getX(), pointA()->getY(), pointC()->getX(), pointC()->getY())/dist(pointB()->getX(), pointB()->getY(), pointC()->getX(), pointC()->getY());
     Point temp;
-    temp.x=((pointA->getX()-pointB->getX())/(ratio+1)+pointB->getX());
-    temp.y=((pointA->getY()-pointB->getY())/(ratio+1)+pointB->getY());
-    line->goThroughPoints(pointC->getX(), pointC->getY(), temp.x, temp.y);
+    temp.x=((pointA()->getX()-pointB()->getX())/(ratio+1)+pointB()->getX());
+    temp.y=((pointA()->getY()-pointB()->getY())/(ratio+1)+pointB()->getY());
+    line()->goThroughPoints(pointC()->getX(), pointC()->getY(), temp.x, temp.y);
 
-    
+
 }
 
 void circleThreePoints::adjust () {
     Point a, b;
-    a.x = pointA->getX() - pointC->getX();
-    a.y = pointA->getY() - pointC->getY();
-    b.x = pointB->getX() - pointC->getX();
-    b.y = pointB->getY() - pointC->getY();
+    a.x = pointA()->getX() - pointC()->getX();
+    a.y = pointA()->getY() - pointC()->getY();
+    b.x = pointB()->getX() - pointC()->getX();
+    b.y = pointB()->getY() - pointC()->getY();
 
     double aLen = length(a);
     double bLen = length(b);
-    circle->setR (std::abs(aLen*bLen*length(a-b)/2/(a%b)));
+    circle()->setR (std::abs(aLen*bLen*length(a-b)/2/(a%b)));
     Point mid = b*(aLen*aLen)/(a%b)/2-a*(bLen*bLen/(a%b))/2;
-    circle->setMiddleX (mid.y+pointC->getX());
-    circle->setMiddleY (-mid.x+pointC->getY());
+    circle()->setMiddleX (mid.y+pointC()->getX());
+    circle()->setMiddleY (-mid.x+pointC()->getY());
 
 }
 void powerLine::adjust() {
     Point c1Mid, c2Mid;
-    c1Mid.x = circle1->getMiddleX();
-    c1Mid.y = circle1->getMiddleY();
-    c2Mid.x = circle2->getMiddleX();
-    c2Mid.y = circle2->getMiddleY();
-    power->setNormalX(2*c2Mid.x-2*c1Mid.x);
-    power->setNormalY(2*c2Mid.y-2*c1Mid.y);
+    c1Mid.x = circle1()->getMiddleX();
+    c1Mid.y = circle1()->getMiddleY();
+    c2Mid.x = circle2()->getMiddleX();
+    c2Mid.y = circle2()->getMiddleY();
+    power()->setNormalX(2*c2Mid.x-2*c1Mid.x);
+    power()->setNormalY(2*c2Mid.y-2*c1Mid.y);
 
-    
-    power->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1->getR()*circle1->getR()+circle2->getR()*circle2->getR());
-    
+
+    power()->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1()->getR()*circle1()->getR()+circle2()->getR()*circle2()->getR());
+
 }
 void symmetricalOfPoints::adjust() {
-    line->setNormalX (pointA->getX() - pointB->getX());
-    line->setNormalY (pointA->getY() - pointB->getY());
-    line->setC (-0.5 * ((pointA->getX()+pointB->getX())*line->getNormalX() +
-                        (pointA->getY()+pointB->getY())*line->getNormalY()));
+    line()->setNormalX (pointA()->getX() - pointB()->getX());
+    line()->setNormalY (pointA()->getY() - pointB()->getY());
+    line()->setC (-0.5 * ((pointA()->getX()+pointB()->getX())*line()->getNormalX()
+                        (pointA()->getY()+pointB()->getY())*line()->getNormalY()));
 
 }
 void symmetricalOfSegment::adjust() {
-    line->setNormalX (segment->getFromX() - segment->getToX());
-    line->setNormalY (segment->getFromY() - segment->getToY());
-    line->setC (-0.5 * ((segment->getFromX() + segment->getToX())*line->getNormalX() + 
-                        (segment->getFromY() + segment->getToY())*line->getNormalY()));
+    line()->setNormalX (segment()->getFromX() - segment()->getToX());
+    line()->setNormalY (segment()->getFromY() - segment()->getToY());
+    line()->setC (-0.5 * ((segment()->getFromX() + segment()->getToX())*line()->getNormalX() +
+                        (segment()->getFromY() + segment()->getToY())*line()->getNormalY()));
 }
 void tangentCirclePoint::adjust() {
     Point p;
-    p.x = point->getX() - circle->getMiddleX();
-    p.y = point->getY() - circle->getMiddleY();
-    double cosin = circle->getR() / length(p);;
+    p.x = point()->getX() - circle()->getMiddleX();
+    p.y = point()->getY() - circle()->getMiddleY();
+    double cosin = circle()->getR() / length(p);;
     double sinus = sqrt(1 - cosin * cosin);
-    line1->setNormalX ((p.x * cosin - p.y * sinus)*sinus);
-    line1->setNormalY ((p.x * sinus + p.y * cosin)*sinus);
-    line1->setC (-(line1->getNormalX()*point->getX() + line1->getNormalY()*point->getY()));
+    line1()->setNormalX ((p.x * cosin - p.y * sinus)*sinus);
+    line1()->setNormalY ((p.x * sinus + p.y * cosin)*sinus);
+    line1()->setC (-(line1()->getNormalX()*point()->getX() + line1()->getNormalY()*point()->getY()));
 
-    line2->setNormalX ((p.x * cosin + p.y * sinus)*sinus);
-    line2->setNormalY ((- p.x * sinus + p.y * cosin)*sinus);
-    line2->setC (-(line2->getNormalX()*point->getX()+line2->getNormalY()*point->getY()));
+    line2()->setNormalX ((p.x * cosin + p.y * sinus)*sinus);
+    line2()->setNormalY ((- p.x * sinus + p.y * cosin)*sinus);
+    line2()->setC (-(line2()->getNormalX()*point()->getX()+line2()->getNormalY()*point()->getY()));
 }
 
 void lineCircleIntersection::adjust() {
-    double temp = circle->getMiddleX() * line->getNormalX() + circle->getMiddleY() * line->getNormalY() +  line->getC();
-    double sqrtdelta = line->getNormalX() * sqrt( circle->getR() * circle->getR() * ( line->getNormalX() * line->getNormalX() + line->getNormalY() * line->getNormalY() ) - temp * temp);
-    double y = (-line->getNormalY() * temp + sqrtdelta) / (line->getNormalX() * line->getNormalX() + line->getNormalY() * line->getNormalY());
-    double x = - ( temp + line->getNormalY() * y)/line->getNormalX();
-    pointA->setX(x + circle->getMiddleX());
-    pointA->setY(y + circle->getMiddleY());
+    double temp = circle()->getMiddleX() * line()->getNormalX() + circle()->getMiddleY() * line()->getNormalY() +  line()->getC();
+    double sqrtdelta = line()->getNormalX() * sqrt( circle()->getR() * circle()->getR() * ( line()->getNormalX() * line()->getNormalX() + line()->getNormalY() * line()->getNormalY() ) - temp * temp);
+    double y = (-line()->getNormalY() * temp + sqrtdelta) / (line()->getNormalX() * line()->getNormalX() + line()->getNormalY() * line()->getNormalY());
+    double x = - ( temp + line()->getNormalY() * y)/line()->getNormalX();
+    pointA()->setX(x + circle()->getMiddleX());
+    pointA()->setY(y + circle()->getMiddleY());
 
-    y = (- line->getNormalY() * temp - sqrtdelta)/(line->getNormalX() * line->getNormalX() + line->getNormalY() * line->getNormalY());
-    x = - (temp + line->getNormalY() * y) / line->getNormalX();
-    pointB->setX(x + circle->getMiddleX());
-    pointB->setY(y + circle->getMiddleY());
-    
+    y = (- line()->getNormalY() * temp - sqrtdelta)/(line()->getNormalX() * line()->getNormalX() + line()->getNormalY() * line()->getNormalY());
+    x = - (temp + line()->getNormalY() * y) / line()->getNormalX();
+    pointB()->setX(x + circle()->getMiddleX());
+    pointB()->setY(y + circle()->getMiddleY());
+
 }
 
 void circlesIntersection::adjust() {
     std::unique_ptr<LineShape> l (makeLineShape(1,0,1));
     Point c1Mid, c2Mid;
-    c1Mid.x = circle1->getMiddleX();
-    c1Mid.y = circle1->getMiddleY();
-    c2Mid.x = circle2->getMiddleX();
-    c2Mid.y = circle2->getMiddleY();
+    c1Mid.x = circle1()->getMiddleX();
+    c1Mid.y = circle1()->getMiddleY();
+    c2Mid.x = circle2()->getMiddleX();
+    c2Mid.y = circle2()->getMiddleY();
     l->setNormalX(2*c2Mid.x-2*c1Mid.x);
     l->setNormalY(2*c2Mid.y-2*c1Mid.y);
-    l->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1->getR()*circle1->getR()+circle2->getR()*circle2->getR() + circle1->getMiddleX() * l->getNormalX() + circle1->getMiddleY() * l->getNormalY()); 
-    
-    
-    double sqrtdelta = l->getNormalX() * sqrt( circle1->getR() * circle1->getR() * ( l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY() ) - l->getC() * l->getC());
+    l->setC (c1Mid*c1Mid-c2Mid*c2Mid-circle1()->getR()*circle1()->getR()+circle2()->getR()*circle2()->getR() + circle1()->getMiddleX() * l->getNormalX() + circle1()->getMiddleY() * l->getNormalY());
+
+
+    double sqrtdelta = l->getNormalX() * sqrt( circle1()->getR() * circle1()->getR() * ( l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY() ) - l->getC() * l->getC());
     double y = (-l->getNormalY() * l->getC() + sqrtdelta) / (l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
     double x = - ( l->getC() + l->getNormalY() * y)/l->getNormalX();
-    pointA->setX(x + circle1->getMiddleX());
-    pointA->setY(y + circle1->getMiddleY());
+    pointA()->setX(x + circle1()->getMiddleX());
+    pointA()->setY(y + circle1()->getMiddleY());
 
     y = (- l->getNormalY() * l->getC() - sqrtdelta)/(l->getNormalX() * l->getNormalX() + l->getNormalY() * l->getNormalY());
     x = - (l->getC() + l->getNormalY() * y) / l->getNormalX();
-    pointB->setX(x + circle1->getMiddleX());
-    pointB->setY(y + circle1->getMiddleY());
+    pointB()->setX(x + circle1()->getMiddleX());
+    pointB()->setY(y + circle1()->getMiddleY());
 }
 void Triangle::adjust () {
-    triangle->setAX(pointA->getX());
-    triangle->setAY(pointA->getY());
-    triangle->setBX(pointB->getX());
-    triangle->setBY(pointB->getY());
-    triangle->setCX(pointC->getX());
-    triangle->setCY(pointC->getY());
+    triangle()->setAX(pointA()->getX());
+    triangle()->setAY(pointA()->getY());
+    triangle()->setBX(pointB()->getX());
+    triangle()->setBY(pointB()->getY());
+    triangle()->setCX(pointC()->getX());
+    triangle()->setCY(pointC()->getY());
 
 }
