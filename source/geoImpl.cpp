@@ -110,7 +110,7 @@ LineShape* makeLineShape (double a, double b, double c) {
     return new LineShapeImpl (a,b,c);
 }
 LineShape* makeLineShape (const SegmentShape& s) {
-    return new LineShapeImpl (s); 
+    return new LineShapeImpl (s);
 }
 LineShape* makeLineShape (const Point& l, const Point& r) {
     return new LineShapeImpl (l, r);
@@ -156,7 +156,7 @@ unsigned int PointShapeImpl::getHitPriority () {return 10;}
 
 void PointShapeImpl::moveShape (double xMov, double yMov) {
     if (isDependent) return;
-    coordinates.x += xMov; 
+    coordinates.x += xMov;
     coordinates.y += yMov;
 }
 
@@ -164,7 +164,7 @@ void PointShapeImpl::getPreferredColor (color& col) { //COLOR
     col.a = 255;
     if (getDependent()) { col.r = 255; } else { col.r = 0; }
     if (getCurrent()) {
-        col.g = 255;    
+        col.g = 255;
         col.b = 0;
     } else if (getActivity()) {
         col.g = 0;
@@ -301,7 +301,7 @@ PointShapeImpl::PointShapeImpl(double x1, double y2){
 }
 double PointShapeImpl::distFromPoint(const Point& v) const {
     Point temp=coordinates-v;
-    return length(temp); 
+    return length(temp);
 }
 
 
@@ -453,7 +453,7 @@ double LineShapeImpl::distFromPoint(const Point& v) const{
     return doubleAbs((n*v+c)/length(n));
 }
 //void LineShapeImpl::draw(drawingClass* drawer) const{
-//    
+//
 //    sf::Color lineColor;
 //    if (isCurrent) {
 //        lineColor = sf::Color::Green;
@@ -603,7 +603,7 @@ double TriangleShapeImpl::distFromPoint(const Point& v) const {
 //    beta = (C.y-visible.top)/visible.height;
 //    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
 //    shape.setPoint(2, v);
-//    
+//
 //    shape.setFillColor(sf::Color(255,0,0,125));
 //    window->draw(shape);
 //    */
@@ -622,7 +622,7 @@ double TriangleShapeImpl::distFromPoint(const Point& v) const {
 //    beta = (C.y-visible.top)/visible.height;
 //    v = sf::Vector2f(box.left + alpha*box.width, box.top + beta*box.height);
 //    shape.setPoint(2, v);
-//    
+//
 //    shape.setFillColor(sf::Color(0,255,255,40));
 //    window->draw(shape);
 //}

@@ -94,7 +94,7 @@ void makeUiOption (uiOptionTracker& tracker, const char* fileName, const T&... c
     opCond.fill (0);
     setUpUiCondition (opCond, con...);
 
-    uiObject obj; 
+    uiObject obj;
     obj.creator = makeConstruction<U>;
     obj.image.loadFromFile (fileName);
     obj.image.setSmooth (true);

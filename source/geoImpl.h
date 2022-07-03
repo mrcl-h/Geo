@@ -164,7 +164,7 @@ class CircleShapeImpl : public CircleShape {
     public:
 
         virtual ~CircleShapeImpl () {}
-        
+
         virtual void setExistance (bool ex) override;
         virtual bool getExistance () const override;
         virtual void setActivity (bool ac) override;
@@ -209,7 +209,7 @@ class TriangleShapeImpl : public TriangleShape {
     public:
 
         virtual ~TriangleShapeImpl () {}
-        
+
         virtual void setExistance (bool ex) override;
         virtual bool getExistance () const override;
         virtual void setActivity (bool ac) override;
@@ -232,7 +232,7 @@ class TriangleShapeImpl : public TriangleShape {
         virtual void setBY (double _y) override;
         virtual void setCX (double _x) override;
         virtual void setCY (double _y) override;
-        
+
 
         virtual double distFromPoint(const Point&) const override;
         //virtual void draw(drawingClass* drawer) const override;

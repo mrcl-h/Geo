@@ -48,7 +48,7 @@ class Shape {
         virtual bool getActivity () const = 0;
         virtual void setCurrent (bool) = 0;
         virtual bool getCurrent () const = 0;
-        virtual void setDependent (bool) = 0; 
+        virtual void setDependent (bool) = 0;
         virtual bool getDependent () const = 0;
         virtual double distFromPoint(const Point&) const =0;
         //virtual void draw(drawingClass* drawer) const {}
@@ -171,7 +171,7 @@ class TriangleShape : public Shape {
 
         virtual double getBX () const = 0;
         virtual double getBY () const = 0;
-        
+
         virtual double getCX () const = 0;
         virtual double getCY () const = 0;
 
@@ -180,10 +180,10 @@ class TriangleShape : public Shape {
 
         virtual void setBX (double) = 0;
         virtual void setBY (double) = 0;
-        
+
         virtual void setCX (double) = 0;
         virtual void setCY (double) = 0;
-        
+
 };
 Point getTrianglePointA (const TriangleShape& ts);
 Point getTrianglePointB (const TriangleShape& ts);
