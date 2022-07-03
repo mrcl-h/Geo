@@ -1,11 +1,94 @@
+/* file responsible for creating different constructions
+ * */
 #pragma once
-#include<iostream>
-#include<SFML/Graphics.hpp>
-#include<vector>
-#include<cmath>
-#include<memory>
-#include"geo.h"
+#include <vector>
+#include "geo.h"
+#include <memory>
 
+class shapeHolderBase {
+    public:
+        virtual void addPoint (PointShape* ps) = 0;
+        virtual void addLine (LineShape* ls) = 0;
+        virtual void addCircle (CircleShape* cs) = 0;
+        virtual void addSegment (SegmentShape* ss) = 0;
+        virtual void addTriangle (TriangleShape* ts) = 0;
+};
+
+template <unsigned int N>
+class zeroEvader {
+    public:
+        enum {num = N};
+};
+template <>
+class zeroEvader<0> {
+    public:
+        enum {num = 1};
+};
+
+template <unsigned int POINTCNT, unsigned int LINECNT = 0, unsigned int CIRCLECNT = 0, unsigned int SEGMENTCNT = 0, unsigned int TRIANGLECNT = 0>
+class shapeHolder : public shapeHolderBase {
+    private:
+        PointShape* points [zeroEvader<POINTCNT>::num];
+        unsigned int pointCount;
+        LineShape* lines [zeroEvader<LINECNT>::num];
+        unsigned int lineCount;
+        CircleShape* circles [zeroEvader<CIRCLECNT>::num];
+        unsigned int circleCount;
+        SegmentShape* segments [zeroEvader<SEGMENTCNT>::num];
+        unsigned int segmentCount;
+        TriangleShape* triangles [zeroEvader<TRIANGLECNT>::num];
+        unsigned int triangleCount;
+    protected:
+        PointShape* getPoint (int n) {return points[n];}
+        LineShape* getLine (int n) {return lines[n];}
+        CircleShape* getCircle (int n) {return circles[n];}
+        SegmentShape* getSegment (int n) {return segments[n];}
+        TriangleShape* getTriangle (int n) {return triangles[n];}
+    public:
+        shapeHolder<POINTCNT, LINECNT, CIRCLECNT, SEGMENTCNT, TRIANGLECNT>()
+            : pointCount (0), lineCount (0), circleCount (0), segmentCount (0), triangleCount(0) {}
+        virtual void addPoint (PointShape* ps) override;
+        virtual void addLine (LineShape* ls) override;
+        virtual void addCircle (CircleShape* cs) override;
+        virtual void addSegment (SegmentShape* ss) override;
+        virtual void addTriangle (TriangleShape* ts) override;
+};
+
+template <unsigned int POINTCNT, unsigned int LINECNT, unsigned int CIRCLECNT, unsigned int SEGMENTCNT, unsigned int TRIANGLECNT>
+void shapeHolder<POINTCNT, LINECNT, CIRCLECNT, SEGMENTCNT, TRIANGLECNT>::addPoint (PointShape* ps) {
+    points [pointCount++] = ps;
+}
+template <unsigned int POINTCNT, unsigned int LINECNT, unsigned int CIRCLECNT, unsigned int SEGMENTCNT, unsigned int TRIANGLECNT>
+void shapeHolder<POINTCNT, LINECNT, CIRCLECNT, SEGMENTCNT, TRIANGLECNT>::addLine (LineShape* ls) {
+    lines [lineCount++] = ls;
+}
+template <unsigned int POINTCNT, unsigned int LINECNT, unsigned int CIRCLECNT, unsigned int SEGMENTCNT, unsigned int TRIANGLECNT>
+void shapeHolder<POINTCNT, LINECNT, CIRCLECNT, SEGMENTCNT, TRIANGLECNT>::addCircle (CircleShape* cs) {
+    circles [circleCount++] = cs;
+}
+template <unsigned int POINTCNT, unsigned int LINECNT, unsigned int CIRCLECNT, unsigned int SEGMENTCNT, unsigned int TRIANGLECNT>
+void shapeHolder<POINTCNT, LINECNT, CIRCLECNT, SEGMENTCNT, TRIANGLECNT>::addSegment (SegmentShape* ss) {
+    segments [segmentCount++] = ss;
+}
+template <unsigned int POINTCNT, unsigned int LINECNT, unsigned int CIRCLECNT, unsigned int SEGMENTCNT, unsigned int TRIANGLECNT>
+void shapeHolder<POINTCNT, LINECNT, CIRCLECNT, SEGMENTCNT, TRIANGLECNT>::addTriangle (TriangleShape* ts) {
+    triangles [triangleCount++] = ts;
+}
+
+class shapeHolderAdderVisitor : public ShapeVisitor {
+    private:
+        shapeHolderBase * sh;
+    public:
+        virtual ~shapeHolderAdderVisitor () {}
+        void setBase (shapeHolderBase * _sh) {
+            sh = _sh;
+        }
+        virtual void visitSegment (SegmentShape* ss) override;
+        virtual void visitTriangle (TriangleShape* ts) override;
+        virtual void visitLine (LineShape* ls) override;
+        virtual void visitCircle (CircleShape* cs) override;
+        virtual void visitPoint (PointShape* ps) override;
+};
 
 
 class Construction {
@@ -14,274 +97,323 @@ class Construction {
         virtual void adjust () {}
 };
 
-typedef Construction* (*constructionMaker)(const constructionElements&, std::vector<std::unique_ptr<Shape> >&);
+typedef Construction* (*constructionMaker)(const std::vector<Shape*>&, std::vector<std::unique_ptr<Shape> >&);
 
 //------------------------------------------------
 
-class segmentMiddle : public Construction { //constructs middle point from segment
+class segmentMiddle : public Construction, public
+shapeHolder <1, 0, 0, 1, 0> { //constructs middle point from segment
     private:
-        SegmentShape * const segment;
-        PointShape *midPoint;
+        PointShape *midPoint () { return getPoint (0); }
+        const SegmentShape * segment () { return getSegment (0); }
     public:
-        //segmentMiddle (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : segment(el.segments[0]), midPoint(NULL) {
-        segmentMiddle (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : segment(el.getVector<SegmentShape*>()[0]), midPoint(NULL) {
-            midPoint = makePointShape();
-            shapes.emplace_back (midPoint);
-            midPoint->setDependent (true);
+        segmentMiddle (std::vector<std::unique_ptr<Shape> >& shapes) {
+            PointShape * mp = makePointShape ();
+            mp->setDependent (true);
+            addPoint (mp);
+            shapes.emplace_back (mp);
         }
         virtual void adjust ();
 };
 
-class pointsMiddle : public Construction { //constructs middle point from two points
+class pointsMiddle : public Construction, public
+shapeHolder <3, 0, 0, 0, 0> { //constructs middle point from two points
     private:
-        PointShape * const pointA, * const pointB;
-        PointShape *midPoint;
+        PointShape * midPoint () { return getPoint (0); }
+        const PointShape * pointA () { return getPoint (1); }
+        const PointShape * pointB () { return getPoint (2); }
     public:
-        //pointsMiddle (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB (el.points[1]), midPoint(NULL) {
-        pointsMiddle (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB (el.getVector<PointShape*>()[1]), midPoint(NULL) {
-            midPoint = makePointShape();
-            shapes.emplace_back (midPoint);
-            midPoint->setDependent (true);
+        pointsMiddle (std::vector<std::unique_ptr<Shape> >& shapes) {
+            PointShape * mp = makePointShape ();
+            mp->setDependent (true);
+            addPoint (mp);
+            shapes.emplace_back (mp);
         }
         virtual void adjust ();
 };
 
-class orthogonalLine : public Construction { //constructs orthogonal line from line and a point
+class orthogonalLine : public Construction, public
+shapeHolder <1, 2, 0, 0, 0> { //constructs orthogonal line from line and a point
     private:
-        LineShape * const line;
-        PointShape * const point;
-        LineShape *orthogonal;
+        LineShape * orthogonal () { return getLine (0); }
+        const LineShape * line () { return getLine (1); }
+        const PointShape * point () { return getPoint (0); }
     public:
-        //orthogonalLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line(el.lines[0]), point(el.points[0]), orthogonal(NULL) {
-        orthogonalLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line(el.getVector<LineShape*>()[0]), point(el.getVector<PointShape*>()[0]), orthogonal(NULL) {
-            orthogonal = makeLineShape (1,0,0);
-            shapes.emplace_back (orthogonal);
-            orthogonal->setDependent (true);
+        orthogonalLine (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * ort = makeLineShape (1,0,0);
+            ort->setDependent (true);
+            addLine (ort);
+            shapes.emplace_back (ort);
         }
         virtual void adjust ();
 };
 
-class parallelLine : public Construction { //constructs parallel line from line and a point
+class parallelLine : public Construction, public
+shapeHolder <1, 2, 0, 0, 0> { //constructs parallel line from line and a point
     private:
-        LineShape * const line;
-        PointShape * const point;
-        LineShape *parallel;
+        LineShape * parallel () { return getLine (0); }
+        const LineShape * line () { return getLine (1); }
+        const PointShape * point () { return getPoint (0); }
     public:
-        //parallelLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line(el.lines[0]), point(el.points[0]), parallel(NULL) {
-        parallelLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line(el.getVector<LineShape*>()[0]), point(el.getVector<PointShape*>()[0]), parallel(NULL) {
-            parallel = makeLineShape (1,0,0);
-            shapes.emplace_back (parallel);
-            parallel->setDependent (true);
+        parallelLine (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * prl = makeLineShape (1,0,0);
+            prl->setDependent (true);
+            addLine (prl);
+            shapes.emplace_back (prl);
         }
         virtual void adjust ();
 };
 
-class lineThroughPoints : public Construction {
+class lineThroughPoints : public Construction, public
+shapeHolder <2, 1, 0, 0, 0> {
     private:
-        PointShape * const pointA, * const pointB;
-        LineShape *line;
+        LineShape * line () { return getLine (0); }
+        const PointShape * pointA () { return getPoint (0); }
+        const PointShape * pointB () { return getPoint (1); }
     public:
-        //lineThroughPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB (el.points[1]), line(NULL) {
-        lineThroughPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB (el.getVector<PointShape*>()[1]), line(NULL) {
-            line = makeLineShape (1,0,0);
-            shapes.emplace_back (line);
-            line->setDependent (true);
+        lineThroughPoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * ln = makeLineShape (1,0,0);
+            ln->setDependent (true);
+            addLine (ln);
+            shapes.emplace_back (ln);
         }
         virtual void adjust ();
 };
 
-class segmentFromPoints : public Construction {
+class segmentFromPoints : public Construction, public
+shapeHolder <2, 0, 0, 1, 0> {
     private:
-        PointShape * const pointA, * const pointB;
-        SegmentShape *segment;
+        SegmentShape * segment () { return getSegment (0); }
+        const PointShape * pointA () { return getPoint (0); }
+        const PointShape * pointB () { return getPoint (1); }
     public:
-        //segmentFromPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB (el.points[1]), segment(NULL) {
-        segmentFromPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB (el.getVector<PointShape*>()[1]), segment(NULL) {
-            segment = makeSegmentShape ();
-            shapes.emplace_back (segment);
-            segment->setDependent(true);
+        segmentFromPoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+            SegmentShape * sg = makeSegmentShape ();
+            sg->setDependent (true);
+            addSegment (sg);
+            shapes.emplace_back (sg);
         }
         virtual void adjust ();
 };
 
-class circleWithCenter : public Construction {
+class circleWithCenter : public Construction, public
+shapeHolder <2, 0, 1, 0, 0> {
     private:
-        PointShape * const center, * const point;
-        CircleShape *circle;
+        CircleShape * circle () { return getCircle (0); }
+        const PointShape * center () { return getPoint (0); }
+        const PointShape * point () { return getPoint (1); }
     public:
-        //circleWithCenter (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : center(el.points[0]), point(el.points[1]), circle(NULL) {
-        circleWithCenter (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : center(el.getVector<PointShape*>()[0]), point(el.getVector<PointShape*>()[1]), circle(NULL) {
-            circle = makeCircleShape (0,0,0);
-            shapes.emplace_back (circle);
-            circle->setDependent(true);
+        circleWithCenter (std::vector<std::unique_ptr<Shape> >& shapes) {
+            CircleShape * cr = makeCircleShape (0,0,0);
+            cr->setDependent (true);
+            addCircle (cr);
+            shapes.emplace_back (cr);
         }
         virtual void adjust ();
 };
 
-class centerOfMass : public Construction {
+class centerOfMass : public Construction, public
+shapeHolder <4, 0, 0, 0, 0> {
     private:
-        PointShape * const pointA, * const pointB, * const pointC;
-        PointShape *center;
+        PointShape * center () { return getPoint (0); }
+        const PointShape * pointA () { return getPoint (1); }
+        const PointShape * pointB () { return getPoint (2); }
+        const PointShape * pointC () { return getPoint (3); }
     public:
-        //centerOfMass (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.points[0]), pointB(el.points[1]), pointC (el.points[2]), center (NULL) {
-        centerOfMass (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.getVector<PointShape*>()[0]), pointB(el.getVector<PointShape*>()[1]), pointC (el.getVector<PointShape*>()[2]), center (NULL) {
-            center = makePointShape ();
-            shapes.emplace_back (center);
-            center->setDependent(true);
+        centerOfMass (std::vector<std::unique_ptr<Shape> >& shapes) {
+            PointShape * cntr = makePointShape ();
+            cntr->setDependent (true);
+            addPoint (cntr);
+            shapes.emplace_back (cntr);
         }
         virtual void adjust ();
 };
 
-class bisectorThreePoints : public Construction {
+class bisectorThreePoints : public Construction, public
+shapeHolder <3, 1, 0, 0, 0> {
     private:
-        PointShape * const pointA, * const pointB, * const pointC;
-        LineShape *line;
+        LineShape * line () { return getLine (0); }
+        const PointShape * pointA () { return getPoint (0); }
+        const PointShape * pointB () { return getPoint (2); }
+        const PointShape * pointC () { return getPoint (3); }
     public:
-        //bisectorThreePoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB(el.points[1]), pointC(el.points[2]), line (NULL) {
-        bisectorThreePoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB(el.getVector<PointShape*>()[1]), pointC(el.getVector<PointShape*>()[2]), line (NULL) {
-            line = makeLineShape (1,0,0);
-            shapes.emplace_back (line);
-            line->setDependent(true);
+        bisectorThreePoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * bis = makeLineShape (1,0,0);
+            bis->setDependent (true);
+            addLine (bis);
+            shapes.emplace_back (bis);
         }
         virtual void adjust ();
 };
 
 
-class circleThreePoints : public Construction {
+class circleThreePoints : public Construction, public
+shapeHolder <3, 0, 1, 0, 0> {
     private:
-        PointShape * const pointA, * const pointB, * const pointC;
-        CircleShape *circle;
+        CircleShape * circle () { return getCircle (0); }
+        const PointShape * pointA () { return getPoint (0); }
+        const PointShape * pointB () { return getPoint (1); }
+        const PointShape * pointC () { return getPoint (2); }
     public:
-        //circleThreePoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.points[0]), pointB(el.points[1]), pointC(el.points[2]), circle (NULL) {
-        circleThreePoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB(el.getVector<PointShape*>()[1]), pointC(el.getVector<PointShape*>()[2]), circle (NULL) {
-            circle = makeCircleShape (0,0,0);
-            shapes.emplace_back (circle);
-            circle->setDependent(true);
+        circleThreePoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+            CircleShape * cir = makeCircleShape (0,0,0);
+            cir->setDependent (true);
+            addCircle (cir);
+            shapes.emplace_back (cir);
         }
         virtual void adjust ();
 };
 
-class circlesIntersection : public Construction {
+class circlesIntersection : public Construction, public
+shapeHolder <2, 0, 2, 0, 0> {
     private:
-        CircleShape * const circle1, * const circle2;
-        PointShape *pointA, *pointB;
+        const CircleShape * circle1 () { return getCircle (0); }
+        const CircleShape * circle2 () { return getCircle (1); }
+        PointShape * pointA () { return getPoint (0); }
+        PointShape * pointB () { return getPoint (1); }
     public:
-        //circlesIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle1(el.circles[0]), circle2(el.circles[1]), pointA(NULL), pointB(NULL) {
-        circlesIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle1(el.getVector<CircleShape*>()[0]), circle2(el.getVector<CircleShape*>()[1]), pointA(NULL), pointB(NULL) {
-            pointA = makePointShape ();
-            shapes.emplace_back (pointA);
-            pointA->setDependent(true);
-            pointB = makePointShape ();
-            shapes.emplace_back (pointB);
-            pointB->setDependent(true);
+        circlesIntersection (std::vector<std::unique_ptr<Shape> >& shapes) {
+            PointShape * pta = makePointShape ();
+            pta->setDependent (true);
+            PointShape * ptb = makePointShape ();
+            ptb->setDependent (true);
+            addPoint (pta);
+            shapes.emplace_back (pta);
+            addPoint (ptb);
+            shapes.emplace_back (ptb);
         }
         virtual void adjust ();
 };
 
-class powerLine : public Construction {
+class powerLine : public Construction, public
+shapeHolder <0, 1, 2, 0, 0> {
     private:
-        CircleShape * const circle1, * const circle2;
-        LineShape *power;
+        LineShape * power () { return getLine (0); }
+        const CircleShape * circle1 () { return getCircle (0); }
+        const CircleShape * circle2 () { return getCircle (1); }
     public:
-        //powerLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle1(el.circles[0]), circle2(el.circles[1]), power(NULL) {
-        powerLine (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle1(el.getVector<CircleShape*>()[0]), circle2(el.getVector<CircleShape*>()[1]), power(NULL) {
-            power = makeLineShape (1,0,0);
-            shapes.emplace_back (power);
-            power->setDependent(true);
+        powerLine (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * pwr = makeLineShape (1,0,0);
+            pwr->setDependent (true);
+            addLine (pwr);
+            shapes.emplace_back (pwr);
         }
         virtual void adjust ();
 };
 
-class lineCircleIntersection : public Construction {
+class lineCircleIntersection : public Construction, public
+shapeHolder <2, 1, 1, 0, 0> {
     private:
-        CircleShape * const circle;
-        LineShape * const line;
-        PointShape *pointA, *pointB;
+        PointShape * pointA () { return getPoint (0); }
+        PointShape * pointB () { return getPoint (1); }
+        const CircleShape * circle () { return getCircle (0); }
+        const LineShape * line () { return getLine (0); }
     public:
-        //lineCircleIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle(el.circles[0]), line(el.lines[0]), pointA(NULL), pointB(NULL) {
-        lineCircleIntersection (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle(el.getVector<CircleShape*>()[0]), line(el.getVector<LineShape*>()[0]), pointA(NULL), pointB(NULL) {
-            pointA = makePointShape ();
-            shapes.emplace_back (pointA);
-            pointA->setDependent(true);
-            pointB = makePointShape ();
-            shapes.emplace_back (pointB);
-            pointB->setDependent(true);
+        lineCircleIntersection (std::vector<std::unique_ptr<Shape> >& shapes) {
+            PointShape * pta = makePointShape ();
+            pta->setDependent (true);
+            PointShape * ptb = makePointShape ();
+            ptb->setDependent (true);
+            addPoint (pta);
+            shapes.emplace_back (pta);
+            addPoint (ptb);
+            shapes.emplace_back (ptb);
         }
         virtual void adjust ();
 };
 
-class tangentCirclePoint : public Construction {
+class tangentCirclePoint : public Construction, public
+shapeHolder <1, 2, 1, 0, 0> {
     private:
-        PointShape * const point;
-        CircleShape * const circle;
-        LineShape *line1, *line2;
+        LineShape * line1 () { return getLine (0); }
+        LineShape * line2 () { return getLine (1); }
+        const PointShape * point () { return getPoint (0); }
+        const CircleShape * circle () { return getCircle (0); }
     public:
-        //tangentCirclePoint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : point(el.points[0]), circle(el.circles[0]), line1(NULL), line2(NULL) {
-        tangentCirclePoint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : point(el.getVector<PointShape*>()[0]), circle(el.getVector<CircleShape*>()[0]), line1(NULL), line2(NULL) {
-            line1 = makeLineShape (1,0,0);
-            shapes.emplace_back (line1);
-            line1->setDependent(true);
-            line2 = makeLineShape (1,0,0);
-            shapes.emplace_back (line2);
-            line2->setDependent(true);
+        tangentCirclePoint (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * ln1 = makeLineShape (1,0,0);
+            ln1->setDependent (true);
+            LineShape * ln2 = makeLineShape (1,0,0);
+            ln2->setDependent (true);
+            addLine (ln1);
+            shapes.emplace_back (ln1);
+            addLine (ln2);
+            shapes.emplace_back (ln2);
         }
         virtual void adjust ();
 };
 
-class symmetricalOfSegment : public Construction {
+class symmetricalOfSegment : public Construction, public
+shapeHolder <0, 1, 0, 1, 0> {
     private:
-        SegmentShape * const segment;
-        LineShape *line;
+        LineShape *line () { return getLine (0); }
+        const SegmentShape * segment ()  { return getSegment (0); }
     public:
-        //symmetricalOfSegment (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : segment(el.segments[0]), line(NULL) {
-        symmetricalOfSegment (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : segment(el.getVector<SegmentShape*>()[0]), line(NULL) {
-            line = makeLineShape (1,0,0);
-            shapes.emplace_back (line);
-            line->setDependent(true);
+        symmetricalOfSegment (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * sym = makeLineShape (1,0,0);
+            sym->setDependent (true);
+            addLine (sym);
+            shapes.emplace_back (sym);
         }
         virtual void adjust ();
 };
-class symmetricalOfPoints : public Construction {
+class symmetricalOfPoints : public Construction, public
+shapeHolder <2, 1, 0, 0, 0> {
     private:
-        PointShape * const pointA, * const pointB;
-        LineShape *line;
+        LineShape * line () { return getLine (0); }
+        const PointShape * pointA () { return getPoint (0); }
+        const PointShape * pointB () { return getPoint (1); }
     public:
-        //symmetricalOfPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.points[0]), pointB(el.points[1]), line(NULL) {
-        symmetricalOfPoints (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA(el.getVector<PointShape*>()[0]), pointB(el.getVector<PointShape*>()[1]), line(NULL) {
-            line = makeLineShape (1,0,0);
-            shapes.emplace_back (line);
-            line->setDependent(true);
+        symmetricalOfPoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+            LineShape * sym = makeLineShape (1,0,0);
+            sym->setDependent (true);
+            addLine (sym);
+            shapes.emplace_back (sym);
         }
         virtual void adjust ();
 };
 
-class lineConstraint : public Construction {
+class lineConstraint : public Construction, public
+shapeHolder <1, 1, 0, 0, 0> {
     private:
-        LineShape * const line;
-        PointShape * const point;
+        const LineShape * line () {
+            return getLine (0);
+        }
+        PointShape * point () {
+            return getPoint (0);
+        }
     public:
-        lineConstraint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : line (el.getVector<LineShape*>()[0]), point (el.getVector<PointShape*>()[0]) {}
+        lineConstraint (std::vector<std::unique_ptr<Shape> >& shapes) {}
         virtual void adjust ();
 };
 
-class circleConstraint : public Construction {
+class circleConstraint : public Construction, public
+shapeHolder <1, 0, 1, 0, 0> {
     private:
-        CircleShape * const circle;
-        PointShape * const point;
+        const CircleShape * circle () {
+            return getCircle (0);
+        }
+        PointShape * point () {
+            return getPoint (0);
+        }
     public:
-        circleConstraint (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : circle (el.getVector<CircleShape*>()[0]), point (el.getVector<PointShape*>()[0]) {}
+        circleConstraint (std::vector<std::unique_ptr<Shape> >& shapes) {}
         virtual void adjust ();
 };
 
-class Triangle : public Construction {
+class Triangle : public Construction, public
+shapeHolder <3, 0, 0, 0, 1> {
     private:
-        PointShape * const pointA, * const pointB, * const pointC;
-        TriangleShape *triangle;
+        TriangleShape * triangle () { return getTriangle (0); }
+        const PointShape * pointA () { return getPoint (0); }
+        const PointShape * pointB () { return getPoint (1); }
+        const PointShape * pointC () { return getPoint (2); }
     public:
-        Triangle (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) : pointA (el.getVector<PointShape*>()[0]), pointB(el.getVector<PointShape*>()[1]), pointC(el.getVector<PointShape*>()[2]), triangle (NULL) {
-            triangle = makeTriangleShape (1,0,0,0,0,1);
-            shapes.emplace_back (triangle);
-            triangle->setDependent(true);
+        Triangle (std::vector<std::unique_ptr<Shape> >& shapes) {
+            TriangleShape * tri = makeTriangleShape (0,0,0,0,0,0);
+            tri->setDependent (true);
+            addTriangle (tri);
+            shapes.emplace_back (tri);
         }
         virtual void adjust ();
 };
@@ -296,10 +428,13 @@ class Triangle : public Construction {
 //TODO: Space transformations: HOMOTHETY, ROTATION, SYMMETRY about point/line, SHIFT, INVERSION, AFINIC
 
 template <typename T>
-//Construction *makeConstruction (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) {
-Construction *makeConstruction (const constructionElements& el, std::vector<std::unique_ptr<Shape> >& shapes) {
-    T* newT = new T (el, shapes);
-    if (newT == NULL) return NULL;
-    newT->adjust();
+Construction *makeConstruction (const std::vector<Shape*>& hulledShapes, std::vector<std::unique_ptr<Shape> >& shapes) {
+    T * newT = new T (shapes);
+    shapeHolderAdderVisitor hav;
+    hav.setBase (newT);
+    for (auto& i : hulledShapes) {
+        i->acceptVisitor (&hav);
+    }
+    newT->adjust ();
     return newT;
 }
