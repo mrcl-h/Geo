@@ -101,7 +101,7 @@ void powerLine::adjust() {
 void symmetricalOfPoints::adjust() {
     line()->setNormalX (pointA()->getX() - pointB()->getX());
     line()->setNormalY (pointA()->getY() - pointB()->getY());
-    line()->setC (-0.5 * ((pointA()->getX()+pointB()->getX())*line()->getNormalX()
+    line()->setC (-0.5 * ((pointA()->getX()+pointB()->getX())*line()->getNormalX() +
                         (pointA()->getY()+pointB()->getY())*line()->getNormalY()));
 
 }
@@ -164,6 +164,28 @@ void circlesIntersection::adjust() {
     pointB()->setX(x + circle1()->getMiddleX());
     pointB()->setY(y + circle1()->getMiddleY());
 }
+
+void circleConstraint::adjust () {
+    Point center = getCircleCenter (*circle());
+    Point current = getPointLocation (*point());
+    Point rVec = current - center;
+    rVec = rVec * circle()->getR()/length (rVec);
+    Point des = center + rVec;
+    point()->setX (des.x);
+    point()->setY (des.y);
+}
+
+void lineConstraint::adjust () {
+    Point current = getPointLocation (*point());
+    Point n = getLineNormal(*line());
+    double lenSq = length (n);
+    lenSq *= lenSq;
+    Point offset = (-line()->getC()-current*n)/lenSq * n;
+    Point des = current+offset;
+    point()->setX (des.x);
+    point()->setY (des.y);
+}
+
 void Triangle::adjust () {
     triangle()->setAX(pointA()->getX());
     triangle()->setAY(pointA()->getY());

@@ -373,6 +373,34 @@ shapeHolder <2, 1, 0, 0, 0> {
         virtual void adjust ();
 };
 
+class lineConstraint : public Construction, public
+shapeHolder <1, 1, 0, 0, 0> {
+    private:
+        const LineShape * line () {
+            return getLine (0);
+        }
+        PointShape * point () {
+            return getPoint (0);
+        }
+    public:
+        lineConstraint (std::vector<std::unique_ptr<Shape> >& shapes) {}
+        virtual void adjust ();
+};
+
+class circleConstraint : public Construction, public
+shapeHolder <1, 0, 1, 0, 0> {
+    private:
+        const CircleShape * circle () {
+            return getCircle (0);
+        }
+        PointShape * point () {
+            return getPoint (0);
+        }
+    public:
+        circleConstraint (std::vector<std::unique_ptr<Shape> >& shapes) {}
+        virtual void adjust ();
+};
+
 class Triangle : public Construction, public
 shapeHolder <3, 0, 0, 0, 1> {
     private:

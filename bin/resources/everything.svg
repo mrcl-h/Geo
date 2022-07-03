@@ -137,7 +137,10 @@
        inkscape:tiled-clone-of="#rect184"
        xlink:href="#rect184"
        transform="translate(0,207.19168)"
-       id="use1616" />
+       id="use1616"
+       inkscape:export-filename="circleConstraint.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
     <use
        x="0"
        y="0"
@@ -184,7 +187,10 @@
        inkscape:tiled-clone-of="#rect184"
        xlink:href="#rect184"
        transform="translate(40.420765,207.19168)"
-       id="use1626" />
+       id="use1626"
+       inkscape:export-filename="lineConstraint.png"
+       inkscape:export-xdpi="301.62714"
+       inkscape:export-ydpi="301.62714" />
     <use
        x="0"
        y="0"
@@ -707,5 +713,29 @@
        xlink:href="#use13707"
        id="use15156"
        transform="translate(114.33526,163.04487)" />
+    <circle
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="circle388"
+       cx="19.268827"
+       cy="238.45361"
+       r="11.197947" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13926"
+       id="use390"
+       transform="translate(-24.799506,196.22807)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path569-1"
+       id="use394"
+       transform="rotate(45,-159.56192,70.05791)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use13926"
+       id="use396"
+       transform="translate(11.569268,207.99927)" />
   </g>
 </svg>
