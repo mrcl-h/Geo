@@ -1,6 +1,6 @@
 #include "inputSFML.h"
 
-void inputSfmlWrapper::onKeyEvent (sf::Event& event) {
+void inputSfmlWrapper::onKeyEvent (const sf::Event& event) {
     inputManager::action a;
     if (event.type == sf::Event::KeyPressed) {
         a = inputManager::pressed;

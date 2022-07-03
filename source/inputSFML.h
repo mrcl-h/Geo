@@ -10,6 +10,6 @@ class inputSfmlWrapper {
         maptype mp;
         inputManager& manager;
     public:
-        void onKeyEvent (sf::Event& event);
+        void onKeyEvent (const sf::Event& event);
         inputSfmlWrapper (inputManager& _manager);
 };

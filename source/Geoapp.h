@@ -42,8 +42,8 @@ class Geoapp{
         mutable svgDrawingClass svgDrawing;
 
         void loop();
-        void update();
-        void events(sf::Event);
+        void drawApp();
+        void events(const sf::Event&);
         void UIhandling(const Point& point);
         void drawUI() const;
         void drawObjects() const;

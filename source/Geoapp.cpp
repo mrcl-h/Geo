@@ -160,85 +160,70 @@ void Geoapp::moveHulledPoints (double x, double y) {
 }
 
 void Geoapp::loop(){
-    while (window.isOpen()){
-        sf::Event event;
-        events(event);
-        update();
+    sf::Event event;
+    while (window.waitEvent(event)){
+        events (event);
 
-        window.display();
         window.clear(sf::Color(255,255,255,255));
+        drawApp ();
+        window.display();
     }
 }
 
-void Geoapp::events(sf::Event event){
-    while (window.pollEvent(event)){
-        if (event.type == sf::Event::Closed){
-            window.close();
-        } else if (event.type == sf::Event::MouseButtonPressed){
-            Point mysz;
-            //mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
-            mysz.x = event.mouseButton.x; mysz.y = event.mouseButton.y;
-            if(mysz.x>uiBarrier*window.getSize().x){
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    UIhandling(mysz);
-                }
-            } else {
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    whenClick(mysz.x,mysz.y);
-                } else if (event.mouseButton.button == sf::Mouse::Right) {
-                    lastMouseRightPosition = mysz;
-                    rightMoving = true;
-                }
+void Geoapp::events(const sf::Event& event){
+    if (event.type == sf::Event::Closed){
+        window.close();
+    } else if (event.type == sf::Event::MouseButtonPressed){
+        Point mysz;
+        //mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
+        mysz.x = event.mouseButton.x; mysz.y = event.mouseButton.y;
+        if(mysz.x>uiBarrier*window.getSize().x){
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                UIhandling(mysz);
             }
-        } else if (event.type == sf::Event::MouseButtonReleased){
-
-            if (event.mouseButton.button == sf::Mouse::Right) {
-                rightMoving = false;
-            }
-
-        } else if (event.type== sf::Event::Resized){
-            resetUIPosition();
-        } else if(event.type == sf::Event::KeyPressed){
-            inWrapper.onKeyEvent (event);
-        } else if(event.type == sf::Event::KeyReleased){
-            inWrapper.onKeyEvent (event);
-        } else if (event.type == sf::Event::MouseWheelScrolled) {
-            if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
-                if (event.mouseWheelScroll.x > uiBarrier*window.getSize().x) {
-                    scrollUI (10*event.mouseWheelScroll.delta);
-                } else {
-                    scalingFactor *= (1.25-event.mouseWheelScroll.delta*0.75);
-                }
+        } else {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                whenClick(mysz.x,mysz.y);
+            } else if (event.mouseButton.button == sf::Mouse::Right) {
+                lastMouseRightPosition = mysz;
+                rightMoving = true;
             }
         }
-    }
-    if (rightMoving) {
-        Point mysz;
-        mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
-        centerX -= (mysz.x-lastMouseRightPosition.x)*scalingFactor;
-        centerY -= (mysz.y-lastMouseRightPosition.y)*scalingFactor;
+    } else if (event.type == sf::Event::MouseButtonReleased){
 
-        lastMouseRightPosition = mysz;
+        if (event.mouseButton.button == sf::Mouse::Right) {
+            rightMoving = false;
+        }
+
+    } else if (event.type== sf::Event::Resized){
+        resetUIPosition();
+    } else if(event.type == sf::Event::KeyPressed){
+        inWrapper.onKeyEvent (event);
+    } else if(event.type == sf::Event::KeyReleased){
+        inWrapper.onKeyEvent (event);
+    } else if (event.type == sf::Event::MouseWheelScrolled) {
+        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+            if (event.mouseWheelScroll.x > uiBarrier*window.getSize().x) {
+                scrollUI (10*event.mouseWheelScroll.delta);
+            } else {
+                scalingFactor *= (1.25-event.mouseWheelScroll.delta*0.75);
+            }
+        }
+    } else if (event.type == sf::Event::MouseMoved) {
+        if (rightMoving) {
+            Point mysz;
+            mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
+            centerX -= (mysz.x-lastMouseRightPosition.x)*scalingFactor;
+            centerY -= (mysz.y-lastMouseRightPosition.y)*scalingFactor;
+
+            lastMouseRightPosition = mysz;
+        }
     }
 }
 
-void Geoapp::update(){
+void Geoapp::drawApp(){
     drawObjects();
     drawUI();
-    /*
-    if (leftKeyDown) {
-        centerX -= step;
-    }
-    if (rightKeyDown) {
-        centerX += step;
-    }
-    if (upKeyDown) {
-        centerY -= step;
-    }
-    if (downKeyDown) {
-        centerY += step;
-    }
-    */
 }
 
 void Geoapp::drawUI() const {
