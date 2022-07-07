@@ -234,8 +234,8 @@ shapeHolder <3, 1, 0, 0, 0> {
     private:
         LineShape * line () { return getLine (0); }
         const PointShape * pointA () { return getPoint (0); }
-        const PointShape * pointB () { return getPoint (2); }
-        const PointShape * pointC () { return getPoint (3); }
+        const PointShape * pointB () { return getPoint (1); }
+        const PointShape * pointC () { return getPoint (2); }
     public:
         bisectorThreePoints (std::vector<std::unique_ptr<Shape> >& shapes) {
             LineShape * bis = makeLineShape (1,0,0);
