@@ -6,6 +6,8 @@ void inputSfmlWrapper::onKeyEvent (const sf::Event& event) {
         a = inputManager::pressed;
     } else if (event.type == sf::Event::KeyReleased) {
         a = inputManager::released;
+    } else {
+        return;
     }
 
     unsigned int mods = (event.key.alt?inputManager::altMod:0) |
