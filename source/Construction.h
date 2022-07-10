@@ -97,7 +97,7 @@ class Construction {
         virtual void adjust () {}
 };
 
-typedef Construction* (*constructionMaker)(const std::vector<Shape*>&, std::vector<std::unique_ptr<Shape> >&);
+typedef Construction* (*constructionMaker)(const std::vector<Shape*>& hulledShapes, std::vector<std::unique_ptr<Shape> >& shapes);
 
 //------------------------------------------------
 

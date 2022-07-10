@@ -5,7 +5,7 @@
 constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
-Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), testPtr (new int) {
+Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (window, &world, uiTracker), testPtr (new int) {
 
     uiBarrier = 0.6;
     sf::ContextSettings settings;
@@ -15,10 +15,7 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
     centerX = centerY = 0;
     //resetUiOptionConditions (currentConditions);
 
-    //uiPages[uiMapId(currentConditions)];
-    //resetConstructionElements (hulledElements);
-    //hulledElements.clear();
-    rightMoving = false;
+    //rightMoving = false;
 
     makeUiOption<segmentMiddle> (uiTracker, "resources/segmentMid.png", uiSegmentObject (1));
     makeUiOption<pointsMiddle> (uiTracker, "resources/pointsMid.png", uiPointObject (2));
@@ -61,8 +58,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
     mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -100), inputManager::ctrlMod);
     mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  100,   0), inputManager::ctrlMod);
 
-    mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, this));
-    mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, this));
+    mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, &mainGeoView));
+    mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, &mainGeoView));
 
     mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, this));
     mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, this));
@@ -70,8 +67,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), sfmlDrawing (&window), t
     mainState->addState (inputManager::Key::U, new inputUIScrollState (&inManager, this,  10));
     mainState->addState (inputManager::Key::D, new inputUIScrollState (&inManager, this, -10));
 
-    mainState->addState (inputManager::Key::Hyphen, new inputScalingState (&inManager, this, 2));
-    mainState->addState (inputManager::Key::Equal, new inputScalingState (&inManager, this, 0.5), inputManager::shiftMod);
+    mainState->addState (inputManager::Key::Hyphen, new inputScalingState (&inManager, &mainGeoView, 2));
+    mainState->addState (inputManager::Key::Equal, new inputScalingState (&inManager, &mainGeoView, 0.5), inputManager::shiftMod);
 
     mainState->addState (inputManager::Key::S, new inputSaveState (&inManager, this, "output.svg", &svgDrawing));
 
@@ -97,17 +94,17 @@ float Geoapp::findUIScrollMin () const {
     return -(objectHeight*uiTracker.size()-windowHeight);
 }
 
-Shape* Geoapp::findObjectHit (const Point& p) const {
-    Shape *shapeHit = NULL;
-    for (auto& i : shapes) {
-        if (i->isHit (p, scalingFactor)) {
-            if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
-                shapeHit = i.get();
-            }
-        }
-    }
-    return shapeHit;
-}
+//Shape* Geoapp::findObjectHit (const Point& p) const {
+//    Shape *shapeHit = NULL;
+//    for (auto& i : shapes) {
+//        if (i->isHit (p, scalingFactor)) {
+//            if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
+//                shapeHit = i.get();
+//            }
+//        }
+//    }
+//    return shapeHit;
+//}
 
 const Point * Geoapp::getMark (char c) const {
     decltype(markMap)::const_iterator it = markMap.find (c);
@@ -150,13 +147,36 @@ void Geoapp::resetUIPosition () {
     uiTop = 0;
 }
 
+class shapeMovingVisitor : public ShapeVisitor {
+    private:
+        float x, y;
+    public:
+        void setMovement (float _x, float _y) {
+            x = _x; y = _y;
+        }
+        virtual void visitSegment (SegmentShape* ss) {
+            ss->moveShape (x,y);
+        }
+        virtual void visitTriangle (TriangleShape* ts) {
+            ts->moveShape (x,y);
+        }
+        virtual void visitLine (LineShape* ls) {
+            ls->moveShape (x,y);
+        }
+        virtual void visitCircle (CircleShape* cs) {
+            cs->moveShape (x,y);
+        }
+        virtual void visitPoint (PointShape* ps) {
+            ps->moveShape (x,y);
+        }
+};
+
 void Geoapp::moveHulledPoints (double x, double y) {
-    for (auto& i : hulledShapes) {
-        i->moveShape (x,y);
-    }
-    for (auto& i : constructions) {
-        i->adjust();
-    }
+    shapeMovingVisitor mv;
+    mv.setMovement (x, y);
+    world.visitHulledShapes (&mv);
+
+    world.refreshConstructions ();
 }
 
 void Geoapp::loop(){
@@ -185,17 +205,25 @@ void Geoapp::events(const sf::Event& event){
             if (event.mouseButton.button == sf::Mouse::Left) {
                 whenClick(mysz.x,mysz.y);
             } else if (event.mouseButton.button == sf::Mouse::Right) {
-                lastMouseRightPosition = mysz;
-                rightMoving = true;
+                //lastMouseRightPosition = mysz;
+                //rightMoving = true;
+                mainGeoView.startRightDragging (mysz.x, mysz.y);
             }
         }
     } else if (event.type == sf::Event::MouseButtonReleased){
 
         if (event.mouseButton.button == sf::Mouse::Right) {
-            rightMoving = false;
+            //rightMoving = false;
+            mainGeoView.stopRightDragging ();
+
         }
 
     } else if (event.type== sf::Event::Resized){
+        floatRect box;
+        box.left = box.top = 0;
+        box.height = getWindowHeight ();
+        box.width = getWindowWidth () * uiBarrier;
+        mainGeoView.setBox (box);
         resetUIPosition();
     } else if(event.type == sf::Event::KeyPressed){
         inWrapper.onKeyEvent (event);
@@ -206,18 +234,22 @@ void Geoapp::events(const sf::Event& event){
             if (event.mouseWheelScroll.x > uiBarrier*window.getSize().x) {
                 scrollUI (10*event.mouseWheelScroll.delta);
             } else {
-                scalingFactor *= (1.25-event.mouseWheelScroll.delta*0.75);
+                //scalingFactor *= (1.25-event.mouseWheelScroll.delta*0.75);
+                mainGeoView.changeScale (1.25-event.mouseWheelScroll.delta*0.75);
             }
         }
     } else if (event.type == sf::Event::MouseMoved) {
-        if (rightMoving) {
-            Point mysz;
-            mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
-            centerX -= (mysz.x-lastMouseRightPosition.x)*scalingFactor;
-            centerY -= (mysz.y-lastMouseRightPosition.y)*scalingFactor;
+        Point mysz;
+        mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
+        mainGeoView.continueRightDragging (mysz.x, mysz.y);
+        //if (rightMoving) {
+        //    Point mysz;
+        //    mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
+        //    centerX -= (mysz.x-lastMouseRightPosition.x)*scalingFactor;
+        //    centerY -= (mysz.y-lastMouseRightPosition.y)*scalingFactor;
 
-            lastMouseRightPosition = mysz;
-        }
+        //    lastMouseRightPosition = mysz;
+        //}
     }
 }
 
@@ -271,18 +303,12 @@ void Geoapp::drawUI() const {
     }
 }
 
-void Geoapp::drawObjects() const{
-    //float windowWidth = window.getSize().x, windowHeight = window.getSize().y;
-    //sf::FloatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
-    //sf::FloatRect box (0,0,windowWidth*uiBarrier,windowHeight);
+void Geoapp::drawObjects() {
+    /*
     float windowWidth = getWindowWidth(), windowHeight = getWindowHeight();
 
     floatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
     floatRect box (0,0,windowWidth*uiBarrier,windowHeight);
-
-    //for(unsigned int i=0;i<hulledShapes.size();i++){
-    //    hulledShapes[i]->hull_draw(&window, visible, box);
-    //}
 
     sfmlDrawing.setVisible (visible);
     sfmlDrawing.setBox (box);
@@ -294,11 +320,8 @@ void Geoapp::drawObjects() const{
     }
 
     drawShapes (&sfmlDrawing);
-    //for(unsigned int i=0;i<shapes.size();i++){
-    //    if (shapes[i]->getExistance())
-    //        //shapes[i]->draw(&sfmlDrawing);
-    //        drawShapes (&sfmlDrawing);
-    //}
+    */
+    mainGeoView.draw();
 }
 
 void Geoapp::UIhandling(const Point& mysz){
@@ -317,16 +340,20 @@ void Geoapp::UIhandling(const Point& mysz){
     }
     //Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
     //Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledElements, shapes);
-    Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledShapes, shapes);
-    constructions.emplace_back (constructionMade);
+    
 
-    if (hulledShapes.size() > 0) {
-        hulledShapes.back()->setCurrent (false);
-    }
-    for (auto i : hulledShapes) {
-        i->setActivity (false);
-    }
-    hulledShapes.clear();
+    //Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledShapes, shapes);
+    //constructions.emplace_back (constructionMade);
+    //if (hulledShapes.size() > 0) {
+    //    hulledShapes.back()->setCurrent (false);
+    //}
+    //for (auto i : hulledShapes) {
+    //    i->setActivity (false);
+    //}
+    //hulledShapes.clear();
+    world.createConstruction (uiTracker.getNthOption(clickedOption).creator);
+
+
     resetUIPosition();
     //resetUiOptionConditions (currentConditions);
     uiTracker.resetConditions();
@@ -336,59 +363,58 @@ void Geoapp::UIhandling(const Point& mysz){
 }
 
 void Geoapp::whenClick(double x, double y){
-    Point clickPosition;
-    clickPosition.x = centerX+(x-float(window.getSize().x*uiBarrier)/2)*scalingFactor;
-    clickPosition.y = centerY+(y-float(window.getSize().y)/2)*scalingFactor;
-    if(currentMode == mode::pointCreation){
-        std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
-        shapes.push_back(std::move(S));
+    mainGeoView.click (x, y);
+    /*
+       Point clickPosition;
+       clickPosition.x = centerX+(x-float(window.getSize().x*uiBarrier)/2)*scalingFactor;
+       clickPosition.y = centerY+(y-float(window.getSize().y)/2)*scalingFactor;
+       if(currentMode == mode::pointCreation){
+    //std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
+    //shapes.push_back(std::move(S));
     } else if(currentMode == mode::selection){
-        Shape *hitShape = findObjectHit (clickPosition);
-        if(hitShape){
-            int selectCount;
-            if (hitShape->getActivity()) {
-                hitShape->setActivity (false);
-                hitShape->setCurrent (false);
+    Shape *hitShape = findObjectHit (clickPosition);
+    if(hitShape){
+    int selectCount;
+    if (hitShape->getActivity()) {
+    hitShape->setActivity (false);
+    hitShape->setCurrent (false);
 
-                hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
+    hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
 
-                //hitShape->removeFromConstructionElements (hulledElements);
-                /*
-                constructionElementsRemovingShapeVisitor rvs;
-                rvs.setElements (&hulledElements);
-                hitShape->acceptVisitor (&rvs);
-                */
+    //hitShape->removeFromConstructionElements (hulledElements);
+    //constructionElementsRemovingShapeVisitor rvs;
+    //rvs.setElements (&hulledElements);
+    //hitShape->acceptVisitor (&rvs);
 
-                if (hulledShapes.size() > 0) {
-                    hulledShapes.back()->setCurrent (true);
-                }
-                selectCount = -1;
-            } else {
-                hitShape->setActivity (true);
-                if (hulledShapes.size() > 0)
-                    hulledShapes.back()->setCurrent (false);
-
-                hulledShapes.push_back(hitShape);
-                hulledShapes.back()->setCurrent (true);
-
-                //hitShape->addToConstructionElements (hulledElements);
-                /*
-                constructionElementsAddingShapeVisitor avs;
-                avs.setElements (&hulledElements);
-                hitShape->acceptVisitor (&avs);
-                */
-
-                selectCount = 1;
-            }
-            //hitShape->addToCurrentConditions (currentConditions, selectCount);
-            uiOptionConditionsAdjusterShapeVisitor ocasv;
-            //ocasv.setConditions (&currentConditions);
-            ocasv.setTracker (&uiTracker);
-            ocasv.setCount (selectCount);
-            hitShape->acceptVisitor (&ocasv);
-            resetUIPosition();
-        }
-        //uiPages[uiMapId(currentConditions)];
+    if (hulledShapes.size() > 0) {
+    hulledShapes.back()->setCurrent (true);
     }
+    selectCount = -1;
+    } else {
+    hitShape->setActivity (true);
+    if (hulledShapes.size() > 0)
+    hulledShapes.back()->setCurrent (false);
+
+    hulledShapes.push_back(hitShape);
+    hulledShapes.back()->setCurrent (true);
+
+    //hitShape->addToConstructionElements (hulledElements);
+    //constructionElementsAddingShapeVisitor avs;
+    //avs.setElements (&hulledElements);
+    //hitShape->acceptVisitor (&avs);
+
+    selectCount = 1;
+    }
+    //hitShape->addToCurrentConditions (currentConditions, selectCount);
+    uiOptionConditionsAdjusterShapeVisitor ocasv;
+    //ocasv.setConditions (&currentConditions);
+    ocasv.setTracker (&uiTracker);
+    ocasv.setCount (selectCount);
+    hitShape->acceptVisitor (&ocasv);
+    resetUIPosition();
+    }
+    //uiPages[uiMapId(currentConditions)];
+    }
+    */
 
 }

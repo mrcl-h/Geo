@@ -24,17 +24,17 @@ class inputPointMovementState : public inputState {
 
 class inputPointSelectionState : public inputState {
     private:
-        Geoapp* app;
+        geoView* gv;
     public:
-        inputPointSelectionState (inputManager* _manager, Geoapp* _app);
+        inputPointSelectionState (inputManager* _manager, geoView* _gv);
         virtual void onEnter () override;
 };
 
 class inputPointCreationState : public inputState {
     private:
-        Geoapp* app;
+        geoView* gv;
     public:
-        inputPointCreationState (inputManager* _manager, Geoapp* _app);
+        inputPointCreationState (inputManager* _manager, geoView* _gv);
         virtual void onEnter () override;
 };
 
@@ -65,10 +65,10 @@ class inputUIScrollState : public inputState {
 
 class inputScalingState : public inputState {
     private:
-        Geoapp* app;
+        geoView* gv;
         double scaleValue;
     public:
-        inputScalingState (inputManager* _manager, Geoapp* _app, double _scaleValue);
+        inputScalingState (inputManager* _manager, geoView* _gv, double _scaleValue);
         virtual void onEnter () override;
 };
 

@@ -15,18 +15,20 @@ void inputPointMovementState::onEnter () {
 inputPointMovementState::inputPointMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y) : inputState (_manager), app(_app), x(_x), y(_y) {}
 
 void inputPointSelectionState::onEnter () {
-    app->setCurrentMode (Geoapp::mode::selection);
+    //app->setCurrentMode (Geoapp::mode::selection);
+    gv->setSelectingMode ();
     done();
 }
 
-inputPointSelectionState::inputPointSelectionState (inputManager* _manager, Geoapp* _app) :inputState(_manager), app(_app) {}
+inputPointSelectionState::inputPointSelectionState (inputManager* _manager, geoView* _gv) :inputState(_manager), gv(_gv) {}
 
 void inputPointCreationState::onEnter () {
-    app->setCurrentMode (Geoapp::mode::pointCreation);
+    //app->setCurrentMode (Geoapp::mode::pointCreation);
+    gv->setAddingMode ();
     done();
 }
 
-inputPointCreationState::inputPointCreationState (inputManager* _manager, Geoapp* _app) :inputState(_manager), app(_app) {}
+inputPointCreationState::inputPointCreationState (inputManager* _manager, geoView* _gv) :inputState(_manager), gv(_gv) {}
 
 void inputSetMarkState::onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
     if (a == inputManager::released) return;
@@ -65,11 +67,12 @@ void inputUIScrollState::onEnter () {
 inputUIScrollState::inputUIScrollState (inputManager* _manager, Geoapp* _app, double _scrollValue) : inputState(_manager), app(_app), scrollValue (_scrollValue){}
 
 void inputScalingState::onEnter () {
-    app->changeScale (scaleValue);
+    //app->changeScale (scaleValue);
+    gv->changeScale (scaleValue);
     done();
 }
 
-inputScalingState::inputScalingState (inputManager* _manager, Geoapp* _app, double _scaleValue) : inputState (_manager), app(_app), scaleValue (_scaleValue) {}
+inputScalingState::inputScalingState (inputManager* _manager, geoView* _gv, double _scaleValue) : inputState (_manager), gv(_gv), scaleValue (_scaleValue) {}
 
 void inputSaveState::onEnter () {
     drawer->setVisible (app->getVisible());
