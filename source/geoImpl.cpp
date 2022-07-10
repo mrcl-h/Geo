@@ -148,8 +148,8 @@ double PointShapeImpl::abs() const {
 //void PointShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
 //    op.pointCount += c;
 //}
-bool PointShapeImpl::isHit (const Point& p) {
-    return distFromPoint(p) < hitEpsilon;
+bool PointShapeImpl::isHit (const Point& p, float scalingFactor) {
+    return distFromPoint(p) < hitEpsilon*scalingFactor;
 }
 
 unsigned int PointShapeImpl::getHitPriority () {return 10;}
@@ -186,8 +186,8 @@ void PointShapeImpl::getPreferredColor (color& col) { //COLOR
 //void SegmentShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
 //    op.segmentCount += c;
 //}
-bool SegmentShapeImpl::isHit (const Point& p) {
-    return distFromPoint(p) < hitEpsilon;
+bool SegmentShapeImpl::isHit (const Point& p, float scalingFactor) {
+    return distFromPoint(p) < hitEpsilon*scalingFactor;
 }
 unsigned int SegmentShapeImpl::getHitPriority () {return 8;}
 
@@ -243,8 +243,8 @@ void LineShapeImpl::goThroughPoints (const double px, const double py, const dou
 //void LineShapeImpl::addToCurrentConditions (uiOptionConditions& op, int m) {
 //    op.lineCount += m;
 //}
-bool LineShapeImpl::isHit (const Point& p) {
-    return distFromPoint(p) < hitEpsilon;
+bool LineShapeImpl::isHit (const Point& p, float scalingFactor) {
+    return distFromPoint(p) < hitEpsilon*scalingFactor;
 }
 
 unsigned int LineShapeImpl::getHitPriority () {return 6;}
@@ -275,8 +275,8 @@ void LineShapeImpl::getPreferredColor (color& col) { //COLOR
 //void CircleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
 //    op.circleCount += c;
 //}
-bool CircleShapeImpl::isHit (const Point& p) {
-    return distFromPoint(p) < hitEpsilon;
+bool CircleShapeImpl::isHit (const Point& p, float scalingFactor) {
+    return distFromPoint(p) < hitEpsilon*scalingFactor;
 }
 unsigned int CircleShapeImpl::getHitPriority () {return 4;}
 
@@ -316,8 +316,8 @@ double PointShapeImpl::distFromPoint(const Point& v) const {
 //void TriangleShapeImpl::addToCurrentConditions (uiOptionConditions& op, int c) {
 //    op.triangleCount += c;
 //}
-bool TriangleShapeImpl::isHit (const Point& p) {
-    return distFromPoint(p) < hitEpsilon;
+bool TriangleShapeImpl::isHit (const Point& p, float scalingFactor) {
+    return distFromPoint(p) < hitEpsilon*scalingFactor;
 }
 unsigned int TriangleShapeImpl::getHitPriority () {return 5;}
 

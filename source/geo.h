@@ -57,7 +57,7 @@ class Shape {
         //virtual void removeFromConstructionElements (constructionElements&) {}
         //virtual void addToCurrentConditions (uiOptionConditions& op, int c) {}
         virtual unsigned int getHitPriority () = 0;
-        virtual bool isHit (const Point& p) = 0;
+        virtual bool isHit (const Point& p, float scalingFactor) = 0;
         virtual void moveShape (double x, double y) {}
         virtual ~Shape() {}
 

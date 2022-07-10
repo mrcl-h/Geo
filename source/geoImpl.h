@@ -41,7 +41,7 @@ class PointShapeImpl : public PointShape {
         //virtual void removeFromConstructionElements (constructionElements& el) override;
 
         //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        virtual bool isHit (const Point& p, float scalingFactor) override;
 
         virtual unsigned int getHitPriority () override;
 
@@ -94,7 +94,7 @@ class SegmentShapeImpl : public SegmentShape{
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
         //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        virtual bool isHit (const Point& p, float scalingFactor) override;
         virtual unsigned int getHitPriority () override;
 
         virtual void getPreferredColor (color& c) override;
@@ -145,7 +145,7 @@ class LineShapeImpl : public LineShape{
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
         //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        virtual bool isHit (const Point& p, float scalingFactor) override;
 
         virtual unsigned int getHitPriority () override;
 
@@ -192,7 +192,7 @@ class CircleShapeImpl : public CircleShape {
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
         //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        virtual bool isHit (const Point& p, float scalingFactor) override;
         virtual unsigned int getHitPriority () override;
 
         virtual void getPreferredColor (color& c) override;
@@ -242,7 +242,7 @@ class TriangleShapeImpl : public TriangleShape {
         //virtual void addToConstructionElements (constructionElements& el) override;
         //virtual void removeFromConstructionElements (constructionElements& el) override;
         //virtual void addToCurrentConditions (uiOptionConditions& op, int c) override;
-        virtual bool isHit (const Point& p) override;
+        virtual bool isHit (const Point& p, float scalingFactor) override;
         virtual unsigned int getHitPriority () override;
 
         virtual void getPreferredColor (color& c) override;

@@ -100,7 +100,7 @@ float Geoapp::findUIScrollMin () const {
 Shape* Geoapp::findObjectHit (const Point& p) const {
     Shape *shapeHit = NULL;
     for (auto& i : shapes) {
-        if (i->isHit (p)) {
+        if (i->isHit (p, scalingFactor)) {
             if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
                 shapeHit = i.get();
             }
