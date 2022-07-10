@@ -1,5 +1,6 @@
 /* file responsible for creating implementations of shape classes
  * */
+#pragma once
 #include "geo.h"
 
 class PointShapeImpl : public PointShape {

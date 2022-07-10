@@ -1,6 +1,7 @@
 /* file responsible for creating input states used by geoapp, for
  * example to move around or change states
  * */
+#pragma once
 #include "Geoapp.h"
 #include "Input.h"
 
