@@ -1,8 +1,8 @@
 /* file responsible for creating different constructions
  * */
 #pragma once
-#include <vector>
 #include "geo.h"
+#include "shapeManager.h"
 #include <memory>
 
 class shapeHolderBase {
@@ -97,7 +97,7 @@ class Construction {
         virtual void adjust () {}
 };
 
-typedef Construction* (*constructionMaker)(const std::vector<Shape*>& hulledShapes, std::vector<std::unique_ptr<Shape> >& shapes);
+typedef Construction* (*constructionMaker)(shapeManager*);
 
 //------------------------------------------------
 
@@ -107,11 +107,11 @@ shapeHolder <1, 0, 0, 1, 0> { //constructs middle point from segment
         PointShape *midPoint () { return getPoint (0); }
         const SegmentShape * segment () { return getSegment (0); }
     public:
-        segmentMiddle (std::vector<std::unique_ptr<Shape> >& shapes) {
+        segmentMiddle (shapeManager * manager) {
             PointShape * mp = makePointShape ();
             mp->setDependent (true);
             addPoint (mp);
-            shapes.emplace_back (mp);
+            manager->addShape (mp);
         }
         virtual void adjust ();
 };
@@ -123,11 +123,11 @@ shapeHolder <3, 0, 0, 0, 0> { //constructs middle point from two points
         const PointShape * pointA () { return getPoint (1); }
         const PointShape * pointB () { return getPoint (2); }
     public:
-        pointsMiddle (std::vector<std::unique_ptr<Shape> >& shapes) {
+        pointsMiddle (shapeManager * manager) {
             PointShape * mp = makePointShape ();
             mp->setDependent (true);
             addPoint (mp);
-            shapes.emplace_back (mp);
+            manager->addShape (mp);
         }
         virtual void adjust ();
 };
@@ -139,11 +139,11 @@ shapeHolder <1, 2, 0, 0, 0> { //constructs orthogonal line from line and a point
         const LineShape * line () { return getLine (1); }
         const PointShape * point () { return getPoint (0); }
     public:
-        orthogonalLine (std::vector<std::unique_ptr<Shape> >& shapes) {
+        orthogonalLine (shapeManager * manager) {
             LineShape * ort = makeLineShape (1,0,0);
             ort->setDependent (true);
             addLine (ort);
-            shapes.emplace_back (ort);
+            manager->addShape (ort);
         }
         virtual void adjust ();
 };
@@ -155,11 +155,11 @@ shapeHolder <1, 2, 0, 0, 0> { //constructs parallel line from line and a point
         const LineShape * line () { return getLine (1); }
         const PointShape * point () { return getPoint (0); }
     public:
-        parallelLine (std::vector<std::unique_ptr<Shape> >& shapes) {
+        parallelLine (shapeManager * manager) {
             LineShape * prl = makeLineShape (1,0,0);
             prl->setDependent (true);
             addLine (prl);
-            shapes.emplace_back (prl);
+            manager->addShape(prl);
         }
         virtual void adjust ();
 };
@@ -171,11 +171,11 @@ shapeHolder <2, 1, 0, 0, 0> {
         const PointShape * pointA () { return getPoint (0); }
         const PointShape * pointB () { return getPoint (1); }
     public:
-        lineThroughPoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+        lineThroughPoints (shapeManager * manager) {
             LineShape * ln = makeLineShape (1,0,0);
             ln->setDependent (true);
             addLine (ln);
-            shapes.emplace_back (ln);
+            manager->addShape(ln);
         }
         virtual void adjust ();
 };
@@ -187,11 +187,11 @@ shapeHolder <2, 0, 0, 1, 0> {
         const PointShape * pointA () { return getPoint (0); }
         const PointShape * pointB () { return getPoint (1); }
     public:
-        segmentFromPoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+        segmentFromPoints (shapeManager * manager) {
             SegmentShape * sg = makeSegmentShape ();
             sg->setDependent (true);
             addSegment (sg);
-            shapes.emplace_back (sg);
+            manager->addShape(sg);
         }
         virtual void adjust ();
 };
@@ -203,11 +203,11 @@ shapeHolder <2, 0, 1, 0, 0> {
         const PointShape * center () { return getPoint (0); }
         const PointShape * point () { return getPoint (1); }
     public:
-        circleWithCenter (std::vector<std::unique_ptr<Shape> >& shapes) {
+        circleWithCenter (shapeManager * manager) {
             CircleShape * cr = makeCircleShape (0,0,0);
             cr->setDependent (true);
             addCircle (cr);
-            shapes.emplace_back (cr);
+            manager->addShape(cr);
         }
         virtual void adjust ();
 };
@@ -220,11 +220,11 @@ shapeHolder <4, 0, 0, 0, 0> {
         const PointShape * pointB () { return getPoint (2); }
         const PointShape * pointC () { return getPoint (3); }
     public:
-        centerOfMass (std::vector<std::unique_ptr<Shape> >& shapes) {
+        centerOfMass (shapeManager * manager) {
             PointShape * cntr = makePointShape ();
             cntr->setDependent (true);
             addPoint (cntr);
-            shapes.emplace_back (cntr);
+            manager->addShape(cntr);
         }
         virtual void adjust ();
 };
@@ -237,11 +237,11 @@ shapeHolder <3, 1, 0, 0, 0> {
         const PointShape * pointB () { return getPoint (1); }
         const PointShape * pointC () { return getPoint (2); }
     public:
-        bisectorThreePoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+        bisectorThreePoints (shapeManager * manager) {
             LineShape * bis = makeLineShape (1,0,0);
             bis->setDependent (true);
             addLine (bis);
-            shapes.emplace_back (bis);
+            manager->addShape(bis);
         }
         virtual void adjust ();
 };
@@ -255,11 +255,11 @@ shapeHolder <3, 0, 1, 0, 0> {
         const PointShape * pointB () { return getPoint (1); }
         const PointShape * pointC () { return getPoint (2); }
     public:
-        circleThreePoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+        circleThreePoints (shapeManager * manager) {
             CircleShape * cir = makeCircleShape (0,0,0);
             cir->setDependent (true);
             addCircle (cir);
-            shapes.emplace_back (cir);
+            manager->addShape(cir);
         }
         virtual void adjust ();
 };
@@ -272,15 +272,15 @@ shapeHolder <2, 0, 2, 0, 0> {
         PointShape * pointA () { return getPoint (0); }
         PointShape * pointB () { return getPoint (1); }
     public:
-        circlesIntersection (std::vector<std::unique_ptr<Shape> >& shapes) {
+        circlesIntersection (shapeManager * manager) {
             PointShape * pta = makePointShape ();
             pta->setDependent (true);
             PointShape * ptb = makePointShape ();
             ptb->setDependent (true);
             addPoint (pta);
-            shapes.emplace_back (pta);
+            manager->addShape(pta);
             addPoint (ptb);
-            shapes.emplace_back (ptb);
+            manager->addShape(ptb);
         }
         virtual void adjust ();
 };
@@ -292,11 +292,11 @@ shapeHolder <0, 1, 2, 0, 0> {
         const CircleShape * circle1 () { return getCircle (0); }
         const CircleShape * circle2 () { return getCircle (1); }
     public:
-        powerLine (std::vector<std::unique_ptr<Shape> >& shapes) {
+        powerLine (shapeManager * manager) {
             LineShape * pwr = makeLineShape (1,0,0);
             pwr->setDependent (true);
             addLine (pwr);
-            shapes.emplace_back (pwr);
+            manager->addShape(pwr);
         }
         virtual void adjust ();
 };
@@ -309,15 +309,15 @@ shapeHolder <2, 1, 1, 0, 0> {
         const CircleShape * circle () { return getCircle (0); }
         const LineShape * line () { return getLine (0); }
     public:
-        lineCircleIntersection (std::vector<std::unique_ptr<Shape> >& shapes) {
+        lineCircleIntersection (shapeManager * manager) {
             PointShape * pta = makePointShape ();
             pta->setDependent (true);
             PointShape * ptb = makePointShape ();
             ptb->setDependent (true);
             addPoint (pta);
-            shapes.emplace_back (pta);
+            manager->addShape(pta);
             addPoint (ptb);
-            shapes.emplace_back (ptb);
+            manager->addShape(ptb);
         }
         virtual void adjust ();
 };
@@ -330,15 +330,15 @@ shapeHolder <1, 2, 1, 0, 0> {
         const PointShape * point () { return getPoint (0); }
         const CircleShape * circle () { return getCircle (0); }
     public:
-        tangentCirclePoint (std::vector<std::unique_ptr<Shape> >& shapes) {
+        tangentCirclePoint (shapeManager * manager) {
             LineShape * ln1 = makeLineShape (1,0,0);
             ln1->setDependent (true);
             LineShape * ln2 = makeLineShape (1,0,0);
             ln2->setDependent (true);
             addLine (ln1);
-            shapes.emplace_back (ln1);
+            manager->addShape(ln1);
             addLine (ln2);
-            shapes.emplace_back (ln2);
+            manager->addShape(ln2);
         }
         virtual void adjust ();
 };
@@ -349,11 +349,11 @@ shapeHolder <0, 1, 0, 1, 0> {
         LineShape *line () { return getLine (0); }
         const SegmentShape * segment ()  { return getSegment (0); }
     public:
-        symmetricalOfSegment (std::vector<std::unique_ptr<Shape> >& shapes) {
+        symmetricalOfSegment (shapeManager * manager) {
             LineShape * sym = makeLineShape (1,0,0);
             sym->setDependent (true);
             addLine (sym);
-            shapes.emplace_back (sym);
+            manager->addShape(sym);
         }
         virtual void adjust ();
 };
@@ -364,11 +364,11 @@ shapeHolder <2, 1, 0, 0, 0> {
         const PointShape * pointA () { return getPoint (0); }
         const PointShape * pointB () { return getPoint (1); }
     public:
-        symmetricalOfPoints (std::vector<std::unique_ptr<Shape> >& shapes) {
+        symmetricalOfPoints (shapeManager * manager) {
             LineShape * sym = makeLineShape (1,0,0);
             sym->setDependent (true);
             addLine (sym);
-            shapes.emplace_back (sym);
+            manager->addShape(sym);
         }
         virtual void adjust ();
 };
@@ -383,7 +383,7 @@ shapeHolder <1, 1, 0, 0, 0> {
             return getPoint (0);
         }
     public:
-        lineConstraint (std::vector<std::unique_ptr<Shape> >& shapes) {}
+        lineConstraint (shapeManager * manager) {}
         virtual void adjust ();
 };
 
@@ -397,7 +397,7 @@ shapeHolder <1, 0, 1, 0, 0> {
             return getPoint (0);
         }
     public:
-        circleConstraint (std::vector<std::unique_ptr<Shape> >& shapes) {}
+        circleConstraint (shapeManager * manager) {}
         virtual void adjust ();
 };
 
@@ -409,11 +409,11 @@ shapeHolder <3, 0, 0, 0, 1> {
         const PointShape * pointB () { return getPoint (1); }
         const PointShape * pointC () { return getPoint (2); }
     public:
-        Triangle (std::vector<std::unique_ptr<Shape> >& shapes) {
+        Triangle (shapeManager * manager) {
             TriangleShape * tri = makeTriangleShape (0,0,0,0,0,0);
             tri->setDependent (true);
             addTriangle (tri);
-            shapes.emplace_back (tri);
+            manager->addShape(tri);
         }
         virtual void adjust ();
 };
@@ -428,13 +428,19 @@ shapeHolder <3, 0, 0, 0, 1> {
 //TODO: Space transformations: HOMOTHETY, ROTATION, SYMMETRY about point/line, SHIFT, INVERSION, AFINIC
 
 template <typename T>
-Construction *makeConstruction (const std::vector<Shape*>& hulledShapes, std::vector<std::unique_ptr<Shape> >& shapes) {
-    T * newT = new T (shapes);
+Construction *makeConstruction (shapeManager * manager) {
+    T * newT = new T (manager);
     shapeHolderAdderVisitor hav;
     hav.setBase (newT);
-    for (auto& i : hulledShapes) {
-        i->acceptVisitor (&hav);
-    }
+    manager->visitHulledShapes (&hav);
     newT->adjust ();
     return newT;
+    //T * newT = new T (shapes);
+    //shapeHolderAdderVisitor hav;
+    //hav.setBase (newT);
+    //for (auto& i : hulledShapes) {
+    //    i->acceptVisitor (&hav);
+    //}
+    //newT->adjust ();
+    //return newT;
 }

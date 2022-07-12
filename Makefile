@@ -6,21 +6,22 @@ bin/app: $(OBJECTS)
 	g++ $(OBJECTS) -o bin/app -lsfml-window -lsfml-system -lsfml-graphics $(CFLAGS)
 
 obj/main.o: main.cpp source/Geoapp.h source/geo.h source/inputSFML.h \
- source/Input.h source/Construction.h source/drawers.h source/uiOptions.h \
- source/conditionTracker.h source/geoWorld.h | obj
+ source/Input.h source/Construction.h source/shapeManager.h \
+ source/drawers.h source/uiOptions.h source/conditionTracker.h \
+ source/geoWorld.h | obj
 	g++ main.cpp -o obj/main.o -c $(CFLAGS)
 
 obj/Construction.o: source/Construction.cpp source/Construction.h \
- source/geo.h | obj
+ source/geo.h source/shapeManager.h | obj
 	g++ source/Construction.cpp -o obj/Construction.o -c $(CFLAGS)
 
 obj/drawers.o: source/drawers.cpp source/drawers.h source/geo.h | obj
 	g++ source/drawers.cpp -o obj/drawers.o -c $(CFLAGS)
 
 obj/Geoapp.o: source/Geoapp.cpp source/Geoapp.h source/geo.h \
- source/inputSFML.h source/Input.h source/Construction.h source/drawers.h \
- source/uiOptions.h source/conditionTracker.h source/geoWorld.h \
- source/keyStates.h | obj
+ source/inputSFML.h source/Input.h source/Construction.h \
+ source/shapeManager.h source/drawers.h source/uiOptions.h \
+ source/conditionTracker.h source/geoWorld.h source/keyStates.h | obj
 	g++ source/Geoapp.cpp -o obj/Geoapp.o -c $(CFLAGS)
 
 obj/geo.o: source/geo.cpp source/geo.h | obj
@@ -31,7 +32,7 @@ obj/geoImpl.o: source/geoImpl.cpp source/geoImpl.h source/geo.h | obj
 
 obj/geoWorld.o: source/geoWorld.cpp source/geoWorld.h source/drawers.h \
  source/geo.h source/uiOptions.h source/conditionTracker.h \
- source/Construction.h | obj
+ source/Construction.h source/shapeManager.h | obj
 	g++ source/geoWorld.cpp -o obj/geoWorld.o -c $(CFLAGS)
 
 obj/Input.o: source/Input.cpp source/Input.h | obj
@@ -42,8 +43,8 @@ obj/inputSFML.o: source/inputSFML.cpp source/inputSFML.h source/Input.h | obj
 
 obj/keyStates.o: source/keyStates.cpp source/keyStates.h source/Geoapp.h \
  source/geo.h source/inputSFML.h source/Input.h source/Construction.h \
- source/drawers.h source/uiOptions.h source/conditionTracker.h \
- source/geoWorld.h | obj
+ source/shapeManager.h source/drawers.h source/uiOptions.h \
+ source/conditionTracker.h source/geoWorld.h | obj
 	g++ source/keyStates.cpp -o obj/keyStates.o -c $(CFLAGS)
 
 obj:

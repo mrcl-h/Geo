@@ -2,8 +2,9 @@
 #include "drawers.h"
 #include "geo.h"
 #include "uiOptions.h"
+#include "shapeManager.h"
 
-class geoWorld {
+class geoWorld : public shapeManager {
     private:
         std::vector<std::unique_ptr<Shape> > shapes;
         std::vector<Shape*> hulledShapes;
@@ -11,10 +12,11 @@ class geoWorld {
         std::vector<std::unique_ptr<Construction> > constructions;
         Shape* findObjectHit (const Point& p, float scalingFactor) const;
     public:
+        virtual void addShape (Shape * shape);
+        virtual void visitShapes (ShapeVisitor * visitor);
+        virtual void visitHulledShapes (ShapeVisitor * visitor);
         void createConstruction (constructionMaker maker);
         void refreshConstructions ();
-        void visitShapes (ShapeVisitor * visitor);
-        void visitHulledShapes (ShapeVisitor * visitor);
         void addPoint (float x, float y);
         void selectClick (float x, float y, float scalingFactor, ShapeVisitor * selectVisitor = NULL, ShapeVisitor * unselectVisitor = NULL);
 };
@@ -47,7 +49,7 @@ class geoView {
     public:
         geoView (sf::RenderWindow& _window, geoWorld * _world, uiOptionTracker& _uiTracker) 
             : centerX (0), centerY (0), scalingFactor (1), window (_window), 
-            sfmlDrawing (&window), world (_world), selectingMode (false), uiTracker (_uiTracker) {}
+            sfmlDrawing (&window), world (_world), selectingMode (false), uiTracker (_uiTracker), isDragging(false) {}
         void changeScale (double rat);
         void setBox (const floatRect& _box);
         void setSelectingMode ();

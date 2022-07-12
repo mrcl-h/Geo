@@ -1,5 +1,9 @@
 #include "geoWorld.h"
 
+void geoWorld::addShape (Shape * shape) {
+    shapes.emplace_back (shape);
+}
+
 Shape* geoWorld::findObjectHit (const Point& p, float scalingFactor) const {
     Shape *shapeHit = NULL;
     for (auto& i : shapes) {
@@ -13,7 +17,8 @@ Shape* geoWorld::findObjectHit (const Point& p, float scalingFactor) const {
 }
 
 void geoWorld::createConstruction (constructionMaker maker) {
-    constructions.emplace_back (maker (hulledShapes, shapes));
+    //constructions.emplace_back (maker (hulledShapes, shapes));
+    constructions.emplace_back (maker (this));
     if (hulledShapes.size () > 0) {
         hulledShapes.back()->setCurrent (false);
     }
