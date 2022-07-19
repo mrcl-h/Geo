@@ -6,17 +6,13 @@ constexpr double epsilon = 2;
 constexpr int antialias = 4;
 
 //Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (window, &world, uiTracker), testPtr (new int) {
-Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (&world, uiTracker), sfmlDrawing (&window), testPtr (new int) {
+Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (&world, uiTracker), sfmlDrawing (&window) {
 
     uiBarrier = 0.6;
     sf::ContextSettings settings;
     settings.antialiasingLevel = antialias;
     window.create(sf::VideoMode(500, 300), "Geo", sf::Style::Default, settings);
     scalingFactor=1.0;
-    centerX = centerY = 0;
-    //resetUiOptionConditions (currentConditions);
-
-    //rightMoving = false;
 
     makeUiOption<segmentMiddle> (uiTracker, "resources/segmentMid.png", uiSegmentObject (1));
     makeUiOption<pointsMiddle> (uiTracker, "resources/pointsMid.png", uiPointObject (2));
@@ -79,58 +75,14 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (&world, uiT
     loop();
 }
 
-void Geoapp::changeScale (double rat) {
-    scalingFactor *= rat;
-}
-
 float Geoapp::findUIScrollMin () const {
     unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
     float uiWidth = windowWidth*(1-uiBarrier);
     std::unordered_map<uint32_t, std::vector<uiObject> >::const_iterator it;
-    //it = uiPages.find(uiMapId (currentConditions));
-    //if (it == uiPages.end()) return 0;
-    //float objectHeight = uiWidth/2;
-    //return -(objectHeight*it->second.size()-windowHeight);
     float objectHeight = uiWidth/2;
     return -(objectHeight*uiTracker.size()-windowHeight);
 }
 
-//Shape* Geoapp::findObjectHit (const Point& p) const {
-//    Shape *shapeHit = NULL;
-//    for (auto& i : shapes) {
-//        if (i->isHit (p, scalingFactor)) {
-//            if (shapeHit == NULL || shapeHit->getHitPriority() < i->getHitPriority()) {
-//                shapeHit = i.get();
-//            }
-//        }
-//    }
-//    return shapeHit;
-//}
-
-//const Point * Geoapp::getMark (char c) const {
-//    decltype(markMap)::const_iterator it = markMap.find (c);
-//    if (it == markMap.end()) { return NULL; }
-//    return &it->second;
-//}
-//
-//void Geoapp::setMark (char c, const Point& p) {
-//    markMap[c] = p;
-//}
-
-void Geoapp::moveCamera (double x, double y) {
-    centerX += x;
-    centerY += y;
-}
-void Geoapp::setCamera (const Point& p) {
-    centerX = p.x;
-    centerY = p.y;
-}
-const Point Geoapp::getCamera () {
-    Point camera;
-    camera.x = centerX;
-    camera.y = centerY;
-    return camera;
-}
 
 void Geoapp::scrollUI (double s) {
     uiTop += s;
@@ -243,14 +195,6 @@ void Geoapp::events(const sf::Event& event){
         Point mysz;
         mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
         mainGeoView.continueRightDragging (mysz.x, mysz.y);
-        //if (rightMoving) {
-        //    Point mysz;
-        //    mysz.x = sf::Mouse::getPosition(window).x; mysz.y=sf::Mouse::getPosition(window).y;
-        //    centerX -= (mysz.x-lastMouseRightPosition.x)*scalingFactor;
-        //    centerY -= (mysz.y-lastMouseRightPosition.y)*scalingFactor;
-
-        //    lastMouseRightPosition = mysz;
-        //}
     }
 }
 
@@ -305,23 +249,6 @@ void Geoapp::drawUI() const {
 }
 
 void Geoapp::drawObjects() {
-    /*
-    float windowWidth = getWindowWidth(), windowHeight = getWindowHeight();
-
-    floatRect visible (centerX - uiBarrier*windowWidth/2*scalingFactor, centerY-windowHeight/2*scalingFactor,uiBarrier*windowWidth*scalingFactor,windowHeight*scalingFactor);
-    floatRect box (0,0,windowWidth*uiBarrier,windowHeight);
-
-    sfmlDrawing.setVisible (visible);
-    sfmlDrawing.setBox (box);
-
-    hullDrawingShapeVisitor hdv;
-    hdv.setDrawer (&sfmlDrawing);
-    for(unsigned int i=0;i<hulledShapes.size();i++){
-        hulledShapes[i]->acceptVisitor (&hdv);
-    }
-
-    drawShapes (&sfmlDrawing);
-    */
     drawingClass * oldDrawer = mainGeoView.setDrawer (&sfmlDrawing);
     mainGeoView.setRects();
     mainGeoView.draw();
@@ -337,88 +264,16 @@ void Geoapp::UIhandling(const Point& mysz){
         return;
     }
     unsigned int clickedOption = (mysz.y-uiTop)/objectHeight;
-    //std::vector<uiObject>& currentPage = uiPages[uiMapId (currentConditions)];
-    //if (clickedOption >= currentPage.size()) {
     if (clickedOption >= uiTracker.size()) {
         return;
     }
-    //Construction *constructionMade = currentPage[clickedOption].creator (hulledElements, shapes);
-    //Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledElements, shapes);
-    
-
-    //Construction *constructionMade = uiTracker.getNthOption(clickedOption).creator (hulledShapes, shapes);
-    //constructions.emplace_back (constructionMade);
-    //if (hulledShapes.size() > 0) {
-    //    hulledShapes.back()->setCurrent (false);
-    //}
-    //for (auto i : hulledShapes) {
-    //    i->setActivity (false);
-    //}
-    //hulledShapes.clear();
     world.createConstruction (uiTracker.getNthOption(clickedOption).creator);
 
 
     resetUIPosition();
-    //resetUiOptionConditions (currentConditions);
     uiTracker.resetConditions();
-
-    //resetConstructionElements (hulledElements);
-    //hulledElements.clear();
 }
 
 void Geoapp::whenClick(double x, double y){
     mainGeoView.click (x, y);
-    /*
-       Point clickPosition;
-       clickPosition.x = centerX+(x-float(window.getSize().x*uiBarrier)/2)*scalingFactor;
-       clickPosition.y = centerY+(y-float(window.getSize().y)/2)*scalingFactor;
-       if(currentMode == mode::pointCreation){
-    //std::unique_ptr<Shape> S (makePointShape(clickPosition.x, clickPosition.y));
-    //shapes.push_back(std::move(S));
-    } else if(currentMode == mode::selection){
-    Shape *hitShape = findObjectHit (clickPosition);
-    if(hitShape){
-    int selectCount;
-    if (hitShape->getActivity()) {
-    hitShape->setActivity (false);
-    hitShape->setCurrent (false);
-
-    hulledShapes.erase (std::find(hulledShapes.begin(), hulledShapes.end(), hitShape));
-
-    //hitShape->removeFromConstructionElements (hulledElements);
-    //constructionElementsRemovingShapeVisitor rvs;
-    //rvs.setElements (&hulledElements);
-    //hitShape->acceptVisitor (&rvs);
-
-    if (hulledShapes.size() > 0) {
-    hulledShapes.back()->setCurrent (true);
-    }
-    selectCount = -1;
-    } else {
-    hitShape->setActivity (true);
-    if (hulledShapes.size() > 0)
-    hulledShapes.back()->setCurrent (false);
-
-    hulledShapes.push_back(hitShape);
-    hulledShapes.back()->setCurrent (true);
-
-    //hitShape->addToConstructionElements (hulledElements);
-    //constructionElementsAddingShapeVisitor avs;
-    //avs.setElements (&hulledElements);
-    //hitShape->acceptVisitor (&avs);
-
-    selectCount = 1;
-    }
-    //hitShape->addToCurrentConditions (currentConditions, selectCount);
-    uiOptionConditionsAdjusterShapeVisitor ocasv;
-    //ocasv.setConditions (&currentConditions);
-    ocasv.setTracker (&uiTracker);
-    ocasv.setCount (selectCount);
-    hitShape->acceptVisitor (&ocasv);
-    resetUIPosition();
-    }
-    //uiPages[uiMapId(currentConditions)];
-    }
-    */
-
 }

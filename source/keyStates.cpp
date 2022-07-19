@@ -15,7 +15,6 @@ void inputPointMovementState::onEnter () {
 inputPointMovementState::inputPointMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y) : inputState (_manager), app(_app), x(_x), y(_y) {}
 
 void inputPointSelectionState::onEnter () {
-    //app->setCurrentMode (Geoapp::mode::selection);
     gv->setSelectingMode ();
     done();
 }
@@ -23,7 +22,6 @@ void inputPointSelectionState::onEnter () {
 inputPointSelectionState::inputPointSelectionState (inputManager* _manager, geoView* _gv) :inputState(_manager), gv(_gv) {}
 
 void inputPointCreationState::onEnter () {
-    //app->setCurrentMode (Geoapp::mode::pointCreation);
     gv->setAddingMode ();
     done();
 }
@@ -37,8 +35,6 @@ void inputSetMarkState::onKey (inputManager::keyType k, inputManager::action a, 
         done();
         return;
     }
-    //app->setMark (mk,app->getCamera());
-    //gv->setMark (mk,app->getCamera());
     marks.setMark (mk, gv->getCamera());
     done();
 }
@@ -52,10 +48,6 @@ void inputGoToMarkState::onKey (inputManager::keyType k, inputManager::action a,
         done();
         return;
     }
-    //const Point * const pptr = app->getMark (mk);
-    //if (pptr != NULL) {
-    //    app->setCamera (*pptr);
-    //}
     if (marks.findMark (mk)) {
         gv->setCamera (marks.getFoundMark());
     }
@@ -72,7 +64,6 @@ void inputUIScrollState::onEnter () {
 inputUIScrollState::inputUIScrollState (inputManager* _manager, Geoapp* _app, double _scrollValue) : inputState(_manager), app(_app), scrollValue (_scrollValue){}
 
 void inputScalingState::onEnter () {
-    //app->changeScale (scaleValue);
     gv->changeScale (scaleValue);
     done();
 }
@@ -80,13 +71,6 @@ void inputScalingState::onEnter () {
 inputScalingState::inputScalingState (inputManager* _manager, geoView* _gv, double _scaleValue) : inputState (_manager), gv(_gv), scaleValue (_scaleValue) {}
 
 void inputSaveState::onEnter () {
-    //drawer->setVisible (app->getVisible());
-    //drawer->setBox (app->getBox());
-    //drawer->startDrawing();
-    //app->drawShapes (drawer);
-    //drawer->endDrawing();
-    //drawer->saveToFile (filename);
-    //done();
     drawingClass * oldDrawer = gv->setDrawer (drawer);
     gv->setRects();
     drawer->startDrawing();

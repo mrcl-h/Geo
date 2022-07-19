@@ -78,7 +78,6 @@ class inputScalingState : public inputState {
 
 class inputSaveState : public inputState {
     private:
-        //Geoapp* app;
         geoView* gv;
         const std::string filename;
         svgDrawingClass* drawer;
