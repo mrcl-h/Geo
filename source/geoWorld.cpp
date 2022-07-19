@@ -1,5 +1,22 @@
 #include "geoWorld.h"
 
+void geoView::moveCamera (double x, double y) {
+    centerX += x; centerY += y;
+    oldCenterX += x; oldCenterY += y;
+}
+void geoView::setCamera (double x, double y) {
+    centerX = x; centerY = y;
+    oldCenterX = x; oldCenterY = y;
+}
+void geoView::setCamera (const Point& p) {
+    centerX = p.x; centerY = p.y;
+    oldCenterX = p.x; oldCenterY = p.y;
+}
+const Point geoView::getCamera () {
+    Point ret;
+    ret.x = centerX; ret.y = centerY;
+    return ret;
+}
 void geoWorld::addShape (Shape * shape) {
     shapes.emplace_back (shape);
 }

@@ -1,11 +1,11 @@
 #include "keyStates.h"
 
 void inputCameraMovementState::onEnter () {
-    app->moveCamera (x,y);
+    gv->moveCamera (x,y);
     done();
 }
 
-inputCameraMovementState::inputCameraMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y) : inputState(_manager), app(_app), x(_x), y(_y) {}
+inputCameraMovementState::inputCameraMovementState (inputManager* _manager, geoView * _gv, double _x, double _y) : inputState(_manager), gv(_gv), x(_x), y(_y) {}
 
 void inputPointMovementState::onEnter () {
     app->moveHulledPoints(x,y);

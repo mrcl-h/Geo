@@ -54,6 +54,10 @@ class geoView {
             world (_world), selectingMode (false), uiTracker (_uiTracker), isDragging(false) {}
         drawingClass * setDrawer (drawingClass * newDrawer);
         void changeScale (double rat);
+        void moveCamera (double x, double y);
+        void setCamera (double x, double y);
+        void setCamera (const Point& p);
+        const Point getCamera ();
         void setBox (const floatRect& _box);
         void setSelectingMode ();
         void setAddingMode ();

@@ -7,10 +7,10 @@
 
 class inputCameraMovementState : public inputState {
     private:
-        Geoapp* app;
+        geoView* gv;
         double x, y;
     public:
-        inputCameraMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y);
+        inputCameraMovementState (inputManager* _manager, geoView * _gv, double _x, double _y);
         virtual void onEnter () override;
 };
 

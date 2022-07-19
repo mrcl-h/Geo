@@ -39,15 +39,15 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (&world, uiT
     makeUiOption<Triangle> (uiTracker, "resources/segmentMid.png", uiPointObject (3));
 
     junctionInputState *mainState = new junctionInputState (&inManager);
-    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -10,   0));
-    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  10,   0));
-    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, this,   0, -10));
-    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, this,   0,  10));
+    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, &mainGeoView, -10,   0));
+    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, &mainGeoView,  10,   0));
+    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, &mainGeoView,   0, -10));
+    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, &mainGeoView,   0,  10));
 
-    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, this, -100,   0), inputManager::ctrlMod);
-    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, this,  100,   0), inputManager::ctrlMod);
-    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, this,   0, -100), inputManager::ctrlMod);
-    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, this,   0,  100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Left,   new inputCameraMovementState (&inManager, &mainGeoView, -100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Right,  new inputCameraMovementState (&inManager, &mainGeoView,  100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, &mainGeoView,   0, -100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, &mainGeoView,   0,  100), inputManager::ctrlMod);
 
     mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -10,   0));
     mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  10));
