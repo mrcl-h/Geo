@@ -75,13 +75,21 @@ void inputScalingState::onEnter () {
 inputScalingState::inputScalingState (inputManager* _manager, geoView* _gv, double _scaleValue) : inputState (_manager), gv(_gv), scaleValue (_scaleValue) {}
 
 void inputSaveState::onEnter () {
-    drawer->setVisible (app->getVisible());
-    drawer->setBox (app->getBox());
+    //drawer->setVisible (app->getVisible());
+    //drawer->setBox (app->getBox());
+    //drawer->startDrawing();
+    //app->drawShapes (drawer);
+    //drawer->endDrawing();
+    //drawer->saveToFile (filename);
+    //done();
+    drawingClass * oldDrawer = gv->setDrawer (drawer);
+    gv->setRects();
     drawer->startDrawing();
-    app->drawShapes (drawer);
+    gv->draw ();
+    gv->setDrawer (oldDrawer);
     drawer->endDrawing();
     drawer->saveToFile (filename);
-    done();
+
 }
 
-inputSaveState::inputSaveState (inputManager* _manager, Geoapp* _app, const std::string& _filename, svgDrawingClass* _drawer) :inputState (_manager), app(_app), filename(_filename), drawer(_drawer) {}
+inputSaveState::inputSaveState (inputManager* _manager, geoView * _gv, const std::string& _filename, svgDrawingClass* _drawer) :inputState (_manager), gv(_gv), filename(_filename), drawer(_drawer) {}

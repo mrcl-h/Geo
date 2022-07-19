@@ -91,7 +91,8 @@ void geoView::changeScale (double rat) {
 
 void geoView::setBox (const floatRect& _box) {
     box = _box;
-    sfmlDrawing.setBox (box);
+    //sfmlDrawing.setBox (box);
+    //drawer->setBox (box);
 }
 
 void geoView::setSelectingMode () {
@@ -136,16 +137,32 @@ void geoView::interruptDragging () {
     centerX = oldCenterX; centerY = oldCenterY;
     isDragging = false;
 }
-void geoView::draw () {
+void geoView::setRects () {
     floatRect visible (centerX - box.width/2*scalingFactor, centerY-box.height/2*scalingFactor,
             box.width*scalingFactor, box.height*scalingFactor);
-    sfmlDrawing.setVisible (visible);
+    drawer->setVisible (visible);
+    drawer->setBox (box);
+}
+void geoView::draw () {
+    //floatRect visible (centerX - box.width/2*scalingFactor, centerY-box.height/2*scalingFactor,
+    //        box.width*scalingFactor, box.height*scalingFactor);
+    ////sfmlDrawing.setVisible (visible);
+    //drawer->setVisible (visible);
+    //drawer->setBox (box);
 
     hullDrawingShapeVisitor hdv;
-    hdv.setDrawer (&sfmlDrawing);
+    //hdv.setDrawer (&sfmlDrawing);
+    hdv.setDrawer (drawer);
     world->visitHulledShapes (&hdv);
 
     drawingShapeVisitor dv;
-    dv.setDrawer (&sfmlDrawing);
+    //dv.setDrawer (&sfmlDrawing);
+    dv.setDrawer (drawer);
     world->visitShapes (&dv);
+}
+
+drawingClass * geoView::setDrawer (drawingClass * newDrawer) {
+    drawingClass * oldDrawer = drawer;
+    drawer = newDrawer;
+    return oldDrawer;
 }

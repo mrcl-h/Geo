@@ -41,7 +41,7 @@ class Geoapp{
         geoWorld world;
         geoView mainGeoView;
 
-        //mutable sfmlDrawingClass sfmlDrawing;
+        mutable sfmlDrawingClass sfmlDrawing;
         mutable svgDrawingClass svgDrawing;
 
         void loop();

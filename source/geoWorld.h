@@ -30,9 +30,10 @@ class geoView {
 
         double scalingFactor;
 
-        sf::RenderWindow& window;
+        //sf::RenderWindow& window;
 
-        sfmlDrawingClass sfmlDrawing;
+        //sfmlDrawingClass sfmlDrawing;
+        drawingClass * drawer;
 
         geoWorld * world;
 
@@ -47,9 +48,11 @@ class geoView {
         bool isDragging;
 
     public:
-        geoView (sf::RenderWindow& _window, geoWorld * _world, uiOptionTracker& _uiTracker) 
-            : centerX (0), centerY (0), scalingFactor (1), window (_window), 
-            sfmlDrawing (&window), world (_world), selectingMode (false), uiTracker (_uiTracker), isDragging(false) {}
+        geoView (geoWorld * _world, uiOptionTracker& _uiTracker) 
+            : centerX (0), centerY (0), scalingFactor (1), //window (_window), 
+            //sfmlDrawing (&window), 
+            world (_world), selectingMode (false), uiTracker (_uiTracker), isDragging(false) {}
+        drawingClass * setDrawer (drawingClass * newDrawer);
         void changeScale (double rat);
         void setBox (const floatRect& _box);
         void setSelectingMode ();
@@ -59,5 +62,6 @@ class geoView {
         void continueRightDragging (float x, float y);
         void stopRightDragging ();
         void interruptDragging ();
+        void setRects ();
         void draw ();
 };

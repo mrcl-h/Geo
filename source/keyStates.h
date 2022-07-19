@@ -75,10 +75,11 @@ class inputScalingState : public inputState {
 
 class inputSaveState : public inputState {
     private:
-        Geoapp* app;
+        //Geoapp* app;
+        geoView* gv;
         const std::string filename;
         svgDrawingClass* drawer;
     public:
-        inputSaveState (inputManager* _manager, Geoapp* _app, const std::string& _filename, svgDrawingClass* _drawer);
+        inputSaveState (inputManager* _manager, geoView * _gv, const std::string& _filename, svgDrawingClass* _drawer);
         virtual void onEnter () override;
 };
