@@ -62,8 +62,8 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (&world, uiT
     mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, &mainGeoView));
     mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, &mainGeoView));
 
-    mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, this));
-    mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, this));
+    mainState->addState (inputManager::Key::M,      new inputSetMarkState  (&inManager, &mainGeoView, marks));
+    mainState->addState (inputManager::Key::Quote,  new inputGoToMarkState (&inManager, &mainGeoView, marks));
 
     mainState->addState (inputManager::Key::U, new inputUIScrollState (&inManager, this,  10));
     mainState->addState (inputManager::Key::D, new inputUIScrollState (&inManager, this, -10));
@@ -107,15 +107,15 @@ float Geoapp::findUIScrollMin () const {
 //    return shapeHit;
 //}
 
-const Point * Geoapp::getMark (char c) const {
-    decltype(markMap)::const_iterator it = markMap.find (c);
-    if (it == markMap.end()) { return NULL; }
-    return &it->second;
-}
-
-void Geoapp::setMark (char c, const Point& p) {
-    markMap[c] = p;
-}
+//const Point * Geoapp::getMark (char c) const {
+//    decltype(markMap)::const_iterator it = markMap.find (c);
+//    if (it == markMap.end()) { return NULL; }
+//    return &it->second;
+//}
+//
+//void Geoapp::setMark (char c, const Point& p) {
+//    markMap[c] = p;
+//}
 
 void Geoapp::moveCamera (double x, double y) {
     centerX += x;

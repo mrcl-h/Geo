@@ -31,33 +31,38 @@ void inputPointCreationState::onEnter () {
 inputPointCreationState::inputPointCreationState (inputManager* _manager, geoView* _gv) :inputState(_manager), gv(_gv) {}
 
 void inputSetMarkState::onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
-    if (a == inputManager::released) return;
+    if (a != inputManager::pressed) return;
     char mk = inputManager::keyToChar(k);
     if (mk == 0) {
         done();
         return;
     }
-    app->setMark (mk,app->getCamera());
+    //app->setMark (mk,app->getCamera());
+    //gv->setMark (mk,app->getCamera());
+    marks.setMark (mk, gv->getCamera());
     done();
 }
 
-inputSetMarkState::inputSetMarkState (inputManager* _manager, Geoapp* _app) : inputState(_manager), app(_app) {}
+inputSetMarkState::inputSetMarkState (inputManager* _manager, geoView * _gv, charMarks & _marks) : inputState(_manager), gv(_gv), marks(_marks) {}
 
 void inputGoToMarkState::onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) {
-    if (a == inputManager::released) return;
+    if (a != inputManager::pressed) return;
     char mk = inputManager::keyToChar(k);
     if (mk == 0) {
         done();
         return;
     }
-    const Point * const pptr = app->getMark (mk);
-    if (pptr != NULL) {
-        app->setCamera (*pptr);
+    //const Point * const pptr = app->getMark (mk);
+    //if (pptr != NULL) {
+    //    app->setCamera (*pptr);
+    //}
+    if (marks.findMark (mk)) {
+        gv->setCamera (marks.getFoundMark());
     }
     done();
 }
 
-inputGoToMarkState::inputGoToMarkState (inputManager* _manager, Geoapp* _app) : inputState(_manager), app(_app) {}
+inputGoToMarkState::inputGoToMarkState (inputManager* _manager, geoView * _gv, charMarks & _marks) : inputState(_manager), gv(_gv), marks(_marks) {}
 
 void inputUIScrollState::onEnter () {
     app->scrollUI (scrollValue);

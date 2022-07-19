@@ -4,6 +4,7 @@
 #pragma once
 #include "Geoapp.h"
 #include "Input.h"
+#include "marks.h"
 
 class inputCameraMovementState : public inputState {
     private:
@@ -41,17 +42,19 @@ class inputPointCreationState : public inputState {
 
 class inputSetMarkState : public inputState {
     private:
-        Geoapp* app;
+        geoView* gv;
+        charMarks& marks;
     public:
-        inputSetMarkState (inputManager* _manager, Geoapp* _app);
+        inputSetMarkState (inputManager* _manager, geoView * _gv, charMarks& _marks);
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) override;
 };
 
 class inputGoToMarkState : public inputState {
     private:
-        Geoapp* app;
+        geoView* gv;
+        charMarks& marks;
     public:
-        inputGoToMarkState (inputManager* _manager, Geoapp* _app);
+        inputGoToMarkState (inputManager* _manager, geoView * _gv, charMarks& _marks);
         virtual void onKey (inputManager::keyType k, inputManager::action a, unsigned int mods) override;
 };
 

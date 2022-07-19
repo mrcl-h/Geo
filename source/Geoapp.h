@@ -9,6 +9,7 @@
 #include "drawers.h"
 #include "uiOptions.h"
 #include "geoWorld.h"
+#include "marks.h"
 
 class Geoapp{
 
@@ -21,7 +22,8 @@ class Geoapp{
         double centerX, centerY, step=0.25;
         bool leftKeyDown=false, rightKeyDown=false, upKeyDown=false, downKeyDown=false;
 
-        std::unordered_map <char, Point> markMap;
+        charMarks marks;
+        //std::unordered_map <char, Point> markMap;
 
         //std::vector<std::unique_ptr<Shape> > shapes;
         //std::vector<Shape*> hulledShapes;
@@ -58,9 +60,9 @@ class Geoapp{
         //Shape* findObjectHit (const Point& p) const;
 
     public:
-        const Point * getMark (char c) const;
+        //const Point * getMark (char c) const;
 
-        void setMark (char c, const Point& p);
+        //void setMark (char c, const Point& p);
 
         void moveCamera (double x, double y);
         void setCamera (double x, double y);
