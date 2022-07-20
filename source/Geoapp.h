@@ -50,8 +50,6 @@ class Geoapp{
 
         void resetUIPosition ();
 
-        void moveHulledPoints (double x, double y);
-
         float getWindowWidth () const {
             return window.getSize().x;
         }

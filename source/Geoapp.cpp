@@ -45,15 +45,15 @@ Geoapp::Geoapp() : inManager (), inWrapper (inManager), mainGeoView (&world, uiT
     mainState->addState (inputManager::Key::Up,     new inputCameraMovementState (&inManager, &mainGeoView,   0, -100), inputManager::ctrlMod);
     mainState->addState (inputManager::Key::Down,   new inputCameraMovementState (&inManager, &mainGeoView,   0,  100), inputManager::ctrlMod);
 
-    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -10,   0));
-    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  10));
-    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -10));
-    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  10,   0));
+    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, &world, -10,   0));
+    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, &world,   0,  10));
+    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, &world,   0, -10));
+    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, &world,  10,   0));
 
-    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, this, -100,   0), inputManager::ctrlMod);
-    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, this,   0,  100), inputManager::ctrlMod);
-    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, this,   0, -100), inputManager::ctrlMod);
-    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, this,  100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::H, new inputPointMovementState (&inManager, &world, -100,   0), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::J, new inputPointMovementState (&inManager, &world,   0,  100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::K, new inputPointMovementState (&inManager, &world,   0, -100), inputManager::ctrlMod);
+    mainState->addState (inputManager::Key::L, new inputPointMovementState (&inManager, &world,  100,   0), inputManager::ctrlMod);
 
     mainState->addState (inputManager::Key::Q, new inputPointCreationState  (&inManager, &mainGeoView));
     mainState->addState (inputManager::Key::W, new inputPointSelectionState (&inManager, &mainGeoView));
@@ -98,38 +98,6 @@ void Geoapp::scrollUI (double s) {
 
 void Geoapp::resetUIPosition () {
     uiTop = 0;
-}
-
-class shapeMovingVisitor : public ShapeVisitor {
-    private:
-        float x, y;
-    public:
-        void setMovement (float _x, float _y) {
-            x = _x; y = _y;
-        }
-        virtual void visitSegment (SegmentShape* ss) {
-            ss->moveShape (x,y);
-        }
-        virtual void visitTriangle (TriangleShape* ts) {
-            ts->moveShape (x,y);
-        }
-        virtual void visitLine (LineShape* ls) {
-            ls->moveShape (x,y);
-        }
-        virtual void visitCircle (CircleShape* cs) {
-            cs->moveShape (x,y);
-        }
-        virtual void visitPoint (PointShape* ps) {
-            ps->moveShape (x,y);
-        }
-};
-
-void Geoapp::moveHulledPoints (double x, double y) {
-    shapeMovingVisitor mv;
-    mv.setMovement (x, y);
-    world.visitHulledShapes (&mv);
-
-    world.refreshConstructions ();
 }
 
 void Geoapp::loop(){

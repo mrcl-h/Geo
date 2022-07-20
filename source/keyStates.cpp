@@ -7,12 +7,42 @@ void inputCameraMovementState::onEnter () {
 
 inputCameraMovementState::inputCameraMovementState (inputManager* _manager, geoView * _gv, double _x, double _y) : inputState(_manager), gv(_gv), x(_x), y(_y) {}
 
+class shapeMovingVisitor : public ShapeVisitor {
+    private:
+        float x, y;
+    public:
+        void setMovement (float _x, float _y) {
+            x = _x; y = _y;
+        }
+        virtual void visitSegment (SegmentShape* ss) {
+            ss->moveShape (x,y);
+        }
+        virtual void visitTriangle (TriangleShape* ts) {
+            ts->moveShape (x,y);
+        }
+        virtual void visitLine (LineShape* ls) {
+            ls->moveShape (x,y);
+        }
+        virtual void visitCircle (CircleShape* cs) {
+            cs->moveShape (x,y);
+        }
+        virtual void visitPoint (PointShape* ps) {
+            ps->moveShape (x,y);
+        }
+};
+
 void inputPointMovementState::onEnter () {
-    app->moveHulledPoints(x,y);
+    //app->moveHulledPoints(x,y);
+    //done();
+    shapeMovingVisitor mv;
+    mv.setMovement (x, y);
+    world->visitHulledShapes (&mv);
+    world->refreshConstructions ();
+
     done();
 }
 
-inputPointMovementState::inputPointMovementState (inputManager* _manager, Geoapp* _app, double _x, double _y) : inputState (_manager), app(_app), x(_x), y(_y) {}
+inputPointMovementState::inputPointMovementState (inputManager* _manager, geoWorld * _world, double _x, double _y) : inputState (_manager), world(_world), x(_x), y(_y) {}
 
 void inputPointSelectionState::onEnter () {
     gv->setSelectingMode ();
