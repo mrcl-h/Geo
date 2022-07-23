@@ -146,6 +146,7 @@ void Geoapp::events(const sf::Event& event){
         box.width = getWindowWidth () * uiBarrier;
         mainGeoView.setBox (box);
         resetUIPosition();
+        window.setView (sf::View(sf::FloatRect(0,0,getWindowWidth(), getWindowHeight())));
     } else if(event.type == sf::Event::KeyPressed){
         inWrapper.onKeyEvent (event);
     } else if(event.type == sf::Event::KeyReleased){
@@ -171,15 +172,53 @@ void Geoapp::drawApp(){
     drawUI();
 }
 
+class uiOptionDrawer {
+    private:
+        constexpr static double fragment = 0.8;
+        const uiObject * currentObject;
+        double x, y, width, height;
+        sf::RenderWindow * window;
+    public:
+        uiOptionDrawer (sf::RenderWindow * _window) : window (_window) {}
+        void setCurrentObject (const uiObject * newObject) {
+            currentObject = newObject;
+        }
+        void setPlace (double _x, double _y, double _width, double _height) {
+            x = _x; y = _y; width = _width; height = _height;
+        }
+        void draw () {
+            double spriteX, spriteY, spriteSide;
+            if (width > height) {
+                spriteSide = fragment * height;
+            } else {
+                spriteSide = fragment * width;
+            }
+            spriteY = y + (height-spriteSide)/2;
+            spriteX = x + (width-spriteSide)/2;
+
+            sf::Sprite currentIcon;
+
+            currentIcon.setPosition (spriteX, spriteY);
+            currentIcon.setTexture (currentObject->image);
+
+            float texWidth = currentObject->image.getSize().x, texHeight = currentObject->image.getSize().y;
+            currentIcon.setScale (spriteSide/texWidth, spriteSide/texHeight);
+
+            window->draw (currentIcon);
+        }
+};
+
 void Geoapp::drawUI() const {
-    unsigned int windowWidth = window.getSize().x, windowHeight = window.getSize().y;
+    unsigned int windowWidth = getWindowWidth(), windowHeight = getWindowHeight();
 
     float uiWidth = windowWidth*(1-uiBarrier);
     float uiLeft = windowWidth * uiBarrier;
 
-    window.setView (sf::View(sf::FloatRect(0,0,windowWidth, windowHeight)));
     sf::RectangleShape rect (sf::Vector2f(uiWidth,windowHeight));
     rect.move(sf::Vector2f(uiLeft,0));
+    rect.setFillColor (sf::Color(0,255,255));
+    window.draw(rect);
+
     sf::Vertex line[] =
     {
         sf::Vertex(sf::Vector2f(uiLeft, 0)),
@@ -187,24 +226,24 @@ void Geoapp::drawUI() const {
     };
     line[0].color=sf::Color(0,0,0);
     line[1].color=sf::Color(0,0,0);
-    rect.setFillColor (sf::Color(0,255,255));
-    window.draw(rect);
     window.draw(line, 2, sf::Lines);
 
-    //const std::vector<uiObject>& currentObjects = uiPages.find(uiMapId (currentConditions))->second;
+    float objectWidth = uiWidth;
     float objectHeight = uiWidth/2;
-
-    sf::Sprite currentIcon;
-    currentIcon.setPosition (uiLeft+uiWidth*0.3, uiTop+objectHeight*0.1);
 
     sf::Vector2f leftSeparator (uiLeft, uiTop+objectHeight);
     sf::Vector2f rightSeparator (windowWidth, uiTop+objectHeight);
-    //for (auto& i : currentObjects) {
+
+    double currentTop = uiTop;
+    uiOptionDrawer optionDrawer (&window);
+
     for (auto& i : uiTracker) {
-        currentIcon.setTexture (i.image);
-        float texWidth = i.image.getSize().x, texHeight = i.image.getSize().y;
-        currentIcon.setScale (objectHeight*0.8/texWidth, objectHeight*0.8/texHeight);
-        window.draw (currentIcon);
+
+        optionDrawer.setCurrentObject (&i);
+        optionDrawer.setPlace (uiLeft, currentTop, uiWidth, objectHeight);
+        currentTop += objectHeight;
+        optionDrawer.draw();
+
         sf::Vertex separator [] = { sf::Vertex (leftSeparator), sf::Vertex (rightSeparator) };
         separator[0].color=sf::Color(0,0,0);
         separator[1].color=sf::Color(0,0,0);
@@ -212,7 +251,6 @@ void Geoapp::drawUI() const {
 
         leftSeparator.y += objectHeight;
         rightSeparator.y += objectHeight;
-        currentIcon.move(0,objectHeight);
     }
 }
 
