@@ -5,6 +5,7 @@
  * By using begin() and end() one can iterate through all options matching
  * current conditions.
  * */
+#pragma once
 #include <array>
 #include <map>
 #include <vector>

@@ -90,22 +90,37 @@ class drawingShapeVisitor : public ShapeVisitor {
         }
 
         virtual void visitSegment (SegmentShape* ss) {
+            if (!ss->getExistance()) {
+                return;
+            }
             setDrawerColorToShape (ss);
             drawer->drawSegment (getSegmentFrom (*ss), getSegmentTo (*ss));
         }
         virtual void visitTriangle (TriangleShape* ts) {
+            if (!ts->getExistance()) {
+                return;
+            }
             setDrawerColorToShape (ts);
             drawer->drawTriangle (getTrianglePointA (*ts), getTrianglePointB (*ts), getTrianglePointC (*ts));
         }
         virtual void visitLine (LineShape* ls) {
+            if (!ls->getExistance()) {
+                return;
+            }
             setDrawerColorToShape (ls);
             drawer->drawLine (ls->getNormalX(), ls->getNormalY(), ls->getC());
         }
         virtual void visitCircle (CircleShape* cs) {
+            if (!cs->getExistance()) {
+                return;
+            }
             setDrawerColorToShape (cs);
             drawer->drawCircle (getCircleCenter (*cs), cs->getR());
         }
         virtual void visitPoint (PointShape* ps) {
+            if (!ps->getExistance()) {
+                return;
+            }
             setDrawerColorToShape (ps);
             drawer->drawPoint (getPointLocation (*ps));
         }
